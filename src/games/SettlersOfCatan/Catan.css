@@ -4,9 +4,6 @@
 }
 
 .hexagon {
-    fill: #ccc;
-    stroke: #333;
-    stroke-width: 0.2;
     pointer-events: auto;
 }
 
