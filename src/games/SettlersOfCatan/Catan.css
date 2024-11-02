@@ -1,7 +1,13 @@
+.container > .grid {
+    position: absolute;
+    pointer-events: none;
+}
+
 .hexagon {
     fill: #ccc;
     stroke: #333;
     stroke-width: 0.2;
+    pointer-events: auto;
 }
 
 .hexagon:hover {
