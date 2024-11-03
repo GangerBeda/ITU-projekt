@@ -1,3 +1,7 @@
+.container {
+    background-color: #09f;
+}
+
 .container > .grid {
     position: absolute;
     pointer-events: none;
