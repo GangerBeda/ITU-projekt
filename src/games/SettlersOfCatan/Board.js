@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HexGrid, Layout, Hexagon, GridGenerator, Pattern } from 'react-hexgrid';
 import './Board.css';
 
@@ -7,11 +7,6 @@ const INVALID_HEXES_SETTLERS = [
     0, 1, 4, 5, 6, 9, 12, 15, 18, 22, 25, 28, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 62, 65, 68, 72, 75, 78, 81, 84, 85, 86, 89, 90,
 ];
 const INVALID_HEXES_PATHS = [7, 9, 11, 22, 24, 26, 28, 41, 43, 45, 47, 49, 62, 64, 66, 68, 79, 81, 83];
-
-const hexClicked = (grid, hexId) => {
-    let element = document.getElementById(`${grid}-${hexId}`);
-    console.log(element);
-};
 
 const convertToColor = (materialType) => {
     switch (materialType) {
@@ -49,6 +44,40 @@ const convertToHoverColor = (materialType) => {
 
 export default function Board(props) {
     const [hoveredHex, setHoveredHex] = useState(null);
+    const [hexColors, setHexColors] = useState({});
+    const [hexHoverColors, setHexHoverColors] = useState({});
+
+    useEffect(() => {
+        const initialColors = {};
+        for (let i = 0; i < 100; i++) {
+            initialColors[`path-${i}`] = '#222';
+            initialColors[`material-${i}`] = '#222';
+            initialColors[`settler-${i}`] = '#222';
+        }
+        setHexColors(initialColors);
+
+        const initialHoverColors = {};
+        for (let i = 0; i < 100; i++) {
+            initialHoverColors[`path-${i}`] = '#222';
+            initialHoverColors[`material-${i}`] = '#222';
+            initialHoverColors[`settler-${i}`] = '#222';
+        }
+        setHexHoverColors(initialHoverColors);
+    }, []);
+
+    const getHexColor = (grid, i) => {
+        return hexColors[`${grid}-${i}`] || '#222';
+    };
+
+    const getHexHoverColor = (grid, i) => {
+        return hexHoverColors[`${grid}-${i}`] || '#555';
+    };
+
+    const hexClicked = (grid, i) => {
+        setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
+        setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
+    };
+
     const renderHexGrid = (grid, size, spacing, flat, invalidHexes, hexRadius) => {
         let j = 0;
         return (
@@ -76,8 +105,8 @@ export default function Board(props) {
                                                 ? convertToHoverColor(props.materialTypes[j])
                                                 : convertToColor(props.materialTypes[j])
                                             : hoveredHex === `${grid}-${i}`
-                                            ? '#555'
-                                            : '#222',
+                                            ? getHexHoverColor(grid, i)
+                                            : getHexColor(grid, i, props.activePlayerColor),
 
                                     stroke: '#000',
                                     strokeWidth: 0.2,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Board from './Board';
 
 const materialTypes = [
@@ -42,6 +42,20 @@ const shuffle = () => {
 };
 
 export default function Catan() {
-    shuffle();
-    return <Board materialTypes={materialTypes} numberTokens={numberTokens} />;
+    const [activePlayerColor, setActivePlayerColor] = useState('#f00');
+    useState(() => {
+        shuffle();
+    });
+    return (
+        <>
+            <select value={activePlayerColor} onChange={(e) => setActivePlayerColor(e.target.value)}>
+                <option value='#f00'>Red</option>
+                <option value='#00f'>Blue</option>
+                <option value='#0f0'>Green</option>
+                <option value='#ff0'>Yellow</option>
+            </select>
+
+            <Board materialTypes={materialTypes} numberTokens={numberTokens} activePlayerColor={activePlayerColor} />
+        </>
+    );
 }
