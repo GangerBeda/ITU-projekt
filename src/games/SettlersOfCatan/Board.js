@@ -58,9 +58,9 @@ export default function Board(props) {
 
         const initialHoverColors = {};
         for (let i = 0; i < 100; i++) {
-            initialHoverColors[`path-${i}`] = '#222';
-            initialHoverColors[`material-${i}`] = '#222';
-            initialHoverColors[`settler-${i}`] = '#222';
+            initialHoverColors[`path-${i}`] = '#555';
+            initialHoverColors[`material-${i}`] = '#555';
+            initialHoverColors[`settler-${i}`] = '#555';
         }
         setHexHoverColors(initialHoverColors);
     }, []);
