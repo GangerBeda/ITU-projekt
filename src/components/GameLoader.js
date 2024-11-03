@@ -2,10 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import Blackjack from '../games/Blackjack/Blackjack';
 import Catan from '../games/SettlersOfCatan/Catan';
+import Chess from '../games/Chess/Chess';
 
 const games = {
     blackjack: Blackjack,
     catan: Catan,
+    chess: Chess,
 };
 
 function GameLoader() {
