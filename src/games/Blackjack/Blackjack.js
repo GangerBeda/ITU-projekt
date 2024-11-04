@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import './Blackjack.css';
+
 
 const initializeDeck = () => {
     const suits = ['♠', '♣', '♥', '♦'];
@@ -13,27 +16,15 @@ const initializeDeck = () => {
 };
 
 const calculateHandValue = (hand) => {
-    let value = 0;
-    let aceCount = 0;
-
-    hand.forEach(card => {
-        if (card.value === 'A') {
-            aceCount++;
-            value += 11;
-        } else if (['K', 'Q', 'J'].includes(card.value)) {
-            value += 10;
-        } else {
-            value += parseInt(card.value);
-        }
-    });
-
-    // Adjust for Aces if value is over 21
-    while (value > 21 && aceCount > 0) {
-        value -= 10;
-        aceCount--;
-    }
-
-    return value;
+    return hand
+        .filter(card => card && card.value) // Filter out undefined or invalid cards
+        .reduce((total, card) => {
+            let cardValue = parseInt(card.value);
+            if (isNaN(cardValue)) {
+                cardValue = card.value === 'A' ? 11 : 10;
+            }
+            return total + cardValue;
+        }, 0);
 };
 
 function Blackjack() {
@@ -44,41 +35,98 @@ function Blackjack() {
     const [gameOver, setGameOver] = useState(false);
     const [result, setResult] = useState("");
 
+    const gestureFieldRef = useRef(null);
+    const lastTapRef = useRef(0);
+    const initialXRef = useRef(null);
+
+    const hitButtonRef = useRef(null);
+    const standButtonRef = useRef(null);
+
     useEffect(() => {
         startNewRound();
+        console.log("New round effect");
     }, []);
 
-    const startNewRound = () => {
-        const newDeck = initializeDeck();
-        const playerStartingHand = [newDeck.pop(), newDeck.pop()];
-        const dealerStartingHand = [newDeck.pop(), newDeck.pop()];
+    const startNewRound = async () => {
+        const response = await axios.post('http://localhost:3001/start');
+        const { deck, playerHand, dealerHand } = response.data;
 
-        setDeck(newDeck);
-        setPlayerHand(playerStartingHand);
-        setDealerHand(dealerStartingHand);
+        setDeck(deck);
+        setPlayerHand(playerHand);
+        setDealerHand(dealerHand);
         setIsPlayerTurn(true);
         setGameOver(false);
         setResult("");
     };
 
-    const handleHit = () => {
-        if (!isPlayerTurn || gameOver) return;
+    useEffect(() => {
+        const gestureField = gestureFieldRef.current;
 
-        const newDeck = [...deck];
-        const newHand = [...playerHand, newDeck.pop()];
-        setPlayerHand(newHand);
-        setDeck(newDeck);
+        if (gestureField) {
+            gestureField.addEventListener("pointerdown", handlePointerDown);
+            gestureField.addEventListener("pointerup", handleDoubleTap);
+            gestureField.addEventListener("pointermove", handleSwipe);
+        }
 
-        const playerValue = calculateHandValue(newHand);
-        if (playerValue > 21) {
-            setResult("Player busts! Dealer wins.");
-            setGameOver(true);
+        return () => {
+            if (gestureField) {
+                gestureField.removeEventListener("pointerdown", handlePointerDown);
+                gestureField.removeEventListener("pointerup", handleDoubleTap);
+                gestureField.removeEventListener("pointermove", handleSwipe);
+            }
+        };
+    }, [isPlayerTurn, gameOver]);
+
+    const handleDoubleTap = async () => {
+        const now = Date.now();
+        if (now - lastTapRef.current < 300) {     
+            hitButtonRef.current.click();
+        }
+        lastTapRef.current = now;
+    };
+
+    const handlePointerDown = (e) => {
+        initialXRef.current = e.clientX;
+    };
+
+    const handleSwipe = (e) => {
+        if (initialXRef.current === null) return;
+        if (e.clientX - initialXRef.current > 200) {
+            standButtonRef.current.click();
         }
     };
 
-    const handleStand = () => {
+    const handleHit = async () => {
+        if (!isPlayerTurn || gameOver) return;
+
+        const response = await axios.post('http://localhost:3001/hit', {
+            deck,
+            playerHand
+        });
+
+        if (response.data.gameOver) {
+            console.log("game over");
+            setPlayerHand(response.data.playerHand);
+            setResult(response.data.message);
+            setGameOver(true);
+        } else {
+            console.log("game continue");
+            setPlayerHand(response.data.playerHand);
+            setDeck(response.data.deck);
+        }
+    };
+
+    const handleStand = async () => {
         setIsPlayerTurn(false);
-        handleDealerTurn();
+        const response = await axios.post('http://localhost:3001/stand', {
+            deck,
+            dealerHand,
+            playerHand
+        });
+
+        setDealerHand(response.data.dealerHand);
+        setResult(response.data.message);
+        setGameOver(true);
     };
 
     const handleDealerTurn = () => {
@@ -102,19 +150,41 @@ function Blackjack() {
         } else {
             setResult("Dealer wins!");
         }
+
         setGameOver(true);
     };
 
     return (
-        <div>
-            <h2>Blackjack</h2>
-            <button onClick={startNewRound} disabled={playerHand.length > 0 && !gameOver}>Deal</button>
-            <button onClick={handleHit} disabled={!isPlayerTurn || gameOver}>Hit</button>
-            <button onClick={handleStand} disabled={!isPlayerTurn || gameOver}>Stand</button>
-            <h3>Player Hand: {playerHand.map(card => `${card.value}${card.suit} `)}</h3>
-            <h3>Dealer Hand: {dealerHand.map((card, index) => (index === 0 && isPlayerTurn) ? '?? ' : `${card.value}${card.suit} `)}</h3>
-            {result && <h3>{result}</h3>}
-            {gameOver && <button onClick={startNewRound}>Play Again</button>}
+        <div className="blackjack-container">
+            <div className="action-buttons">
+                <button ref={hitButtonRef} className="action-button" onClick={() => handleHit()} disabled={!isPlayerTurn || gameOver}>Hit</button>
+                <button ref={standButtonRef} className="action-button" onClick={() => handleStand()} disabled={!isPlayerTurn || gameOver}>Stand</button>
+                {gameOver && <button className="action-button" onClick={() => startNewRound()}>Play Again</button>}
+            </div>
+
+            <h3>Dealer hand</h3>
+            <div className="dealer-hand">
+                {dealerHand.map((card, index) => (
+                    <div key={index} className="card">
+                        {index === 0 && isPlayerTurn ? "??" : `${card.value} ${card.suit}`}
+                    </div>
+                ))}
+            </div>
+            
+            <div className="gesture-field" ref={gestureFieldRef}>
+                <p className="gesture-instructions">Double-tap to Hit, Swipe to Stand<br /><br /> 
+                Dealer draws to 17, single deck. <br /><br />
+                {result && <div className="result-message">{result}</div>}</p>
+                
+            </div>
+            <div className="player-hand">
+                {playerHand.map((card, index) => (
+                    <div key={index} className="card player-card">
+                        {card.value} {card.suit}
+                    </div>
+                ))}
+            </div>
+            <h2>Your hand</h2>
         </div>
     );
 }

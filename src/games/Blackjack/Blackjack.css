@@ -1,0 +1,111 @@
+/* Blackjack.css */
+.blackjack-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+    background-color: #006400;
+    color: white;
+    font-family: Arial, sans-serif;
+    position: relative;
+}
+
+.blackjack-header {
+    font-size: 2.5em;
+    margin-top: 10px;
+    text-shadow: 2px 2px #000;
+}
+
+.dealer-hand {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.player-hand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.card {
+    width: 80px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    margin: 0 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    font-size: 1.6em;
+}
+
+.player-card {
+    width: 100px;
+    height: 150px;
+    font-size: 2.0em;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    left: 100px;
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 10px;
+}
+
+.action-button {
+    padding: 20px 30px;
+    font-size: 1.4em;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 2px solid rgb(179, 152, 0);
+}
+
+.action-button:hover {
+    background-color: #0a7400;
+}
+
+.hand-values {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 1.2em;
+    text-align: right;
+}
+
+.result-message {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.gesture-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 4px solid rgb(179, 152, 0);
+    border-radius: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 60%;
+    width: 40%;
+}
+
+.gesture-instructions {
+    font-size: 1.2em;
+    color: white;
+    text-align: center;
+}
