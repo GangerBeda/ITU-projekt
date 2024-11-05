@@ -9,6 +9,7 @@
     color: white;
     font-family: Arial, sans-serif;
     position: relative;
+    user-select: none;
 }
 
 .blackjack-header {
@@ -41,12 +42,14 @@
     margin: 0 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     font-size: 1.6em;
+    user-select: none;
 }
 
 .player-card {
     width: 100px;
     height: 150px;
     font-size: 2.0em;
+    user-select: none;
 }
 
 .action-buttons {
@@ -74,6 +77,10 @@
 
 .action-button:hover {
     background-color: #0a7400;
+}
+
+.action-button:active {
+    background-color: #11ce00;
 }
 
 .hand-values {
@@ -108,4 +115,5 @@
     font-size: 1.2em;
     color: white;
     text-align: center;
+    user-select: none;
 }

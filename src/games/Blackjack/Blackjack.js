@@ -16,15 +16,27 @@ const initializeDeck = () => {
 };
 
 const calculateHandValue = (hand) => {
-    return hand
-        .filter(card => card && card.value) // Filter out undefined or invalid cards
-        .reduce((total, card) => {
-            let cardValue = parseInt(card.value);
-            if (isNaN(cardValue)) {
-                cardValue = card.value === 'A' ? 11 : 10;
-            }
-            return total + cardValue;
-        }, 0);
+    let value = 0;
+    let aceCount = 0;
+
+    hand.forEach((card) => {
+        if (card.value === 'A') {
+            aceCount += 1;
+            value += 11;
+        } else if (['K', 'Q', 'J'].includes(card.value)) {
+            value += 10;
+        } else {
+            value += parseInt(card.value, 10);
+        }
+    });
+
+    // Adjust for aces if the value is over 21
+    while (value > 21 && aceCount > 0) {
+        value -= 10;
+        aceCount -= 1;
+    }
+
+    return value;
 };
 
 function Blackjack() {
@@ -38,9 +50,11 @@ function Blackjack() {
     const gestureFieldRef = useRef(null);
     const lastTapRef = useRef(0);
     const initialXRef = useRef(null);
+    const swipeStartTimeRef = useRef(null); // Define swipeStartTimeRef here
 
     const hitButtonRef = useRef(null);
     const standButtonRef = useRef(null);
+    const playAgainButtonRef = useRef(null);
 
     useEffect(() => {
         startNewRound();
@@ -64,14 +78,16 @@ function Blackjack() {
 
         if (gestureField) {
             gestureField.addEventListener("pointerdown", handlePointerDown);
-            gestureField.addEventListener("pointerup", handleDoubleTap);
+            gestureField.addEventListener("pointerup", handlePointerUp);
+            // gestureField.addEventListener("pointerup", handleDoubleTap);
             gestureField.addEventListener("pointermove", handleSwipe);
         }
 
         return () => {
             if (gestureField) {
                 gestureField.removeEventListener("pointerdown", handlePointerDown);
-                gestureField.removeEventListener("pointerup", handleDoubleTap);
+                gestureField.removeEventListener("pointerup", handlePointerUp);
+                // gestureField.removeEventListener("pointerup", handleDoubleTap);
                 gestureField.removeEventListener("pointermove", handleSwipe);
             }
         };
@@ -79,25 +95,52 @@ function Blackjack() {
 
     const handleDoubleTap = async () => {
         const now = Date.now();
-        if (now - lastTapRef.current < 300) {     
+        if (now - lastTapRef.current < 300) {
+            // Double-tap detected
             hitButtonRef.current.click();
+            if (gameOver) playAgainButtonRef.current.click();
+            lastTapRef.current = 0; // Reset after double-tap is detected
+        } else {
+            lastTapRef.current = now;
         }
-        lastTapRef.current = now;
     };
 
     const handlePointerDown = (e) => {
         initialXRef.current = e.clientX;
+        swipeStartTimeRef.current = Date.now(); // Start swipe timing
     };
-
+    
     const handleSwipe = (e) => {
-        if (initialXRef.current === null) return;
-        if (e.clientX - initialXRef.current > 200) {
+        if (initialXRef.current === null) return; // Ensure a swipe has started
+    
+        const distance = e.clientX - initialXRef.current;
+        const timeElapsed = Date.now() - lastTapRef.current;
+    
+        if (distance > 200 && timeElapsed <= 1000) { // 200px distance and <= 1 second
             standButtonRef.current.click();
+            initialXRef.current = null; // Reset the swipe tracking
         }
+    };
+    
+    const handlePointerUp = (e) => {
+        const swipeDistance = e.clientX - initialXRef.current;
+        const swipeDuration = Date.now() - swipeStartTimeRef.current;
+    
+        if (swipeDistance > 200 && swipeDuration <= 300) {
+            // If swipe conditions are met, trigger the Stand button
+            standButtonRef.current.click();
+        } else if (swipeDistance < 20) {
+            // Short movement, so check for double-tap
+            handleDoubleTap();
+        }
+    
+        // Reset swipe tracking variables
+        initialXRef.current = null;
+        swipeStartTimeRef.current = null;
     };
 
     const handleHit = async () => {
-        if (!isPlayerTurn || gameOver) return;
+        if (!isPlayerTurn || gameOver) {return;}
 
         const response = await axios.post('http://localhost:3001/hit', {
             deck,
@@ -159,10 +202,10 @@ function Blackjack() {
             <div className="action-buttons">
                 <button ref={hitButtonRef} className="action-button" onClick={() => handleHit()} disabled={!isPlayerTurn || gameOver}>Hit</button>
                 <button ref={standButtonRef} className="action-button" onClick={() => handleStand()} disabled={!isPlayerTurn || gameOver}>Stand</button>
-                {gameOver && <button className="action-button" onClick={() => startNewRound()}>Play Again</button>}
+                {gameOver && <button ref={playAgainButtonRef} className="action-button" onClick={() => startNewRound()}>Play Again</button>}
             </div>
 
-            <h3>Dealer hand</h3>
+            <h3>Dealer's hand{gameOver && ': ' + calculateHandValue(dealerHand)}</h3>
             <div className="dealer-hand">
                 {dealerHand.map((card, index) => (
                     <div key={index} className="card">
@@ -174,7 +217,7 @@ function Blackjack() {
             <div className="gesture-field" ref={gestureFieldRef}>
                 <p className="gesture-instructions">Double-tap to Hit, Swipe to Stand<br /><br /> 
                 Dealer draws to 17, single deck. <br /><br />
-                {result && <div className="result-message">{result}</div>}</p>
+                {result && <div className="result-message">{result}<br /><br />Double-tap to play again.</div>}</p>
                 
             </div>
             <div className="player-hand">
@@ -184,7 +227,7 @@ function Blackjack() {
                     </div>
                 ))}
             </div>
-            <h2>Your hand</h2>
+            <h2>Your hand: {calculateHandValue(playerHand)}</h2>
         </div>
     );
 }
