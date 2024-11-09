@@ -4,6 +4,7 @@ import { HexGrid, Layout, Hexagon, GridGenerator, Pattern } from 'react-hexgrid'
 import './Board.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 const INVALID_HEXES_MATERIALS = [0, 1, 2, 3, 4, 8, 9, 14, 15, 21, 22, 27, 28, 32, 33, 34, 35, 36];
 const INVALID_HEXES_SETTLERS = [
@@ -163,8 +164,9 @@ export default function Board(props) {
                 <img className='dice' src={require(`./images/Dice/${roll1}.png`)} alt={`Dice showing ${roll1}`} width={100} height={100} />
                 <img className='dice' src={require(`./images/Dice/${roll2}.png`)} alt={`Dice showing ${roll2}`} width={100} height={100} />
             </div>
-
-            <FontAwesomeIcon icon={faHome} className='home-icon' />
+            <Link key={''} to={'/'} className='home-icon-container'>
+                <FontAwesomeIcon icon={faHome} className='home-icon' />
+            </Link>
             <FontAwesomeIcon icon={faBookOpen} className='rules-icon' />
         </div>
     );
