@@ -1,21 +1,34 @@
-// FourInARowController.js
-export class FourInARowController {
-    constructor(model) {
-        this.model = model;
-    }
+import React, { useState, useEffect } from 'react';
+import { FourInARowModel } from '../models/FourInARowModel';
+import FourInARowView from '../views/FourInARowView';
 
-    handleMove(column) {
-        return {
-            success: this.model.makeMove(column),
-            gameState: this.model.getState()
-        };
-    }
+const model = new FourInARowModel();
 
-    getGameState() {
-        return this.model.getState();
-    }
+function FourInARowController() {
+    const [gameState, setGameState] = useState(model.getState());
 
-    subscribeToChanges(callback) {
-        this.model.addObserver(callback);
-    }
+    useEffect(() => {
+        // Přidání observeru, který aktualizuje stav komponenty při změnách v modelu
+        model.addObserver(setGameState);
+        return () => model.observers = []; // Reset observerů při odpojení
+    }, []);
+
+    const startNewGame = () => {
+        model.resetGame();
+    };
+
+    const makeMove = (column) => {
+        model.makeMove(column);
+    };
+
+    // Předání dat a akcí do view
+    return (
+        <FourInARowView
+            gameState={gameState}
+            makeMove={makeMove}
+            startNewGame={startNewGame}
+        />
+    );
 }
+
+export default FourInARowController;

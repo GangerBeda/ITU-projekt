@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Blackjack from '../games/Blackjack/Blackjack';
 import Catan from '../games/SettlersOfCatan/Catan';
 import Chess from '../games/Chess/Chess';
-import FourInARow from "../games/FourInARow/FourInARow";
+import FourInARow from '../games/FourInARow/controllers/FourInARowController';
 
 const games = {
     blackjack: Blackjack,
