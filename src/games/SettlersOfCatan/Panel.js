@@ -7,7 +7,7 @@ export default function Panel() {
     const [panel, setPanel] = useState('resourcesa');
     return (
         <div className='panel'>
-            {panel === 'resources' ? <PanelResources /> : <PanelPlayers />}
+            {panel === 'resources' ? <PanelResources setPanel={setPanel} /> : <PanelPlayers setPanel={setPanel} />}
             <div className='card-container'>
                 <div className='card'>0</div>
                 <div className='card'>0</div>

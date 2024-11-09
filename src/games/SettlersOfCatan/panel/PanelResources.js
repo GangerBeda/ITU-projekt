@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function PanelResources() {
+export default function PanelResources({ setPanel }) {
     return (
         <>
             <div className='separator' />
@@ -28,7 +28,7 @@ export default function PanelResources() {
             <br />
             <button>End Turn</button>
             <div className='separator' />
-            <button>Leaderboard</button>
+            <button onClick={() => setPanel('leaderboard')}>Leaderboard</button>
         </>
     );
 }
