@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { HexGrid, Layout, Hexagon, GridGenerator, Pattern } from 'react-hexgrid';
 import './Board.css';
 
@@ -48,21 +49,29 @@ export default function Board(props) {
     const [hexHoverColors, setHexHoverColors] = useState({});
 
     useEffect(() => {
-        const initialColors = {};
-        for (let i = 0; i < 100; i++) {
-            initialColors[`path-${i}`] = '#222';
-            initialColors[`material-${i}`] = '#222';
-            initialColors[`settler-${i}`] = '#222';
-        }
-        setHexColors(initialColors);
+        axios
+            .get('http://localhost:3001/api/gameObj')
+            .then((response) => {
+                setHexColors(response.data.hexColors);
+                setHexHoverColors(response.data.hexHoverColors);
+            })
+            .catch(() => {
+                const initialColors = {};
+                for (let i = 0; i < 100; i++) {
+                    initialColors[`path-${i}`] = '#222';
+                    initialColors[`material-${i}`] = '#222';
+                    initialColors[`settler-${i}`] = '#222';
+                }
+                setHexColors(initialColors);
 
-        const initialHoverColors = {};
-        for (let i = 0; i < 100; i++) {
-            initialHoverColors[`path-${i}`] = '#555';
-            initialHoverColors[`material-${i}`] = '#555';
-            initialHoverColors[`settler-${i}`] = '#555';
-        }
-        setHexHoverColors(initialHoverColors);
+                const initialHoverColors = {};
+                for (let i = 0; i < 100; i++) {
+                    initialHoverColors[`path-${i}`] = '#555';
+                    initialHoverColors[`material-${i}`] = '#555';
+                    initialHoverColors[`settler-${i}`] = '#555';
+                }
+                setHexHoverColors(initialHoverColors);
+            });
     }, []);
 
     const getHexColor = (grid, i) => {
@@ -76,6 +85,15 @@ export default function Board(props) {
     const hexClicked = (grid, i) => {
         setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
         setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
+
+        axios
+            .post('http://localhost:3001/api/gameObj', {
+                hexColors: { ...hexColors, [`${grid}-${i}`]: props.activePlayerColor },
+                hexHoverColors: { ...hexHoverColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') },
+            })
+            .catch((error) => {
+                console.log('Request failed:', error);
+            });
     };
 
     const renderHexGrid = (grid, size, spacing, flat, invalidHexes, hexRadius) => {
