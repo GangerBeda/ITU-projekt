@@ -7,6 +7,24 @@ export default function PanelResources(props) {
         props.setRoll2(Math.floor((Math.random() * 10000) % 6) + 1);
     };
 
+    const endTurn = (event) => {
+        event.preventDefault();
+        props.setActivePlayerColor((prevColor) => {
+            switch (prevColor) {
+                case '#f00':
+                    return '#00f';
+                case '#00f':
+                    return '#0f0';
+                case '#0f0':
+                    return '#ff0';
+                case '#ff0':
+                    return '#f00';
+                default:
+                    return '#f00';
+            }
+        });
+    };
+
     return (
         <>
             <div className='separator' />
@@ -32,7 +50,7 @@ export default function PanelResources(props) {
             <div className='separator' />
             <button onClick={(event) => setRolls(event)}>Roll</button>
             <br />
-            <button>End Turn</button>
+            <button onClick={(event) => endTurn(event)}>End Turn</button>
             <div className='separator' />
             <button onClick={() => props.setPanel('leaderboard')}>Leaderboard</button>
         </>

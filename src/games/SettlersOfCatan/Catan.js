@@ -59,7 +59,8 @@ export default function Catan() {
             </select>*/}
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Board materialTypes={materialTypes} numberTokens={numberTokens} activePlayerColor={activePlayerColor} roll1={roll1} roll2={roll2} />
-                <Panel setRoll1={setRoll1} setRoll2={setRoll2} />
+
+                <Panel setRoll1={setRoll1} setRoll2={setRoll2} setActivePlayerColor={setActivePlayerColor} />
             </div>
         </>
     );

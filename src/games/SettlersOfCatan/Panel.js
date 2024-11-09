@@ -8,7 +8,7 @@ export default function Panel(props) {
     return (
         <div className='panel'>
             {panel === 'resources' ? (
-                <PanelResources setPanel={setPanel} setRoll1={props.setRoll1} setRoll2={props.setRoll2} />
+                <PanelResources setPanel={setPanel} setRoll1={props.setRoll1} setRoll2={props.setRoll2} setActivePlayerColor={props.setActivePlayerColor} />
             ) : (
                 <PanelPlayers setPanel={setPanel} />
             )}
