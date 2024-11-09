@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HexGrid, Layout, Hexagon, GridGenerator, Pattern } from 'react-hexgrid';
 import './Board.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faBookOpen } from '@fortawesome/free-solid-svg-icons';
 
 const INVALID_HEXES_MATERIALS = [0, 1, 2, 3, 4, 8, 9, 14, 15, 21, 22, 27, 28, 32, 33, 34, 35, 36];
 const INVALID_HEXES_SETTLERS = [
@@ -47,6 +49,8 @@ export default function Board(props) {
     const [hoveredHex, setHoveredHex] = useState(null);
     const [hexColors, setHexColors] = useState({});
     const [hexHoverColors, setHexHoverColors] = useState({});
+    const [roll1, setRoll1] = useState(1);
+    const [roll2, setRoll2] = useState(1);
 
     useEffect(() => {
         axios
@@ -152,6 +156,16 @@ export default function Board(props) {
             {renderHexGrid('path', { x: 4, y: 4 }, 1.375, false, INVALID_HEXES_PATHS, 5)}
             {renderHexGrid('material', { x: 10, y: 10 }, 1.1, false, INVALID_HEXES_MATERIALS, 3)}
             {renderHexGrid('settler', { x: 2, y: 2 }, 3.175, true, INVALID_HEXES_SETTLERS, 5)}
+            <div className='statebox'>
+                <p>Game State</p>
+            </div>
+            <div className='dice-container'>
+                <img className='dice' src={require(`./images/Dice/${roll1}.png`)} alt={`Dice showing ${roll1}`} width={100} height={100} />
+                <img className='dice' src={require(`./images/Dice/${roll2}.png`)} alt={`Dice showing ${roll2}`} width={100} height={100} />
+            </div>
+
+            <FontAwesomeIcon icon={faHome} className='home-icon' />
+            <FontAwesomeIcon icon={faBookOpen} className='rules-icon' />
         </div>
     );
 }

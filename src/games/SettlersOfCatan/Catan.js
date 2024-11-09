@@ -49,12 +49,12 @@ export default function Catan() {
     });
     return (
         <>
-            <select value={activePlayerColor} onChange={(e) => setActivePlayerColor(e.target.value)}>
+            {/*<select value={activePlayerColor} onChange={(e) => setActivePlayerColor(e.target.value)}>
                 <option value='#f00'>Red</option>
                 <option value='#00f'>Blue</option>
                 <option value='#0f0'>Green</option>
                 <option value='#ff0'>Yellow</option>
-            </select>
+            </select>*/}
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <Board materialTypes={materialTypes} numberTokens={numberTokens} activePlayerColor={activePlayerColor} />
                 <Panel />

@@ -4,7 +4,7 @@ import PanelResources from './panel/PanelResources';
 import PanelPlayers from './panel/PanelPlayers';
 
 export default function Panel() {
-    const [panel, setPanel] = useState('resourcesa');
+    const [panel, setPanel] = useState('resources');
     return (
         <div className='panel'>
             {panel === 'resources' ? <PanelResources setPanel={setPanel} /> : <PanelPlayers setPanel={setPanel} />}
