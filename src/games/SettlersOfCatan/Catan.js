@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Board from './Board';
+import Panel from './Panel';
 
 const materialTypes = [
     'desert',
@@ -54,8 +55,10 @@ export default function Catan() {
                 <option value='#0f0'>Green</option>
                 <option value='#ff0'>Yellow</option>
             </select>
-
-            <Board materialTypes={materialTypes} numberTokens={numberTokens} activePlayerColor={activePlayerColor} />
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <Board materialTypes={materialTypes} numberTokens={numberTokens} activePlayerColor={activePlayerColor} />
+                <Panel />
+            </div>
         </>
     );
 }
