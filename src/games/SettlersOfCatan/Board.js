@@ -50,8 +50,6 @@ export default function Board(props) {
     const [hoveredHex, setHoveredHex] = useState(null);
     const [hexColors, setHexColors] = useState({});
     const [hexHoverColors, setHexHoverColors] = useState({});
-    const [roll1, setRoll1] = useState(1);
-    const [roll2, setRoll2] = useState(1);
 
     useEffect(() => {
         axios
@@ -161,8 +159,8 @@ export default function Board(props) {
                 <p>Game State</p>
             </div>
             <div className='dice-container'>
-                <img className='dice' src={require(`./images/Dice/${roll1}.png`)} alt={`Dice showing ${roll1}`} width={100} height={100} />
-                <img className='dice' src={require(`./images/Dice/${roll2}.png`)} alt={`Dice showing ${roll2}`} width={100} height={100} />
+                <img className='dice' src={require(`./images/Dice/${props.roll1}.png`)} alt={`Dice showing ${props.roll1}`} width={100} height={100} />
+                <img className='dice' src={require(`./images/Dice/${props.roll2}.png`)} alt={`Dice showing ${props.roll2}`} width={100} height={100} />
             </div>
             <Link key={''} to={'/'} className='home-icon-container'>
                 <FontAwesomeIcon icon={faHome} className='home-icon' />

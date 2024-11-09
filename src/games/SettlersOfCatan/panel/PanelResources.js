@@ -1,6 +1,12 @@
 import React from 'react';
 
-export default function PanelResources({ setPanel }) {
+export default function PanelResources(props) {
+    const setRolls = (event) => {
+        event.preventDefault();
+        props.setRoll1(Math.floor((Math.random() * 10000) % 6) + 1);
+        props.setRoll2(Math.floor((Math.random() * 10000) % 6) + 1);
+    };
+
     return (
         <>
             <div className='separator' />
@@ -24,11 +30,11 @@ export default function PanelResources({ setPanel }) {
             <button>Buy development card</button>
             <button>Trade</button>
             <div className='separator' />
-            <button>Roll</button>
+            <button onClick={(event) => setRolls(event)}>Roll</button>
             <br />
             <button>End Turn</button>
             <div className='separator' />
-            <button onClick={() => setPanel('leaderboard')}>Leaderboard</button>
+            <button onClick={() => props.setPanel('leaderboard')}>Leaderboard</button>
         </>
     );
 }
