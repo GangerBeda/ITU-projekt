@@ -1,35 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Panel.css';
+import PanelResources from './panel/PanelResources';
+import PanelPlayers from './panel/PanelPlayers';
 
 export default function Panel() {
+    const [panel, setPanel] = useState('resourcesa');
     return (
         <div className='panel'>
-            <div className='separator' />
-            <h1>Cards</h1>
-            <div className='separator' />
-            <div className='card-container'>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-            </div>
-            <div className='card-container'>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-            </div>
-            <div className='separator' />
-            <button>Buy development card</button>
-            <button>Trade</button>
-            <div className='separator' />
-            <button>Roll</button>
-            <br />
-            <button>End Turn</button>
-            <div className='separator' />
-            <button>Leaderboard</button>
+            {panel === 'resources' ? <PanelResources /> : <PanelPlayers />}
             <div className='card-container'>
                 <div className='card'>0</div>
                 <div className='card'>0</div>
