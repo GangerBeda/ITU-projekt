@@ -1,4 +1,4 @@
-export class FourInARowModel {
+class FourInARowModel {
     constructor() {
         this.board = Array(6).fill(null).map(() => Array(7).fill(null));
         this.currentPlayer = 'red';
@@ -6,6 +6,12 @@ export class FourInARowModel {
         this.winner = null;
         this.message = 'Hráč Červený začíná.'; // Inicializace zprávy
         this.observers = [];
+        this.notifyObservers(); // Oznámení při vytvoření instance
+        this.timeLimit = 0; // Inicializace časového limitu
+    }
+
+    getTimeLimit() {
+        return this.timeLimit;
     }
 
     addObserver(observer) {
@@ -23,6 +29,7 @@ export class FourInARowModel {
             winner: this.winner,
             message: this.message,
             movesHistory: this.movesHistory,
+            timeLimit: this.timeLimit, // Přidáno, pokud chybělo
         };
     }
 
@@ -36,53 +43,63 @@ export class FourInARowModel {
     }
 
     makeMove(column) {
-        // Pokud už existuje vítěz, ukončíme funkci. Žádné další tahy nejsou povoleny.
         if (this.winner) {
             return;
         }
 
-        // Procházíme sloupce odspodu nahoru a hledáme první prázdnou pozici v daném sloupci.
         for (let row = this.board.length - 1; row >= 0; row--) {
-            if (!this.board[row][column]) { // Pokud je pozice prázdná
-                // Umístíme žeton aktuálního hráče do prázdné pozice.
+            if (!this.board[row][column]) {
                 this.board[row][column] = this.currentPlayer;
-
-                // Uložíme tah do historie tahů.
                 this.movesHistory.push({ row, column, player: this.currentPlayer });
 
-                // Zkontrolujeme, zda tento tah vedl k výhře aktuálního hráče.
                 if (this.checkWinner(row, column, this.currentPlayer)) {
-                    // Nastavíme aktuálního hráče jako vítěze.
                     this.winner = this.currentPlayer;
-
-                    // Aktualizujeme zprávu pro uživatele, že hráč vyhrál a hra je ukončena.
                     this.message = `Hráč ${this.winner === 'red' ? 'Červený' : 'Žlutý'} vyhrál!<br />Hra je ukončena. Začněte novou hru.`;
                 } else {
-                    // Přepneme na dalšího hráče, pokud nebyl zjištěn vítěz.
                     this.currentPlayer = this.currentPlayer === 'red' ? 'yellow' : 'red';
-
-                    // Aktualizujeme zprávu, který hráč je na tahu.
                     this.message = `Hráč ${this.currentPlayer === 'red' ? 'Červený' : 'Žlutý'} je na tahu.`;
                 }
 
-                // Upozorníme všechny pozorovatele (např. frontend komponenty), že došlo ke změně stavu.
                 this.notifyObservers();
-                return true; // Tah byl úspěšně proveden.
+                return true;
             }
         }
-
-        // Pokud je sloupec plný (nebyla nalezena žádná prázdná pozice), vrátíme false.
         return false;
+    }
+
+    undo() {
+        if (this.movesHistory.length === 0) return; // Pokud není žádný tah k vrácení
+
+        const lastMove = this.movesHistory.pop(); // Odstraňte poslední tah z historie
+        this.board[lastMove.row][lastMove.column] = null; // Odstraňte žeton z herního pole
+        this.currentPlayer = lastMove.player;
+        this.winner = null;
+        this.message = `Hráč ${this.currentPlayer === 'red' ? 'Červený' : 'Žlutý'} je na tahu.`;
+        this.notifyObservers();
+    }
+
+    settings(options) {
+
+        if (options.timeLimit !== undefined) {
+            this.timeLimit = options.timeLimit;
+        }
+
+        this.notifyObservers();
+    }
+    setTimeLimit(timeLimit) {
+        this.timeLimit = timeLimit;
+        this.notifyObservers();
+        console.log("Časový limit nastaven na serveru:", this.timeLimit);
     }
 
 
 
     checkWinner(row, column, player) {
         const directions = [
-            { dr: 0, dc: 1 },  // Horizontálně
-            { dr: 1, dc: 0 },  // Vertikálně
-            { dr: 1, dc: 1 },  // Diagonálně \
-            { dr: 1, dc: -1 }  // Diagonálně /
+            { dr: 0, dc: 1 },
+            { dr: 1, dc: 0 },
+            { dr: 1, dc: 1 },
+            { dr: 1, dc: -1 }
         ];
 
         for (const { dr, dc } of directions) {
@@ -104,3 +121,6 @@ export class FourInARowModel {
         return false;
     }
 }
+
+// Export třídy pomocí CommonJS
+module.exports = { FourInARowModel };

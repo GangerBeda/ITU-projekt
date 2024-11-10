@@ -8,6 +8,9 @@ const ClassicTicTacToe = require("./models/ClassicTicTacToe");
 const UltimateTicTacToe = require("./models/UltimateTicTacToe");
 const Score = require("./models/Score");
 
+const { FourInARowModel } = require('../src/games/FourInARow/models/FourInARowModel');
+
+
 
 const app = express();
 const port = 3001;
@@ -86,7 +89,7 @@ app.post('/chess/start', (req, res) => {
     const gameId = Date.now().toString();
     const game = new GameState(mode, timeLimit);
     games.set(gameId, game);
-    
+
     res.json({
         gameId,
         fen: game.chess.fen(),
@@ -100,7 +103,7 @@ app.post('/chess/start', (req, res) => {
 app.post('/chess/move', (req, res) => {
     const { gameId, from, to } = req.body;
     const game = games.get(gameId);
-    
+
     if (!game) {
         return res.status(404).json({ error: 'Game not found' });
     }
@@ -130,7 +133,7 @@ app.post('/chess/move', (req, res) => {
 app.post('/chess/save', (req, res) => {
     const { gameId } = req.body;
     const game = games.get(gameId);
-    
+
     if (!game) {
         return res.status(404).json({ error: 'Game not found' });
     }
@@ -152,12 +155,12 @@ app.post('/chess/load', (req, res) => {
     const { savedState } = req.body;
     const gameId = Date.now().toString();
     const game = new GameState(savedState.gameMode, savedState.timeLimit);
-    
+
     game.chess.load(savedState.fen);
     game.moveHistory = savedState.moveHistory;
     game.remainingTimeWhite = savedState.remainingTimeWhite;
     game.remainingTimeBlack = savedState.remainingTimeBlack;
-    
+
     games.set(gameId, game);
 
     res.json({
@@ -325,4 +328,96 @@ app.post("/tictactoe/set-score", (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+
+
+//4in a
+// Inicializace herního modelu
+const gameModel = new FourInARowModel(); // vytvoření instance modelu
+
+app.get('/', (req, res) => {
+    res.send('Server běží! Připojte se na /api/makeMove pro tah.');
+});
+
+// Endpoint pro tah
+app.post('/fourinarow/makeMove', (req, res) => {
+    const { column } = req.body;
+
+    if (typeof column !== 'number' || column < 0 || column > 6) {
+        return res.status(400).json({ message: 'Invalid column' });
+    }
+
+    const moveResult = gameModel.makeMove(column);
+    if (moveResult) {
+        res.status(200).json(gameModel.getState());
+    } else {
+        res.status(400).json({ message: 'Column is full or game is over' });
+    }
+});
+// Endpoint pro zahájení nové hry
+app.post('/fourinarow/new-game', (req, res) => {
+    gameModel.resetGame();  // volá resetovací metodu ve vašem modelu
+    res.status(200).json(gameModel.getState());  // vrátí aktualizovaný stav hry
+});
+app.post('/fourinarow/reset', (req, res) => {
+    gameModel.resetGame();  // volá resetovací metodu ve vašem modelu
+    res.status(200).json(gameModel.getState());  // vrátí aktualizovaný stav hry
+});
+app.post('/fourinarow/undo', (req, res) => {
+    gameModel.undo();
+    res.status(200).json(gameModel.getState());
+});
+app.post('/fourinarow/settings', (req, res) => {
+    const options = req.body;
+    gameModel.settings(options);
+    res.status(200).json(gameModel.getState());
+});
+app.post('/fourinarow/set-time', (req, res) => {
+    const { timeLimit } = req.body;
+
+    if (typeof timeLimit !== 'number' || timeLimit <= 0) {
+        console.error("Invalid time limit:", timeLimit); // Přidejte log
+        return res.status(400).json({ message: 'Invalid time limit' });
+    }
+
+    try {
+        gameModel.setTimeLimit(timeLimit);
+        console.log("Server updated time limit:", gameModel.getState());
+        res.status(200).json(gameModel.getState());
+    } catch (error) {
+        console.error("Error setting time limit on server:", error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+
+//app.get('/fourinarow/get-time', (req, res) => {})
+
+// Endpointy pro hru 4 v řadě
+
+// POST /fourinarow/new-game
+// Inicializuje novou hru a nastaví hráče "Červený" na první tah.
+
+// POST /fourinarow/make-move
+// Umožňuje provést tah hráče. V požadavku je třeba uvést sloupec, kam chce hráč umístit svůj žeton na herní desku.
+
+// POST /fourinarow/reset
+// Resetuje hru do výchozího stavu. Vrátí prázdnou herní desku a nastaví hráče "Červený" jako prvního na tahu.
+
+// POST /fourinarow/undo
+// Vrátí poslední tah pomocí movesHistory.
+
+// POST /fourinarow/settings
+// Uloží nová uživatelská nastavení (např. barevné schéma, zvuky).
+
+// GET /fourinarow/settings
+// Načte aktuální nastavení uživatele, např. barvy.
+// Netreba Perzistence
+
+// POST /fourinarow/set-time
+// Nastaví časový limit pro tah hráče v sekundách.
+
+// GET /fourinarow/get-time
+// Získá zbývající čas na aktuální tah hráče ve hře.
 
