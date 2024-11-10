@@ -20,7 +20,8 @@ app.post('/', (req, res) => {
     res.send('Got a POST request');
 });
 
-app.post('/api/gameObj', (req, res) => {
+// settlers of catan
+app.post('/catan/build', (req, res) => {
     const receivedObject = req.body;
 
     fs.writeFile('db/gameObj.json', JSON.stringify(receivedObject, null, 2), (err) => {
@@ -36,7 +37,7 @@ app.post('/api/gameObj', (req, res) => {
     });
 });
 
-app.get('/api/gameObj', (req, res) => {
+app.get('/catan/state', (req, res) => {
     fs.readFile('db/gameObj.json', 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading file', err);
@@ -82,21 +83,21 @@ app.post('/chess/start', (req, res) => {
     const gameId = Date.now().toString();
     const game = new GameState(mode, timeLimit);
     games.set(gameId, game);
-    
+
     res.json({
         gameId,
         fen: game.chess.fen(),
         turn: game.chess.turn(),
         gameMode: game.gameMode,
         remainingTimeWhite: game.remainingTimeWhite,
-        remainingTimeBlack: game.remainingTimeBlack
+        remainingTimeBlack: game.remainingTimeBlack,
     });
 });
 
 app.post('/chess/move', (req, res) => {
     const { gameId, from, to } = req.body;
     const game = games.get(gameId);
-    
+
     if (!game) {
         return res.status(404).json({ error: 'Game not found' });
     }
@@ -114,7 +115,7 @@ app.post('/chess/move', (req, res) => {
             isDraw: game.chess.isDraw(),
             moveHistory: game.moveHistory,
             remainingTimeWhite: game.remainingTimeWhite,
-            remainingTimeBlack: game.remainingTimeBlack
+            remainingTimeBlack: game.remainingTimeBlack,
         };
 
         res.json(response);
@@ -126,7 +127,7 @@ app.post('/chess/move', (req, res) => {
 app.post('/chess/save', (req, res) => {
     const { gameId } = req.body;
     const game = games.get(gameId);
-    
+
     if (!game) {
         return res.status(404).json({ error: 'Game not found' });
     }
@@ -137,7 +138,7 @@ app.post('/chess/save', (req, res) => {
         timeLimit: game.timeLimit,
         moveHistory: game.moveHistory,
         remainingTimeWhite: game.remainingTimeWhite,
-        remainingTimeBlack: game.remainingTimeBlack
+        remainingTimeBlack: game.remainingTimeBlack,
     };
 
     // In production, save to database
@@ -148,12 +149,12 @@ app.post('/chess/load', (req, res) => {
     const { savedState } = req.body;
     const gameId = Date.now().toString();
     const game = new GameState(savedState.gameMode, savedState.timeLimit);
-    
+
     game.chess.load(savedState.fen);
     game.moveHistory = savedState.moveHistory;
     game.remainingTimeWhite = savedState.remainingTimeWhite;
     game.remainingTimeBlack = savedState.remainingTimeBlack;
-    
+
     games.set(gameId, game);
 
     res.json({
@@ -163,7 +164,7 @@ app.post('/chess/load', (req, res) => {
         gameMode: game.gameMode,
         moveHistory: game.moveHistory,
         remainingTimeWhite: game.remainingTimeWhite,
-        remainingTimeBlack: game.remainingTimeBlack
+        remainingTimeBlack: game.remainingTimeBlack,
     });
 });
 
@@ -176,4 +177,3 @@ app.post('/chess/exit', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-

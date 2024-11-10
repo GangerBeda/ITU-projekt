@@ -76,7 +76,7 @@ export default function Board(props) {
 
     useEffect(() => {
         axios
-            .get('http://localhost:3001/api/gameObj')
+            .get('http://localhost:3001/catan/state')
             .then((response) => {
                 setHexColors(response.data.hexColors);
                 setHexHoverColors(response.data.hexHoverColors);
@@ -117,7 +117,7 @@ export default function Board(props) {
         setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
 
         axios
-            .post('http://localhost:3001/api/gameObj', {
+            .post('http://localhost:3001/catan/build', {
                 hexColors: { ...hexColors, [`${grid}-${i}`]: props.activePlayerColor },
                 hexHoverColors: { ...hexHoverColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') },
             })
