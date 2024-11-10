@@ -44,7 +44,6 @@ const Chessboard = ({ fen, onMove, controlType }) => {
 
     const getPossibleMovesForSelectedPiece = (chess, square) => {
         const possibleMoves = chess.moves({ square: square, verbose: true });
-        console.log(possibleMoves)
 
         const cleanedMoves = possibleMoves.map(move => move.to);
 

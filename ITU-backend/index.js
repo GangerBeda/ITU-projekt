@@ -82,7 +82,7 @@ app.post('/chess/start', (req, res) => {
     const gameId = Date.now().toString();
     const game = new GameState(mode, timeLimit);
     games.set(gameId, game);
-    
+
     res.json({
         gameId,
         fen: game.chess.fen(),
@@ -96,7 +96,7 @@ app.post('/chess/start', (req, res) => {
 app.post('/chess/move', (req, res) => {
     const { gameId, from, to } = req.body;
     const game = games.get(gameId);
-    
+
     if (!game) {
         return res.status(404).json({ error: 'Game not found' });
     }
@@ -126,7 +126,7 @@ app.post('/chess/move', (req, res) => {
 app.post('/chess/save', (req, res) => {
     const { gameId } = req.body;
     const game = games.get(gameId);
-    
+
     if (!game) {
         return res.status(404).json({ error: 'Game not found' });
     }
@@ -140,7 +140,6 @@ app.post('/chess/save', (req, res) => {
         remainingTimeBlack: game.remainingTimeBlack
     };
 
-    // In production, save to database
     res.json({ savedState });
 });
 
@@ -148,12 +147,12 @@ app.post('/chess/load', (req, res) => {
     const { savedState } = req.body;
     const gameId = Date.now().toString();
     const game = new GameState(savedState.gameMode, savedState.timeLimit);
-    
+
     game.chess.load(savedState.fen);
     game.moveHistory = savedState.moveHistory;
     game.remainingTimeWhite = savedState.remainingTimeWhite;
     game.remainingTimeBlack = savedState.remainingTimeBlack;
-    
+
     games.set(gameId, game);
 
     res.json({
