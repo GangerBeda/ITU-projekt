@@ -331,15 +331,13 @@ app.listen(port, () => {
 
 
 
-//4in a
-// Inicializace herního modelu
+// 4 in a Row
 const gameModel = new FourInARowModel(); // vytvoření instance modelu
 
 app.get('/', (req, res) => {
     res.send('Server běží! Připojte se na /api/makeMove pro tah.');
 });
 
-// Endpoint pro tah
 app.post('/fourinarow/makeMove', (req, res) => {
     const { column } = req.body;
 
@@ -354,7 +352,6 @@ app.post('/fourinarow/makeMove', (req, res) => {
         res.status(400).json({ message: 'Column is full or game is over' });
     }
 });
-// Endpoint pro zahájení nové hry
 app.post('/fourinarow/new-game', (req, res) => {
     gameModel.resetGame();  // volá resetovací metodu ve vašem modelu
     res.status(200).json(gameModel.getState());  // vrátí aktualizovaný stav hry
@@ -389,37 +386,6 @@ app.post('/fourinarow/set-time', (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
-
-
-//app.get('/fourinarow/get-time', (req, res) => {})
-
-// Endpointy pro hru 4 v řadě
-
-// POST /fourinarow/new-game
-// Inicializuje novou hru a nastaví hráče "Červený" na první tah.
-
-// POST /fourinarow/make-move
-// Umožňuje provést tah hráče. V požadavku je třeba uvést sloupec, kam chce hráč umístit svůj žeton na herní desku.
-
-// POST /fourinarow/reset
-// Resetuje hru do výchozího stavu. Vrátí prázdnou herní desku a nastaví hráče "Červený" jako prvního na tahu.
-
-// POST /fourinarow/undo
-// Vrátí poslední tah pomocí movesHistory.
-
-// POST /fourinarow/settings
-// Uloží nová uživatelská nastavení (např. barevné schéma, zvuky).
-
-// GET /fourinarow/settings
-// Načte aktuální nastavení uživatele, např. barvy.
-// Netreba Perzistence
-
-// POST /fourinarow/set-time
-// Nastaví časový limit pro tah hráče v sekundách.
-
-// GET /fourinarow/get-time
-// Získá zbývající čas na aktuální tah hráče ve hře.
 
 
 // ======================================== BLACKJACK START ========================================
