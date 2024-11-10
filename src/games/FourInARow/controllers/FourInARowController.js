@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FourInARowModel } from '../models/FourInARowModel';
 import FourInARowView from '../views/FourInARowView';
-import SettingsPopup from '../views/Buttons/SettingsPopup.css';
+import SettingsPopup from '../views/Buttons/SettingsPopup';
 
 
 const model = new FourInARowModel();
