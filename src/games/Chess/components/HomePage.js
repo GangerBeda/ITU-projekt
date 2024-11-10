@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const HomePage = ({ navigate, rootNavigate }) => {
     const startNewGame = () => {
-        navigate('/play', { state: { isNew: true }});
+        navigate('/play', { state: { isNew: true } });
     };
 
     const loadGame = () => {
@@ -24,95 +24,150 @@ const HomePage = ({ navigate, rootNavigate }) => {
 
     return (
         <DndProvider backend={HTML5Backend}>
-        <div style={{
-            position: 'relative',
-            width: '100%'
-        }}>
-            <button
-                onClick={goToRoot}
-                className="btn-primary"
-                style={{
-                    position: 'absolute',
-                    top: '20px',
-                    left: '20px',
-                    zIndex: 10,
-                    width: '150px',  // 1.5x the original width
-                    height: '90px', // 1.5x the original height
-                    fontSize: '30px' // 1.5x the original font size
-                }}
-            >
-                Home
-            </button>
-    
-            <div
-                style={{
-                    backgroundColor: '#D3D3D3',
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',  // Ensures the buttons are centered vertically as well
-                    padding: '20px'
-                }}
-                className="flex flex-col items-center justify-center min-h-screen bg-gray-100"
-            >
-                <h1 style={{ fontSize: '4rem' }} className="mb-8">Chess</h1>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {/* New Game Button */}
-                    <button 
-                        onClick={startNewGame} 
-                        className="btn-primary" 
-                        style={{ 
-                            fontSize: '30px',  
-                            width: '300px',
-                            height: '90px', 
-                            backgroundColor: 'blue', 
-                            color: 'white', 
-                            textAlign: 'center',
-                            wordWrap: 'break-word', // Makes sure text breaks into two lines if needed
-                            whiteSpace: 'normal'    // Allow wrapping
+            <div style={{
+                position: 'relative',
+                width: '100%'
+            }}>
+                <button
+                    onClick={goToRoot}
+                    className="btn-primary"
+                    style={{
+                        
+                        backgroundImage: `url(${require('../assets/images/icons/home_icon.png')})`,
+                        position: 'absolute',
+                        top: '20px',
+                        left: '20px',
+                        zIndex: 10,
+                        backgroundColor: '#D3D3D3',
+                        width: '50px',
+                        height: '50px',
+                        backgroundSize: '45px 45px', // Set a smaller size for the image
+                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
+                        backgroundPosition: 'center' // Center the image in the button
+                    }}
+                ></button>
+
+                <div
+                    style={{
+                        backgroundColor: '#D3D3D3',
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',  // Ensures the buttons are centered vertically as well
+                        padding: '20px'
+                    }}
+                >
+                    <div style={{
+                        backgroundColor: '#E5E5E5',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '400px', // Scaled from 350px
+                        marginBottom: '12rem', // Scaled from 10rem
+                    }}>
+                        <div style={{
+                            backgroundColor: 'white',
+                            borderRadius: '12px', // Scaled from 8px
+                            width: '100%',
+                            padding: '50px', // Scaled from 20px
+                            boxShadow: '0 3px 6px rgba(0,0,0,0.1)' // Slightly adjusted for scale
                         }}>
-                        New Game
-                    </button>
-    
-                    {/* Load Game Button */}
-                    <button 
-                        onClick={loadGame} 
-                        className="btn-secondary" 
-                        style={{ 
-                            fontSize: '30px',  // 1.5x the original font size
-                            width: '300px',  // 1.5x the original width
-                            height: '90px',  // 1.5x the original height
-                            backgroundColor: 'white', 
-                            color: 'black',
-                            textAlign: 'center',
-                            wordWrap: 'break-word', // Allows text to break into two lines
-                            whiteSpace: 'normal'    // Allow wrapping
-                        }}>
-                        Load Game
-                    </button>
-    
-                    {/* Settings Button */}
-                    <button 
-                        onClick={goToSettings} 
-                        className="btn-secondary" 
-                        style={{ 
-                            fontSize: '30px',  // 1.5x the original font size
-                            width: '300px',  // 1.5x the original width
-                            height: '90px',  // 1.5x the original height
-                            backgroundColor: 'white', 
-                            color: 'black',
-                            textAlign: 'center',
-                            wordWrap: 'break-word', // Allows text to break into two lines
-                            whiteSpace: 'normal'    // Allow wrapping
-                        }}>
-                        Settings
-                    </button>
+                            <div style={{
+                                backgroundColor: 'white',
+                                margin: '-30px -30px 30px -30px', // Scaled from -20px -20px 20px -20px
+                                padding: '22px 30px', // Scaled from 15px 20px
+                                borderRadius: '12px 12px 0 0', // Scaled from 8px
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '15px' // Scaled from 10px
+                            }}>
+                                <h2 style={{
+                                    display: 'flex',
+                                    color: 'black',
+                                    margin: 0,
+                                    fontSize: '40px', // Scaled from 16px
+                                    fontWeight: 'bold'
+                                }}>
+                                    Chess Game
+                                </h2>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}> {/* Scaled from 20px */}
+                                <div>
+                                    <div style={{ display: 'flex' }}> {/* Scaled from 8px */}
+                                        <button
+                                            onClick={startNewGame}
+                                            style={{
+                                                flex: 1,
+                                                padding: '12px', // Scaled from 8px
+                                                borderRadius: '6px', // Scaled from 4px
+                                                border: 'none',
+                                                backgroundColor: '#3B52E4',
+                                                color: 'white',
+                                                cursor: 'pointer',
+                                                fontSize: '25px', // Scaled from 14px
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            New Game
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div style={{ display: 'flex' }}> {/* Scaled from 8px */}
+                                        <button
+                                            onClick={loadGame}
+                                            style={{
+                                                flex: 1,
+                                                padding: '12px', // Scaled from 8px
+                                                borderRadius: '6px', // Scaled from 4px
+                                                border: 'none',
+                                                backgroundColor: '#E5E5E5',
+                                                color: 'black',
+                                                cursor: 'pointer',
+                                                fontSize: '25px', // Scaled from 14px
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            Load Game
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div style={{ display: 'flex' }}> {/* Scaled from 8px */}
+                                        <button
+                                            onClick={goToSettings}
+                                            style={{
+                                                flex: 1,
+                                                padding: '12px', // Scaled from 8px
+                                                borderRadius: '6px', // Scaled from 4px
+                                                border: 'none',
+                                                backgroundColor: '#E5E5E5',
+                                                color: 'black',
+                                                cursor: 'pointer',
+                                                fontSize: '25px', // Scaled from 14px
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            Settings
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    
                 </div>
             </div>
-        </div>
-    </DndProvider>
+        </DndProvider>
     );
+
 };
 
 export default HomePage;

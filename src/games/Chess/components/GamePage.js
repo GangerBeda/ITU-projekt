@@ -30,7 +30,6 @@ const GamePage = ({ navigate }) => {
                 timeLimit: 5
             });  // Fallback to default settings
         }
-        console.log("Settings: ", savedSettings);
     };
 
 
@@ -102,7 +101,6 @@ const GamePage = ({ navigate }) => {
             console.error('Error loading game:', error);
             alert('Failed to load game');
         }
-        console.log('Game loaded:', savedState);
     };
 
     const goToSettings = () => {
@@ -226,146 +224,189 @@ const GamePage = ({ navigate }) => {
                     onClick={goToRoot}
                     className="btn-primary"
                     style={{
+                        
+                        backgroundImage: `url(${require('../assets/images/icons/home_icon.png')})`,
                         position: 'absolute',
                         top: '20px',
                         left: '20px',
                         zIndex: 10,
-                        width: '150px',
-                        height: '90px',
-                        fontSize: '30px'
+                        backgroundColor: '#D3D3D3',
+                        width: '50px',
+                        height: '50px',
+                        backgroundSize: '45px 45px', // Set a smaller size for the image
+                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
+                        backgroundPosition: 'center' // Center the image in the button
                     }}
-                >
-                    Home
-                </button>
+                ></button>
 
+                {/* White card container */}
                 <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginLeft: '200px',
+                    backgroundColor: 'white',
+                    borderRadius: '24px',
+                    paddingLeft: '30px',
+                    paddingRight: '30px',
+                    paddingBottom: '15px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                 }}>
                     <div style={{
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        maxWidth: '700px',  // Adjust based on your chessboard size
+                        alignItems: 'flex-start',
+                        gap: '20px',
                     }}>
                         <div style={{
-                            width: '100%',
                             display: 'flex',
-                            justifyContent: 'space-between',
+                            flexDirection: 'column',
                             alignItems: 'center',
-                            marginBottom: '10px',
-                            marginTop: '20px'
+                            maxWidth: '700px',
                         }}>
                             <div style={{
-                                backgroundColor: '#000',
-                                color: '#fff',
-                                padding: '10px 25px',
-                                borderRadius: '8px',
-                                fontSize: '24px',
-                                fontWeight: 'bold'
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '10px',
+                                marginTop: '20px'
                             }}>
-                                Black: {formatTime(gameState?.remainingTimeBlack)}
+                                <div style={{
+                                    backgroundColor: '#000',
+                                    color: '#fff',
+                                    padding: '10px 25px',
+                                    borderRadius: '8px',
+                                    fontSize: '24px',
+                                    fontWeight: 'bold'
+                                }}>
+                                    Black: {formatTime(gameState?.remainingTimeBlack)}
+                                </div>
+                                <div style={{
+                                    backgroundColor: gameState?.turn === 'w' ? '#f5f5f5' : '#000',
+                                    color: gameState?.turn === 'w' ? '#000' : '#fff',
+                                    padding: '10px 25px',
+                                    borderRadius: '8px',
+                                    fontSize: '24px',
+                                    fontWeight: 'bold',
+                                    width: '130px',
+                                    textAlign: 'center',
+                                    border: '1px solid #000'
+                                }}>
+                                    Turn: {gameState?.turn === 'w' ? 'White' : 'Black'}
+                                </div>
                             </div>
+
+                            <Chessboard
+                                fen={gameState ? gameState.fen : undefined}
+                                onMove={handleMove}
+                                controlType={settings.controlType}
+                            />
+
                             <div style={{
-                                backgroundColor: gameState?.turn === 'w' ? '#fff' : '#000', // White if it's White's turn, Black if it's Black's turn
-                                color: gameState?.turn === 'w' ? '#000' : '#fff', // Black text for White's turn, White text for Black's turn
-                                padding: '10px 25px',
-                                borderRadius: '8px',
-                                fontSize: '24px',
-                                fontWeight: 'bold',
-                                width: '130px', // Fixed width
-                                textAlign: 'center' // Center the text
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'left',
+                                marginTop: '10px',
                             }}>
-                                Turn: {gameState?.turn === 'w' ? 'White' : 'Black'}
+                                <div style={{
+                                    backgroundColor: '#f5f5f5',
+                                    color: '#000',
+                                    padding: '10px 25px',
+                                    borderRadius: '8px',
+                                    fontSize: '24px',
+                                    fontWeight: 'bold',
+                                    border: '1px solid #000'
+                                }}>
+                                    White: {formatTime(gameState?.remainingTimeWhite)}
+                                </div>
                             </div>
-                        </div>
 
-                        <Chessboard
-                            fen={gameState ? gameState.fen : undefined}
-                            onMove={handleMove}
-                            controlType={settings.controlType}
-                        />
-
-                        <div style={{
-                            width: '100%',
-                            display: 'flex',
-                            justifyContent: 'left',
-                            marginTop: '10px',
-                        }}>
-                            <div style={{
-                                backgroundColor: '#fff',
-                                color: '#000',
-                                padding: '10px 25px',
-                                borderRadius: '8px',
-                                fontSize: '24px',
-                                fontWeight: 'bold'
-                            }}>
-                                White: {formatTime(gameState?.remainingTimeWhite)}
-                            </div>
-                        </div>
-
-                        <div style={{
-                            display: 'flex',
-                            gap: '20px',
-                            width: '100%',
-                            marginTop: '20px'
-                        }}>
-                            <div style={{ flex: '0 0 auto' }}>
-                                <button onClick={goBack} className="btn-secondary" style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    fontSize: '10px',
-                                }}>Go Back</button>
-                            </div>
                             <div style={{
                                 display: 'flex',
                                 gap: '20px',
-                                marginLeft: 'auto'
+                                width: '100%',
+                                marginTop: '20px'
                             }}>
-                                <button onClick={startNewGame} className="btn-secondary" style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    fontSize: '10px',
-                                }}>Restart</button>
-                                <button onClick={handleSave} className="btn-secondary" style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    fontSize: '10px',
-                                }}>Save</button>
-                                <button onClick={goToSettings} className="btn-secondary" style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    fontSize: '10px',
-                                }}>Settings</button>
+                                <div style={{ flex: '0 0 auto' }}>
+                                    <button onClick={goBack} className="btn-secondary" style={{
+                                        backgroundColor: '#f5f5f5',
+                                        width: '40px',
+                                        height: '40px',
+                                        border: "2px solid black",
+                                        borderRadius: "4px",
+                                        backgroundImage: `url(${require('../assets/images/icons/arrow_icon.png')})`,
+                                        backgroundSize: '25px 25px', // Set a smaller size for the image
+                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
+                                        backgroundPosition: 'center' // Center the image in the button
+                                    }}>
+                                    </button>
+                                </div>
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '20px',
+                                    marginLeft: 'auto'
+                                }}>
+                                    <button onClick={startNewGame} className="btn-secondary" style={{
+                                        backgroundColor: '#f5f5f5',
+                                        width: '40px',
+                                        height: '40px',
+                                        border: "2px solid black",
+                                        borderRadius: "4px",
+                                        backgroundImage: `url(${require('../assets/images/icons/restart_icon.png')})`,
+                                        backgroundSize: '30px 30px', // Set a smaller size for the image
+                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
+                                        backgroundPosition: 'center' // Center the image in the button
+                                    }}></button>
+                                    <button onClick={handleSave} className="btn-secondary" style={{
+                                        backgroundColor: '#f5f5f5',
+                                        width: '40px',
+                                        height: '40px',
+                                        border: "2px solid black",
+                                        borderRadius: "4px",
+                                        backgroundImage: `url(${require('../assets/images/icons/save_icon.png')})`,
+                                        backgroundSize: '30px 30px', // Set a smaller size for the image
+                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
+                                        backgroundPosition: 'center' // Center the image in the button
+                                    }}></button>
+                                    <button onClick={goToSettings} className="btn-secondary" style={{
+                                        backgroundColor: '#f5f5f5',
+                                        width: '40px',
+                                        height: '40px',
+                                        border: "2px solid black",
+                                        borderRadius: "4px",
+                                        backgroundImage: `url(${require('../assets/images/icons/settings_icon.png')})`,
+                                        backgroundSize: '30px 30px', // Set a smaller size for the image
+                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
+                                        backgroundPosition: 'center' // Center the image in the button
+                                    }}></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Move history panel */}
-                    <div style={{
-                        width: '200px',
-                        height: '500px',
-                        maxHeight: '500px', 
-                        marginLeft: '20px',
-                        backgroundColor: '#f5f5f5',
-                        borderRadius: '8px',
-                        padding: '10px',
-                        overflowY: 'auto',
-                        fontSize: '18px',
-                        color: '#000',
-                    }}>
-                        <h3 style={{ textAlign: 'center' }}>Move History</h3>
-                        <ul style={{ listStyleType: 'none', padding: 0 }}>
-                            {gameState?.moveHistory?.map((move, index) => (
-                                <li key={index} style={{
-                                    padding: '5px 0',
-                                    borderBottom: '1px solid #ccc'
-                                }}>
-                                    <b>{index + 1}. {move.piece}</b> from <b>{move.from}</b> to <b>{move.to}</b>
-                                </li>
-                            ))}
-                        </ul>
+                        {/* Move history panel */}
+                        <div style={{
+                            width: '200px',
+                            height: '680px',
+                            maxHeight: '680px',
+                            backgroundColor: '#f5f5f5',
+                            borderRadius: '8px',
+                            padding: '10px',
+                            overflowY: 'auto',
+                            fontSize: '18px',
+                            color: '#000',
+                            border: "2px solid black",
+                            borderRadius: "4px",
+                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                            marginTop: '80px'
+                        }}>
+                            <h3 style={{ textAlign: 'center', marginTop: '0' }}>Move History</h3>
+                            <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                {gameState?.moveHistory?.map((move, index) => (
+                                    <li key={index} style={{
+                                        padding: '5px 0',
+                                        borderBottom: '1px solid #ccc'
+                                    }}>
+                                        <b>{index + 1}. {move.piece}</b> from <b>{move.from}</b> to <b>{move.to}</b>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
