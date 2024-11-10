@@ -43,22 +43,10 @@ const Chessboard = ({ fen, onMove, controlType }) => {
     };
 
     const getPossibleMovesForSelectedPiece = (chess, square) => {
-        const possibleMoves = chess.moves({ square: square });
+        const possibleMoves = chess.moves({ square: square, verbose: true });
         console.log(possibleMoves)
 
-        const cleanedMoves = possibleMoves.map(move => {
-            if (move.length === 4) {
-                return move.slice(2);
-            } else if (move.length === 3) {
-                return move.slice(1);
-            } else {
-                // TODO: CHECK '+' and CHECKMATE and 
-                // CASTLE NOTATIONS 'O-O', 'O-O-O']
-                if (move.includes('+')) {
-                }
-                return move;
-            }
-        });
+        const cleanedMoves = possibleMoves.map(move => move.to);
 
         return cleanedMoves;
     };

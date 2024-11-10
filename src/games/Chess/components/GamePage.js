@@ -25,17 +25,16 @@ const GamePage = ({ navigate }) => {
             setSettings(JSON.parse(savedSettings));  // Load saved settings
         } else {
             setSettings({
-                gameMode: 'untimed',
+                gameMode: 'timed',
                 controlType: 'click',
-                timeLimit: 5
-            });  // Fallback to default settings
+                timeLimit: 5,
+                notation: 'compact'
+            });
         }
     };
 
 
     useEffect(() => {
-        // Ensure settings are loaded only once
-
         if (!settingsLoaded.current) {
             loadSettings();
             settingsLoaded.current = true; // Mark settings as loaded
@@ -224,7 +223,7 @@ const GamePage = ({ navigate }) => {
                     onClick={goToRoot}
                     className="btn-primary"
                     style={{
-                        
+
                         backgroundImage: `url(${require('../assets/images/icons/home_icon.png')})`,
                         position: 'absolute',
                         top: '20px',
@@ -381,7 +380,7 @@ const GamePage = ({ navigate }) => {
 
                         {/* Move history panel */}
                         <div style={{
-                            width: '200px',
+                            width: settings.notation === 'detailed' ? '200px' : '140px', // Dynamic width based on notation
                             height: '680px',
                             maxHeight: '680px',
                             backgroundColor: '#f5f5f5',
@@ -393,16 +392,25 @@ const GamePage = ({ navigate }) => {
                             border: "2px solid black",
                             borderRadius: "4px",
                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-                            marginTop: '80px'
+                            marginTop: '80px',
                         }}>
                             <h3 style={{ textAlign: 'center', marginTop: '0' }}>Move History</h3>
                             <ul style={{ listStyleType: 'none', padding: 0 }}>
                                 {gameState?.moveHistory?.map((move, index) => (
-                                    <li key={index} style={{
-                                        padding: '5px 0',
-                                        borderBottom: '1px solid #ccc'
-                                    }}>
-                                        <b>{index + 1}. {move.piece}</b> from <b>{move.from}</b> to <b>{move.to}</b>
+                                    <li
+                                        key={index}
+                                        style={{
+                                            padding: '5px 0',
+                                            borderBottom: '1px solid #ccc',
+                                            fontSize: settings.notation === 'detailed' ? '18px' : '20px',
+                                            fontWeight: index % 2 !== 0 ? 'bold' : 'normal', // Odd indices are bold
+                                        }}
+                                    >
+                                        {settings.notation === 'detailed' ? (
+                                            `${index + 1}. ${move.piece} from ${move.from} to ${move.to}`
+                                        ) : (
+                                            `${index + 1}. ${move.san}`
+                                        )}
                                     </li>
                                 ))}
                             </ul>

@@ -7,7 +7,8 @@ const Settings = ({ navigate }) => {
     const [settings, setSettings] = useState({
         gameMode: 'timed',
         timeLimit: 5,
-        controlType: 'click'
+        controlType: 'click',
+        notation: 'compact'
     });
 
     useEffect(() => {
@@ -243,6 +244,51 @@ const Settings = ({ navigate }) => {
                                             }}
                                         >
                                             Drag & Drop
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label style={{
+                                        display: 'block',
+                                        marginBottom: '12px', // Scaled from 8px
+                                        fontSize: '21px', // Scaled from 14px
+                                        fontWeight: 'bold'
+                                    }}>
+                                        Notation
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '12px' }}> {/* Scaled from 8px */}
+                                        <button
+                                            onClick={() => handleSettingChange('notation', 'compact')}
+                                            style={{
+                                                flex: 1,
+                                                padding: '12px', // Scaled from 8px
+                                                borderRadius: '6px', // Scaled from 4px
+                                                border: 'none',
+                                                backgroundColor: settings.notation === 'compact' ? '#3B52E4' : '#E5E5E5',
+                                                color: settings.notation === 'compact' ? 'white' : '#000',
+                                                cursor: 'pointer',
+                                                fontSize: '21px', // Scaled from 14px
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            Compact Mode
+                                        </button>
+                                        <button
+                                            onClick={() => handleSettingChange('notation', 'detailed')}
+                                            style={{
+                                                flex: 1,
+                                                padding: '12px', // Scaled from 8px
+                                                borderRadius: '6px', // Scaled from 4px
+                                                border: 'none',
+                                                backgroundColor: settings.notation === 'detailed' ? '#3B52E4' : '#E5E5E5',
+                                                color: settings.notation === 'detailed' ? 'white' : '#000',
+                                                cursor: 'pointer',
+                                                fontSize: '21px', // Scaled from 14px
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            Detailed Mode
                                         </button>
                                     </div>
                                 </div>
