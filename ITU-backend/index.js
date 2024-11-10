@@ -421,3 +421,99 @@ app.post('/fourinarow/set-time', (req, res) => {
 // GET /fourinarow/get-time
 // Získá zbývající čas na aktuální tah hráče ve hře.
 
+
+// ======================================== BLACKJACK START ========================================
+
+function initializeDeck() {
+    const suits = ['♠', '♣', '♥', '♦'];
+    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    const deck = [];
+    for (let suit of suits) {
+        for (let value of values) {
+            deck.push({ suit, value });
+        }
+    }
+    return shuffleDeck(deck);
+}
+
+function shuffleDeck(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+}
+
+function calculateHandValue(hand) {
+    let value = 0;
+    let aceCount = 0;
+
+    for (let card of hand) {
+        if (card.value === 'A') {
+            aceCount++;
+            value += 11;
+        } else if (['K', 'Q', 'J'].includes(card.value)) {
+            value += 10;
+        } else {
+            value += parseInt(card.value);
+        }
+    }
+
+    while (value > 21 && aceCount > 0) {
+        value -= 10;
+        aceCount--;
+    }
+
+    return value;
+}
+
+app.post('/blackjack/start', (req, res) => {
+    const deck = initializeDeck();
+    const playerHand = [deck.pop(), deck.pop()];
+    const dealerHand = [deck.pop(), deck.pop()];
+
+    res.json({ deck, playerHand, dealerHand });
+});
+
+console.log("test 2");
+
+app.post('/blackjack/hit', (req, res) => {
+    const { deck, playerHand } = req.body;
+
+    if (deck.length > 0) {
+        playerHand.push(deck.pop());
+        const playerValue = calculateHandValue(playerHand);
+
+        if (playerValue > 21) {
+            return res.json({ playerHand, deck, message: 'Player busts! Dealer wins.', gameOver: true });
+        }
+
+        res.json({ playerHand, deck });
+    } else {
+        res.status(400).json({ message: 'No cards left in deck' });
+    }
+});
+
+app.post('/blackjack/stand', (req, res) => {
+    const { deck, dealerHand, playerHand } = req.body;
+
+    while (calculateHandValue(dealerHand) < 17 && deck.length > 0) {
+        dealerHand.push(deck.pop());
+    }
+
+    const dealerValue = calculateHandValue(dealerHand);
+    const playerValue = calculateHandValue(playerHand);
+    let result;
+
+    if (dealerValue > 21 || playerValue > dealerValue) {
+        result = 'Player wins!';
+    } else if (dealerValue === playerValue) {
+        result = "It's a tie!";
+    } else {
+        result = 'Dealer wins!';
+    }
+
+    res.json({ dealerHand, deck, message: result, gameOver: true });
+});
+
+// ======================================== BLACKJACK END ========================================
