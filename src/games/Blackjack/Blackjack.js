@@ -62,7 +62,7 @@ function Blackjack() {
     }, []);
 
     const startNewRound = async () => {
-        const response = await axios.post('http://localhost:3001/start');
+        const response = await axios.post('http://localhost:3001/blackjack/start');
         const { deck, playerHand, dealerHand } = response.data;
 
         setDeck(deck);
@@ -142,7 +142,7 @@ function Blackjack() {
     const handleHit = async () => {
         if (!isPlayerTurn || gameOver) {return;}
 
-        const response = await axios.post('http://localhost:3001/hit', {
+        const response = await axios.post('http://localhost:3001/blackjack/hit', {
             deck,
             playerHand
         });
@@ -161,7 +161,7 @@ function Blackjack() {
 
     const handleStand = async () => {
         setIsPlayerTurn(false);
-        const response = await axios.post('http://localhost:3001/stand', {
+        const response = await axios.post('http://localhost:3001/blackjack/stand', {
             deck,
             dealerHand,
             playerHand
