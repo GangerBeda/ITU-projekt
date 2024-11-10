@@ -2,19 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Blackjack.css';
 
-
-const initializeDeck = () => {
-    const suits = ['♠', '♣', '♥', '♦'];
-    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    let deck = [];
-    for (let suit of suits) {
-        for (let value of values) {
-            deck.push({ suit, value });
-        }
-    }
-    return deck.sort(() => Math.random() - 0.5); // Simple shuffle
-};
-
 const calculateHandValue = (hand) => {
     let value = 0;
     let aceCount = 0;
@@ -30,7 +17,6 @@ const calculateHandValue = (hand) => {
         }
     });
 
-    // Adjust for aces if the value is over 21
     while (value > 21 && aceCount > 0) {
         value -= 10;
         aceCount -= 1;
@@ -50,7 +36,7 @@ function Blackjack() {
     const gestureFieldRef = useRef(null);
     const lastTapRef = useRef(0);
     const initialXRef = useRef(null);
-    const swipeStartTimeRef = useRef(null); // Define swipeStartTimeRef here
+    const swipeStartTimeRef = useRef(null);
 
     const hitButtonRef = useRef(null);
     const standButtonRef = useRef(null);
@@ -79,16 +65,12 @@ function Blackjack() {
         if (gestureField) {
             gestureField.addEventListener("pointerdown", handlePointerDown);
             gestureField.addEventListener("pointerup", handlePointerUp);
-            // gestureField.addEventListener("pointerup", handleDoubleTap);
-            gestureField.addEventListener("pointermove", handleSwipe);
         }
 
         return () => {
             if (gestureField) {
                 gestureField.removeEventListener("pointerdown", handlePointerDown);
                 gestureField.removeEventListener("pointerup", handlePointerUp);
-                // gestureField.removeEventListener("pointerup", handleDoubleTap);
-                gestureField.removeEventListener("pointermove", handleSwipe);
             }
         };
     }, [isPlayerTurn, gameOver]);
@@ -96,31 +78,21 @@ function Blackjack() {
     const handleDoubleTap = async () => {
         const now = Date.now();
         if (now - lastTapRef.current < 300) {
-            // Double-tap detected
+            // Double-tap
             hitButtonRef.current.click();
             if (gameOver) playAgainButtonRef.current.click();
-            lastTapRef.current = 0; // Reset after double-tap is detected
+            lastTapRef.current = 0;
         } else {
             lastTapRef.current = now;
         }
     };
 
+    // Record when, where cursor is on mouse down
     const handlePointerDown = (e) => {
         initialXRef.current = e.clientX;
-        swipeStartTimeRef.current = Date.now(); // Start swipe timing
+        swipeStartTimeRef.current = Date.now();
     };
     
-    const handleSwipe = (e) => {
-        if (initialXRef.current === null) return; // Ensure a swipe has started
-    
-        const distance = e.clientX - initialXRef.current;
-        const timeElapsed = Date.now() - lastTapRef.current;
-    
-        if (distance > 200 && timeElapsed <= 1000) { // 200px distance and <= 1 second
-            standButtonRef.current.click();
-            initialXRef.current = null; // Reset the swipe tracking
-        }
-    };
     
     const handlePointerUp = (e) => {
         const swipeDistance = e.clientX - initialXRef.current;
@@ -172,43 +144,18 @@ function Blackjack() {
         setGameOver(true);
     };
 
-    const handleDealerTurn = () => {
-        let dealerValue = calculateHandValue(dealerHand);
-        const newDeck = [...deck];
-        const newDealerHand = [...dealerHand];
-
-        while (dealerValue < 17) {
-            newDealerHand.push(newDeck.pop());
-            dealerValue = calculateHandValue(newDealerHand);
-        }
-
-        setDeck(newDeck);
-        setDealerHand(newDealerHand);
-
-        const playerValue = calculateHandValue(playerHand);
-        if (dealerValue > 21 || playerValue > dealerValue) {
-            setResult("Player wins!");
-        } else if (dealerValue === playerValue) {
-            setResult("It's a tie!");
-        } else {
-            setResult("Dealer wins!");
-        }
-
-        setGameOver(true);
-    };
-
     return (
         <div className="blackjack-container">
-            <div className="action-buttons">
-                <button ref={hitButtonRef} className="action-button" onClick={() => handleHit()} disabled={!isPlayerTurn || gameOver}>Hit</button>
-                <button ref={standButtonRef} className="action-button" onClick={() => handleStand()} disabled={!isPlayerTurn || gameOver}>Stand</button>
-                {gameOver && <button ref={playAgainButtonRef} className="action-button" onClick={() => startNewRound()}>Play Again</button>}
+            <div className="blackjack-action-buttons">
+                <button ref={hitButtonRef} className="blackjack-action-button" onClick={() => handleHit()} disabled={!isPlayerTurn || gameOver}>Hit</button>
+                <button ref={standButtonRef} className="blackjack-action-button" onClick={() => handleStand()} disabled={!isPlayerTurn || gameOver}>Stand</button>
+                {gameOver && <button ref={playAgainButtonRef} className="blackjack-action-button" onClick={() => startNewRound()}>Play Again</button>}
             </div>
 
             <h3>Dealer's hand{gameOver && ': ' + calculateHandValue(dealerHand)}</h3>
             <div className="dealer-hand">
                 {dealerHand.map((card, index) => (
-                    <div key={index} className="card">
+                    <div key={index} className="blackjack-card">
                         {index === 0 && isPlayerTurn ? "??" : `${card.value} ${card.suit}`}
                     </div>
                 ))}
@@ -222,7 +169,7 @@ function Blackjack() {
             </div>
             <div className="player-hand">
                 {playerHand.map((card, index) => (
-                    <div key={index} className="card player-card">
+                    <div key={index} className="blackjack-card player-card">
                         {card.value} {card.suit}
                     </div>
                 ))}
