@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom'; // Pridaný import
+import { useLocation } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Chessboard from './Chessboard';
@@ -14,7 +14,6 @@ const GamePage = ({ navigate }) => {
 
     const timerRef = useRef(null);
 
-    // A ref to track whether settings have been loaded
     const settingsLoaded = useRef(false);
 
     const timed = useRef(false);
@@ -22,7 +21,7 @@ const GamePage = ({ navigate }) => {
     const loadSettings = () => {
         const savedSettings = localStorage.getItem('chessSettings');
         if (savedSettings) {
-            setSettings(JSON.parse(savedSettings));  // Load saved settings
+            setSettings(JSON.parse(savedSettings));
         } else {
             setSettings({
                 gameMode: 'timed',
@@ -37,11 +36,11 @@ const GamePage = ({ navigate }) => {
     useEffect(() => {
         if (!settingsLoaded.current) {
             loadSettings();
-            settingsLoaded.current = true; // Mark settings as loaded
+            settingsLoaded.current = true;
         }
 
         if (settings === null) {
-            return; // Exit early if settings aren't loaded yet
+            return;
         }
 
         if (shouldLoadGame) {
@@ -54,34 +53,31 @@ const GamePage = ({ navigate }) => {
         } else {
             startNewGame();
         }
-    }, [settings]);  // Only run when settings or shouldLoadGame change
+    }, [settings]);
 
 
     useEffect(() => {
-        if (!gameState || !gameState.turn || !timed.current) return;  // Exit if no game state or if it's not a timed game
+        if (!gameState || !gameState.turn || !timed.current) return;
 
-        // Set the timer based on the current player's turn (white or black)
         const currentPlayer = gameState.turn === 'w' ? 'white' : 'black';
         const currentTimer = currentPlayer === 'white' ? 'remainingTimeWhite' : 'remainingTimeBlack';
 
-        // Set up the timer to update every second
         const timer = setInterval(() => {
             if (gameState.turn === 'w' && currentPlayer === 'white') {
                 setGameState(prev => ({
                     ...prev,
-                    [currentTimer]: prev[currentTimer] - 1000  // Subtract 1 second
+                    [currentTimer]: prev[currentTimer] - 1000
                 }));
             } else if (gameState.turn === 'b' && currentPlayer === 'black') {
                 setGameState(prev => ({
                     ...prev,
-                    [currentTimer]: prev[currentTimer] - 1000  // Subtract 1 second
+                    [currentTimer]: prev[currentTimer] - 1000
                 }));
             }
         }, 1000);
 
-        // Cleanup function to clear the interval when the component unmounts or when the turn changes
         return () => clearInterval(timer);
-    }, [gameState?.turn, gameState?.remainingTimeWhite, gameState?.remainingTimeBlack, settings?.gameMode]); // Trigger when game state or settings change
+    }, [gameState?.turn, gameState?.remainingTimeWhite, gameState?.remainingTimeBlack, settings?.gameMode]);
 
 
     const loadGame = async (savedState) => {
@@ -164,7 +160,6 @@ const GamePage = ({ navigate }) => {
             });
             const data = await response.json();
 
-            // Save to localStorage for demo purposes
             localStorage.setItem('savedChessGame', JSON.stringify(data.savedState));
             alert('Game saved successfully!');
         } catch (error) {
@@ -189,7 +184,6 @@ const GamePage = ({ navigate }) => {
         }
     };
 
-    // Cleanup on component unmount
     useEffect(() => {
         return () => {
             handleExit();
@@ -232,13 +226,13 @@ const GamePage = ({ navigate }) => {
                         backgroundColor: '#D3D3D3',
                         width: '50px',
                         height: '50px',
-                        backgroundSize: '45px 45px', // Set a smaller size for the image
-                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
-                        backgroundPosition: 'center' // Center the image in the button
+                        backgroundSize: '45px 45px',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center'
                     }}
                 ></button>
 
-                {/* White card container */}
+                { }
                 <div style={{
                     backgroundColor: 'white',
                     borderRadius: '24px',
@@ -330,9 +324,9 @@ const GamePage = ({ navigate }) => {
                                         border: "2px solid black",
                                         borderRadius: "4px",
                                         backgroundImage: `url(${require('../assets/images/icons/arrow_icon.png')})`,
-                                        backgroundSize: '25px 25px', // Set a smaller size for the image
-                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
-                                        backgroundPosition: 'center' // Center the image in the button
+                                        backgroundSize: '25px 25px',
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'center'
                                     }}>
                                     </button>
                                 </div>
@@ -348,9 +342,9 @@ const GamePage = ({ navigate }) => {
                                         border: "2px solid black",
                                         borderRadius: "4px",
                                         backgroundImage: `url(${require('../assets/images/icons/restart_icon.png')})`,
-                                        backgroundSize: '30px 30px', // Set a smaller size for the image
-                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
-                                        backgroundPosition: 'center' // Center the image in the button
+                                        backgroundSize: '30px 30px',
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'center'
                                     }}></button>
                                     <button onClick={handleSave} className="btn-secondary" style={{
                                         backgroundColor: '#f5f5f5',
@@ -359,9 +353,9 @@ const GamePage = ({ navigate }) => {
                                         border: "2px solid black",
                                         borderRadius: "4px",
                                         backgroundImage: `url(${require('../assets/images/icons/save_icon.png')})`,
-                                        backgroundSize: '30px 30px', // Set a smaller size for the image
-                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
-                                        backgroundPosition: 'center' // Center the image in the button
+                                        backgroundSize: '30px 30px',
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'center'
                                     }}></button>
                                     <button onClick={goToSettings} className="btn-secondary" style={{
                                         backgroundColor: '#f5f5f5',
@@ -370,17 +364,17 @@ const GamePage = ({ navigate }) => {
                                         border: "2px solid black",
                                         borderRadius: "4px",
                                         backgroundImage: `url(${require('../assets/images/icons/settings_icon.png')})`,
-                                        backgroundSize: '30px 30px', // Set a smaller size for the image
-                                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
-                                        backgroundPosition: 'center' // Center the image in the button
+                                        backgroundSize: '30px 30px',
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'center'
                                     }}></button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Move history panel */}
+                        { }
                         <div style={{
-                            width: settings.notation === 'detailed' ? '200px' : '140px', // Dynamic width based on notation
+                            width: settings.notation === 'detailed' ? '200px' : '140px',
                             height: '680px',
                             maxHeight: '680px',
                             backgroundColor: '#f5f5f5',
@@ -403,7 +397,7 @@ const GamePage = ({ navigate }) => {
                                             padding: '5px 0',
                                             borderBottom: '1px solid #ccc',
                                             fontSize: settings.notation === 'detailed' ? '18px' : '20px',
-                                            fontWeight: index % 2 !== 0 ? 'bold' : 'normal', // Odd indices are bold
+                                            fontWeight: index % 2 !== 0 ? 'bold' : 'normal',
                                         }}
                                     >
                                         {settings.notation === 'detailed' ? (

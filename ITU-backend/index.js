@@ -141,7 +141,6 @@ app.post('/chess/save', (req, res) => {
         remainingTimeBlack: game.remainingTimeBlack,
     };
 
-    // In production, save to database
     res.json({ savedState });
 });
 
