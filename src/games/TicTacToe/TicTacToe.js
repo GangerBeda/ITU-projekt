@@ -6,17 +6,17 @@ import RestartButton from "./Buttons/RestartButton";
 import ClassicTTTModeButton from "./Buttons/ClassicTTTModeButton";
 import BlindModeButton from "./Buttons/BlindModeButton";
 import ResetScoreButton from "./Buttons/ResetScoreButton";
+import HomeButton from "./Buttons/HomeButton";
+import InfoButton from "./Buttons/InfoButton";
 import "./TicTacToe.css";
 
 const TicTacToe = () => {
     const [isClassicMode, setIsClassicMode] = useState(false);
 
-    // Classic Tic-Tac-Toe states
     const [classicBoard, setClassicBoard] = useState([]);
     const [classicIsXNext, setClassicIsXNext] = useState(null);
     const [classicWinner, setClassicWinner] = useState(null);
 
-    // Ultimate Tic-Tac-Toe states
     const [subBoards, setSubBoards] = useState([]);
     const [mainBoard, setMainBoard] = useState([]);
     const [isXNext, setIsXNext] = useState(null);
@@ -24,9 +24,7 @@ const TicTacToe = () => {
     const [ultimateWinner, setUltimateWinner] = useState(null);
     const [blindMode, setBlindMode] = useState(null);
 
-    // Score states
     const [score, setScoreState] = useState([]);
-    // const [hoveredSquare, setHoveredSquare] = useState(null);
 
     const toggleGameMode = () => {
         setIsClassicMode(!isClassicMode);
@@ -47,6 +45,14 @@ const TicTacToe = () => {
         updateScore("O", 0);
     };
 
+    const restartGame = () => {
+        if (isClassicMode) {
+            startClassicGame();
+        } else {
+            startUltimateGame();
+        }
+    };
+
 
     const startClassicGame = async () => {
         const game = await createClassicGame();
@@ -55,7 +61,7 @@ const TicTacToe = () => {
         setClassicWinner(game.winner);
     };
 
-    const makeClassicMoveHandler = async (cellIndex) => {
+    const makeClassicMoveClick = async (cellIndex) => {
         const gameUpdate = await makeClassicMove(cellIndex);
         if(classicWinner) return;
         setClassicBoard(gameUpdate.board);
@@ -73,7 +79,7 @@ const TicTacToe = () => {
         setBlindMode(game.blindMode);
     };
 
-    const makeUltimateMoveHandler = async (subBoardIndex, cellIndex) => {
+    const makeUltimateMoveClick = async (subBoardIndex, cellIndex) => {
         const gameUpdate = await makeUltimateMove(subBoardIndex, cellIndex, null);
         if(ultimateWinner) return;
         setSubBoards(gameUpdate.subBoards);
@@ -95,10 +101,6 @@ const TicTacToe = () => {
         setScoreState(updatedScore);
     };
 
-    // const onHoverSquare = (index) => {
-    //     setHoveredSquare(index);
-    // };
-
     useEffect(() => {
         fetchScore();
         startUltimateGame();
@@ -108,10 +110,12 @@ const TicTacToe = () => {
         <div className="tic-tac-toe">
             <h1>{isClassicMode ? "Classic Tic-Tac-Toe" : "Ultimate Tic-Tac-Toe"}</h1>
             <div className="buttons-board">
-                <RestartButton />
+                <HomeButton />
+                <RestartButton onClick={restartGame}/>
                 <ClassicTTTModeButton onClick={toggleGameMode} />
                 {!isClassicMode ? <BlindModeButton onClick={toggleBlindMode} /> : null}
                 <ResetScoreButton onClick={resetScore}/>
+                <InfoButton />
             </div>
             <h1>{!isClassicMode && blindMode ? "Blind Mode is On" : ""}</h1>
             <p className="score" > {isXNext ? "X" : "O"} Is on move</p>
@@ -119,22 +123,22 @@ const TicTacToe = () => {
                 <ClassicBoard
                     board={classicBoard}
                     isXNext={classicIsXNext}
-                    winner={classicWinner}
-                    onSquareClick={makeClassicMoveHandler}
+                    onSquareClick={makeClassicMoveClick}
                 />
             ) : (
                 <div>
                 <MainBoard
                     subBoards={subBoards}
                     mainBoard={mainBoard}
-                    onSquareClick={makeUltimateMoveHandler}
+                    onSquareClick={makeUltimateMoveClick}
                     activeSubBoard={activeSubBoard}
+                    blindModeActive={blindMode}
                 />
                 </div>
             )}
             <p className="score">Score</p>
             <p className="score">X: {score.X} ---------- O: {score.O}</p>
-            {ultimateWinner && <p className="winner">Winner: {ultimateWinner}</p>}
+            {ultimateWinner && !isClassicMode && <p className="winner">Winner: {ultimateWinner}</p>}
             {classicWinner && isClassicMode && <p className="winner">Winner: {classicWinner}</p>}
         </div>
     );

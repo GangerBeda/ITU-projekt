@@ -1,16 +1,16 @@
 import React from "react";
 import "./Square.css";
 
-const Square = ({ value, onClick, isWinner, onMouseEnter, onMouseLeave }) => {
+const Square = ({ value, onClick, isWinner, onMouseEnter, onMouseLeave, isBlind }) => {
     return (
-        <button
-            className={`square ${isWinner ? "won" : ""}`}
+        <div
+            className={`square ${isWinner ? "won" : ""} ${isBlind ? "blind" : ""}`}
             onClick={onClick}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
             {value}
-        </button>
+        </div>
     );
 };
 

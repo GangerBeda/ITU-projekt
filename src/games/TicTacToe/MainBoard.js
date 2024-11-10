@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import SubBoard from "./SubBoard";
 import "./MainBoard.css";
 
-const MainBoard = ({ subBoards, mainBoard, onSquareClick, activeSubBoard }) => {
+const MainBoard = ({ subBoards, mainBoard, onSquareClick, activeSubBoard, blindModeActive }) => {
+    
     const [hoveredSquare, setHoveredSquare] = useState(null);
 
     return (
@@ -16,6 +17,7 @@ const MainBoard = ({ subBoards, mainBoard, onSquareClick, activeSubBoard }) => {
                     onSquareClick={(cellIndex) => onSquareClick(index, cellIndex)}
                     onHoverSquare={setHoveredSquare}
                     hoveredSquare={hoveredSquare === index}
+                    blindModeActive={blindModeActive}
                 />
             ))}
         </div>
