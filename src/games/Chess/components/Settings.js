@@ -12,7 +12,6 @@ const Settings = ({ navigate }) => {
     });
 
     useEffect(() => {
-        // Load existing settings if available
         const savedSettings = localStorage.getItem('chessSettings');
         if (savedSettings) {
             try {
@@ -57,7 +56,7 @@ const Settings = ({ navigate }) => {
                     onClick={goToRoot}
                     className="btn-primary"
                     style={{
-                        
+
                         backgroundImage: `url(${require('../assets/images/icons/home_icon.png')})`,
                         position: 'absolute',
                         top: '20px',
@@ -66,9 +65,9 @@ const Settings = ({ navigate }) => {
                         backgroundColor: '#D3D3D3',
                         width: '50px',
                         height: '50px',
-                        backgroundSize: '45px 45px', // Set a smaller size for the image
-                        backgroundRepeat: 'no-repeat', // Prevents repeating the image
-                        backgroundPosition: 'center' // Center the image in the button
+                        backgroundSize: '45px 45px',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center'
                     }}
                 ></button>
 
@@ -86,29 +85,29 @@ const Settings = ({ navigate }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '525px', // Scaled from 350px
-                        marginBottom: '15rem', // Scaled from 10rem
+                        width: '525px',
+                        marginBottom: '15rem',
                     }}>
                         <div style={{
                             backgroundColor: 'white',
-                            borderRadius: '12px', // Scaled from 8px
+                            borderRadius: '12px',
                             width: '100%',
-                            padding: '30px', // Scaled from 20px
-                            boxShadow: '0 3px 6px rgba(0,0,0,0.1)' // Slightly adjusted for scale
+                            padding: '30px',
+                            boxShadow: '0 3px 6px rgba(0,0,0,0.1)'
                         }}>
                             <div style={{
                                 backgroundColor: '#3B52E4',
-                                margin: '-30px -30px 30px -30px', // Scaled from -20px -20px 20px -20px
-                                padding: '22px 30px', // Scaled from 15px 20px
-                                borderRadius: '12px 12px 0 0', // Scaled from 8px
+                                margin: '-30px -30px 30px -30px',
+                                padding: '22px 30px',
+                                borderRadius: '12px 12px 0 0',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '15px' // Scaled from 10px
+                                gap: '15px'
                             }}>
                                 <span style={{
                                     color: 'white',
                                     cursor: 'pointer',
-                                    fontSize: '24px', // Scaled and made bold
+                                    fontSize: '24px',
                                     fontWeight: 'bold'
                                 }} onClick={goBack}>
                                     ←
@@ -116,35 +115,35 @@ const Settings = ({ navigate }) => {
                                 <h2 style={{
                                     color: 'white',
                                     margin: 0,
-                                    fontSize: '24px', // Scaled from 16px
+                                    fontSize: '24px',
                                     fontWeight: 'bold'
                                 }}>
                                     Settings
                                 </h2>
                             </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}> {/* Scaled from 20px */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}> { }
                                 <div>
                                     <label style={{
                                         display: 'block',
-                                        marginBottom: '12px', // Scaled from 8px
-                                        fontSize: '21px', // Scaled from 14px
+                                        marginBottom: '12px',
+                                        fontSize: '21px',
                                         fontWeight: 'bold'
                                     }}>
                                         Game Mode
                                     </label>
-                                    <div style={{ display: 'flex', gap: '12px' }}> {/* Scaled from 8px */}
+                                    <div style={{ display: 'flex', gap: '12px' }}> { }
                                         <button
                                             onClick={() => handleSettingChange('gameMode', 'untimed')}
                                             style={{
                                                 flex: 1,
-                                                padding: '12px', // Scaled from 8px
-                                                borderRadius: '6px', // Scaled from 4px
+                                                padding: '12px',
+                                                borderRadius: '6px',
                                                 border: 'none',
                                                 backgroundColor: settings.gameMode === 'untimed' ? '#3B52E4' : '#E5E5E5',
                                                 color: settings.gameMode === 'untimed' ? 'white' : '#000',
                                                 cursor: 'pointer',
-                                                fontSize: '21px', // Scaled from 14px
+                                                fontSize: '21px',
                                                 fontWeight: 'bold'
                                             }}
                                         >
@@ -154,13 +153,13 @@ const Settings = ({ navigate }) => {
                                             onClick={() => handleSettingChange('gameMode', 'timed')}
                                             style={{
                                                 flex: 1,
-                                                padding: '12px', // Scaled from 8px
-                                                borderRadius: '6px', // Scaled from 4px
+                                                padding: '12px',
+                                                borderRadius: '6px',
                                                 border: 'none',
                                                 backgroundColor: settings.gameMode === 'timed' ? '#3B52E4' : '#E5E5E5',
                                                 color: settings.gameMode === 'timed' ? 'white' : '#000',
                                                 cursor: 'pointer',
-                                                fontSize: '21px', // Scaled from 14px
+                                                fontSize: '21px',
                                                 fontWeight: 'bold'
                                             }}
                                         >
@@ -173,26 +172,26 @@ const Settings = ({ navigate }) => {
                                     <div>
                                         <label style={{
                                             display: 'block',
-                                            marginBottom: '12px', // Scaled from 8px
-                                            fontSize: '21px', // Scaled from 14px
+                                            marginBottom: '12px',
+                                            fontSize: '21px',
                                             fontWeight: 'bold'
                                         }}>
                                             Time Control
                                         </label>
-                                        <div style={{ display: 'flex', gap: '12px' }}> {/* Scaled from 8px */}
+                                        <div style={{ display: 'flex', gap: '12px' }}> { }
                                             {[5, 10, 15].map(time => (
                                                 <button
                                                     key={time}
                                                     onClick={() => handleSettingChange('timeLimit', time)}
                                                     style={{
                                                         flex: 1,
-                                                        padding: '12px', // Scaled from 8px
-                                                        borderRadius: '6px', // Scaled from 4px
+                                                        padding: '12px',
+                                                        borderRadius: '6px',
                                                         border: 'none',
                                                         backgroundColor: settings.timeLimit === time ? '#3B52E4' : '#E5E5E5',
                                                         color: settings.timeLimit === time ? 'white' : '#000',
                                                         cursor: 'pointer',
-                                                        fontSize: '21px', // Scaled from 14px
+                                                        fontSize: '21px',
                                                         fontWeight: 'bold'
                                                     }}
                                                 >
@@ -206,24 +205,24 @@ const Settings = ({ navigate }) => {
                                 <div>
                                     <label style={{
                                         display: 'block',
-                                        marginBottom: '12px', // Scaled from 8px
-                                        fontSize: '21px', // Scaled from 14px
+                                        marginBottom: '12px',
+                                        fontSize: '21px',
                                         fontWeight: 'bold'
                                     }}>
                                         Control Type
                                     </label>
-                                    <div style={{ display: 'flex', gap: '12px' }}> {/* Scaled from 8px */}
+                                    <div style={{ display: 'flex', gap: '12px' }}> { }
                                         <button
                                             onClick={() => handleSettingChange('controlType', 'click')}
                                             style={{
                                                 flex: 1,
-                                                padding: '12px', // Scaled from 8px
-                                                borderRadius: '6px', // Scaled from 4px
+                                                padding: '12px',
+                                                borderRadius: '6px',
                                                 border: 'none',
                                                 backgroundColor: settings.controlType === 'click' ? '#3B52E4' : '#E5E5E5',
                                                 color: settings.controlType === 'click' ? 'white' : '#000',
                                                 cursor: 'pointer',
-                                                fontSize: '21px', // Scaled from 14px
+                                                fontSize: '21px',
                                                 fontWeight: 'bold'
                                             }}
                                         >
@@ -233,13 +232,13 @@ const Settings = ({ navigate }) => {
                                             onClick={() => handleSettingChange('controlType', 'drag')}
                                             style={{
                                                 flex: 1,
-                                                padding: '12px', // Scaled from 8px
-                                                borderRadius: '6px', // Scaled from 4px
+                                                padding: '12px',
+                                                borderRadius: '6px',
                                                 border: 'none',
                                                 backgroundColor: settings.controlType === 'drag' ? '#3B52E4' : '#E5E5E5',
                                                 color: settings.controlType === 'drag' ? 'white' : '#000',
                                                 cursor: 'pointer',
-                                                fontSize: '21px', // Scaled from 14px
+                                                fontSize: '21px',
                                                 fontWeight: 'bold'
                                             }}
                                         >
@@ -251,24 +250,24 @@ const Settings = ({ navigate }) => {
                                 <div>
                                     <label style={{
                                         display: 'block',
-                                        marginBottom: '12px', // Scaled from 8px
-                                        fontSize: '21px', // Scaled from 14px
+                                        marginBottom: '12px',
+                                        fontSize: '21px',
                                         fontWeight: 'bold'
                                     }}>
                                         Notation
                                     </label>
-                                    <div style={{ display: 'flex', gap: '12px' }}> {/* Scaled from 8px */}
+                                    <div style={{ display: 'flex', gap: '12px' }}> { }
                                         <button
                                             onClick={() => handleSettingChange('notation', 'compact')}
                                             style={{
                                                 flex: 1,
-                                                padding: '12px', // Scaled from 8px
-                                                borderRadius: '6px', // Scaled from 4px
+                                                padding: '12px',
+                                                borderRadius: '6px',
                                                 border: 'none',
                                                 backgroundColor: settings.notation === 'compact' ? '#3B52E4' : '#E5E5E5',
                                                 color: settings.notation === 'compact' ? 'white' : '#000',
                                                 cursor: 'pointer',
-                                                fontSize: '21px', // Scaled from 14px
+                                                fontSize: '21px',
                                                 fontWeight: 'bold'
                                             }}
                                         >
@@ -278,13 +277,13 @@ const Settings = ({ navigate }) => {
                                             onClick={() => handleSettingChange('notation', 'detailed')}
                                             style={{
                                                 flex: 1,
-                                                padding: '12px', // Scaled from 8px
-                                                borderRadius: '6px', // Scaled from 4px
+                                                padding: '12px',
+                                                borderRadius: '6px',
                                                 border: 'none',
                                                 backgroundColor: settings.notation === 'detailed' ? '#3B52E4' : '#E5E5E5',
                                                 color: settings.notation === 'detailed' ? 'white' : '#000',
                                                 cursor: 'pointer',
-                                                fontSize: '21px', // Scaled from 14px
+                                                fontSize: '21px',
                                                 fontWeight: 'bold'
                                             }}
                                         >
@@ -297,15 +296,15 @@ const Settings = ({ navigate }) => {
                                     onClick={saveSettings}
                                     style={{
                                         width: '100%',
-                                        padding: '18px', // Scaled from 12px
+                                        padding: '18px',
                                         backgroundColor: '#3B52E4',
                                         color: 'white',
                                         border: 'none',
-                                        borderRadius: '6px', // Scaled from 4px
+                                        borderRadius: '6px',
                                         cursor: 'pointer',
-                                        fontSize: '21px', // Scaled from 14px
+                                        fontSize: '21px',
                                         fontWeight: 'bold',
-                                        marginTop: '15px' // Scaled from 10px
+                                        marginTop: '15px'
                                     }}
                                 >
                                     Save Settings
