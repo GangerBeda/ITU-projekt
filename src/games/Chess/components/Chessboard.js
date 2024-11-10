@@ -64,18 +64,18 @@ const Chessboard = ({ fen, onMove, controlType }) => {
                 className={`chess-square 
                     ${isDark ? 'chess-dark' : 'chess-light'} 
                     ${isSelected ? 'chess-selected' : ''} 
-                    ${isHighlighted ? (hasPiece ?  'chess-with-piece' : 'chess-highlighted') : ''}`}
+                    ${isHighlighted ? (hasPiece ? 'chess-with-piece' : 'chess-highlighted') : ''}`}
                 onClick={() => handleSquareClick(square)}
-                onDragOver={(e) => e.preventDefault()}  // Allow drop
-                onDrop={() => handlePieceDrop(square)}  // Handles drag-and-drop moves
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => handlePieceDrop(square)}
             >
                 {piece && (
                     <img
                         src={getPieceImageSrc(piece)}
                         alt={`Piece ${piece.type}`}
                         className="chess-piece"
-                        draggable={controlType === 'drag'}  // Enable drag if controlType is 'drag'
-                        onDragStart={() => handlePieceDrag(square)}  // Trigger drag start event    
+                        draggable={controlType === 'drag'}
+                        onDragStart={() => handlePieceDrag(square)}
                     />
                 )}
             </div>
@@ -96,11 +96,11 @@ const Chessboard = ({ fen, onMove, controlType }) => {
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="chess-board">
-            {[...Array(8)].map((_, i) =>
-                [...Array(8)].map((__, j) => renderSquare(i, j))
-            )}
-        </div>
+            <div className="chess-board">
+                {[...Array(8)].map((_, i) =>
+                    [...Array(8)].map((__, j) => renderSquare(i, j))
+                )}
+            </div>
         </div>
     );
 };

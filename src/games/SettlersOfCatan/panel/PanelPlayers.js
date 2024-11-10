@@ -2,11 +2,11 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-export default function PanelPlayers({ setPanel }) {
+export default function PanelPlayers(props) {
     return (
         <>
             <div className='icon-container'>
-                <FontAwesomeIcon icon={faTimes} className='x-icon' onClick={() => setPanel('resources')} />
+                <FontAwesomeIcon icon={faTimes} className='x-icon' onClick={() => props.setPanel('resources')} />
             </div>
             <p>Total Cards</p>
             <div className='card-container'>

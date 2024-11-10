@@ -44,20 +44,23 @@ const shuffle = () => {
 
 export default function Catan() {
     const [activePlayerColor, setActivePlayerColor] = useState('#f00');
+    const [roll1, setRoll1] = useState(1);
+    const [roll2, setRoll2] = useState(1);
     useState(() => {
         shuffle();
     });
     return (
         <>
-            <select value={activePlayerColor} onChange={(e) => setActivePlayerColor(e.target.value)}>
+            {/*<select value={activePlayerColor} onChange={(e) => setActivePlayerColor(e.target.value)}>
                 <option value='#f00'>Red</option>
                 <option value='#00f'>Blue</option>
                 <option value='#0f0'>Green</option>
                 <option value='#ff0'>Yellow</option>
-            </select>
+            </select>*/}
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Board materialTypes={materialTypes} numberTokens={numberTokens} activePlayerColor={activePlayerColor} />
-                <Panel />
+                <Board materialTypes={materialTypes} numberTokens={numberTokens} activePlayerColor={activePlayerColor} roll1={roll1} roll2={roll2} />
+
+                <Panel setRoll1={setRoll1} setRoll2={setRoll2} setActivePlayerColor={setActivePlayerColor} />
             </div>
         </>
     );
