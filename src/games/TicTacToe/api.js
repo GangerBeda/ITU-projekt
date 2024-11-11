@@ -10,7 +10,7 @@ export const createClassicGame = async () => {
         }
         return response.json();
     } catch (error) {
-        console.error("Error creating Classic game:", error);
+        console.error("Error creating Classic game", error);
     }
 };
 
@@ -28,7 +28,7 @@ export const makeClassicMove = async (cellIndex) => {
         }
         return response.json();
     } catch (error) {
-        console.error("Error making Classic move:", error);
+        console.error("Error making Classic move", error);
     }
 };
 
@@ -42,31 +42,27 @@ export const createUltimateGame = async () => {
         }
         return response.json();
     } catch (error) {
-        console.error("Error creating Ultimate game:", error);
+        console.error("Error creating Ultimate game", error);
     }
 };
 
 export const makeUltimateMove = async (subBoardIndex, cellIndex, blindMode) => {
     try {
         blindMode = blindMode === null ? null : blindMode;
-        const response = await fetch("http://localhost:3001/tictactoe/ultimate-game/move", {
+        const response = await fetch(`${BASE_URL}/ultimate-game/move`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ subBoardIndex, cellIndex, blindMode })
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ subBoardIndex, cellIndex, blindMode }),
         });
-
-        console.log("Response status:", response.status);
-        console.log("Response URL:", response.url);
 
         if (!response.ok) {
             throw new Error("Failed to make move or toggle blind mode");
         }
-
-        const data = await response.json();
-        return data;
+        return response.json();
     } catch (error) {
-        console.error("Error in makeUltimateMove:", error);
-        return null;
+        console.error("Error in makeUltimateMove", error);
     }
 };
 
@@ -80,7 +76,7 @@ export const getScore = async () => {
         }
         return response.json();
     } catch (error) {
-        console.error("Error getting score:", error);
+        console.error("Error getting score", error);
     }
 };
 
@@ -98,6 +94,6 @@ export const setScore = async (player, wins) => {
         }
         return response.json();
     } catch (error) {
-        console.error("Error setting score:", error);
+        console.error("Error setting score", error);
     }
 };

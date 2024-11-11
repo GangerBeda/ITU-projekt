@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import "./RestartButton.css";
 
-const RestartButton = () => {
+const RestartButton = ({onClick}) => {
     return (
-        <div className="restart-button">
-            <div onClick={() => window.location.reload()}>Restart</div>
+        <div className="restart-button" onClick={onClick}>
+            Restart
         </div>
     );
 };
