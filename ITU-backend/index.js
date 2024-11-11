@@ -4,13 +4,11 @@ const fs = require('fs');
 
 const bodyParser = require('body-parser');
 const { Chess } = require('chess.js');
-const ClassicTicTacToe = require("./models/ClassicTicTacToe");
-const UltimateTicTacToe = require("./models/UltimateTicTacToe");
-const Score = require("./models/Score");
+const ClassicTicTacToe = require('./models/ClassicTicTacToe');
+const UltimateTicTacToe = require('./models/UltimateTicTacToe');
+const Score = require('./models/Score');
 
 const { FourInARowModel } = require('../src/games/FourInARow/models/FourInARowModel');
-
-
 
 const app = express();
 const port = 3001;
@@ -27,7 +25,8 @@ app.post('/', (req, res) => {
     res.send('Got a POST request');
 });
 
-app.post('/api/gameObj', (req, res) => {
+// settlers of catan
+app.post('/catan/build', (req, res) => {
     const receivedObject = req.body;
 
     fs.writeFile('db/gameObj.json', JSON.stringify(receivedObject, null, 2), (err) => {
@@ -43,7 +42,7 @@ app.post('/api/gameObj', (req, res) => {
     });
 });
 
-app.get('/api/gameObj', (req, res) => {
+app.get('/catan/state', (req, res) => {
     fs.readFile('db/gameObj.json', 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading file', err);
@@ -96,7 +95,7 @@ app.post('/chess/start', (req, res) => {
         turn: game.chess.turn(),
         gameMode: game.gameMode,
         remainingTimeWhite: game.remainingTimeWhite,
-        remainingTimeBlack: game.remainingTimeBlack
+        remainingTimeBlack: game.remainingTimeBlack,
     });
 });
 
@@ -121,7 +120,7 @@ app.post('/chess/move', (req, res) => {
             isDraw: game.chess.isDraw(),
             moveHistory: game.moveHistory,
             remainingTimeWhite: game.remainingTimeWhite,
-            remainingTimeBlack: game.remainingTimeBlack
+            remainingTimeBlack: game.remainingTimeBlack,
         };
 
         res.json(response);
@@ -144,7 +143,7 @@ app.post('/chess/save', (req, res) => {
         timeLimit: game.timeLimit,
         moveHistory: game.moveHistory,
         remainingTimeWhite: game.remainingTimeWhite,
-        remainingTimeBlack: game.remainingTimeBlack
+        remainingTimeBlack: game.remainingTimeBlack,
     };
 
     // In production, save to database
@@ -170,7 +169,7 @@ app.post('/chess/load', (req, res) => {
         gameMode: game.gameMode,
         moveHistory: game.moveHistory,
         remainingTimeWhite: game.remainingTimeWhite,
-        remainingTimeBlack: game.remainingTimeBlack
+        remainingTimeBlack: game.remainingTimeBlack,
     });
 });
 
@@ -180,8 +179,6 @@ app.post('/chess/exit', (req, res) => {
     res.json({ success: true });
 });
 
-
-
 // ULTIMATE TIC TAC TOE
 
 const score = new Score();
@@ -190,12 +187,16 @@ const gamesTTT = {
     ultimate: null,
 };
 
-
 function calculateWinner(board) {
     const winningCombinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
     ];
     for (const [a, b, c] of winningCombinations) {
         if (board[a] && board[a] === board[b] && board[a] === board[c]) {
@@ -213,24 +214,24 @@ function validateUltimateMove(game, subBoardIndex, cellIndex) {
     return !game.mainBoard[subBoardIndex] && !game.subBoards[subBoardIndex][cellIndex];
 }
 
-app.post("/tictactoe/new-classic-game", (req, res) => {
+app.post('/tictactoe/new-classic-game', (req, res) => {
     gamesTTT.classic = new ClassicTicTacToe();
     res.json({ board: gamesTTT.classic.board, isXNext: gamesTTT.classic.isXNext });
 });
 
-app.post("/tictactoe/classic-game/move", (req, res) => {
+app.post('/tictactoe/classic-game/move', (req, res) => {
     const { cellIndex } = req.body;
     const game = gamesTTT.classic;
 
     if (!game || !validateClassicMove(game, cellIndex)) {
-        return  res.json({
+        return res.json({
             board: game.board,
             isXNext: game.isXNext,
             winner: game.winner,
         });
     }
 
-    game.board[cellIndex] = game.isXNext ? "X" : "O";
+    game.board[cellIndex] = game.isXNext ? 'X' : 'O';
     game.isXNext = !game.isXNext;
     game.winner = calculateWinner(game.board);
 
@@ -245,7 +246,7 @@ app.post("/tictactoe/classic-game/move", (req, res) => {
     });
 });
 
-app.post("/tictactoe/new-ultimate-game", (req, res) => {
+app.post('/tictactoe/new-ultimate-game', (req, res) => {
     gamesTTT.ultimate = new UltimateTicTacToe();
     res.json({
         subBoards: gamesTTT.ultimate.subBoards,
@@ -256,22 +257,22 @@ app.post("/tictactoe/new-ultimate-game", (req, res) => {
     });
 });
 
-app.post("/tictactoe/ultimate-game/move", (req, res) => {
+app.post('/tictactoe/ultimate-game/move', (req, res) => {
     const { subBoardIndex, cellIndex, blindMode } = req.body;
     const game = gamesTTT.ultimate;
 
-    if(blindMode !== null) {
-    if (subBoardIndex === null && cellIndex === null) {
-        game.blindMode = !blindMode;
-        return res.json({
-            subBoards: game.subBoards,
-            mainBoard: game.mainBoard,
-            isXNext: game.isXNext,
-            activeSubBoard: game.activeSubBoard,
-            blindMode: game.blindMode,
-            winner: game.winner,
-        });
-    }
+    if (blindMode !== null) {
+        if (subBoardIndex === null && cellIndex === null) {
+            game.blindMode = !blindMode;
+            return res.json({
+                subBoards: game.subBoards,
+                mainBoard: game.mainBoard,
+                isXNext: game.isXNext,
+                activeSubBoard: game.activeSubBoard,
+                blindMode: game.blindMode,
+                winner: game.winner,
+            });
+        }
     }
 
     if (!game || !validateUltimateMove(game, subBoardIndex, cellIndex)) {
@@ -285,7 +286,7 @@ app.post("/tictactoe/ultimate-game/move", (req, res) => {
         });
     }
 
-    game.subBoards[subBoardIndex][cellIndex] = game.isXNext ? "X" : "O";
+    game.subBoards[subBoardIndex][cellIndex] = game.isXNext ? 'X' : 'O';
     game.isXNext = !game.isXNext;
 
     const subBoardWinner = calculateWinner(game.subBoards[subBoardIndex]);
@@ -310,26 +311,22 @@ app.post("/tictactoe/ultimate-game/move", (req, res) => {
     });
 });
 
-app.get("/tictactoe/get-score", (req, res) => {
+app.get('/tictactoe/get-score', (req, res) => {
     res.json(score.scores);
 });
 
-app.post("/tictactoe/set-score", (req, res) => {
+app.post('/tictactoe/set-score', (req, res) => {
     const { player, wins } = req.body;
 
-    if ((player !== "X" && player !== "O") || wins < 0) return res.status(400).send("Invalid input");
+    if ((player !== 'X' && player !== 'O') || wins < 0) return res.status(400).send('Invalid input');
 
     score.scores[player] = wins;
     res.json(score.scores);
 });
 
-
-
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-
-
 
 // 4 in a Row
 const gameModel = new FourInARowModel(); // vytvoření instance modelu
@@ -353,12 +350,12 @@ app.post('/fourinarow/makeMove', (req, res) => {
     }
 });
 app.post('/fourinarow/new-game', (req, res) => {
-    gameModel.resetGame();  // volá resetovací metodu ve vašem modelu
-    res.status(200).json(gameModel.getState());  // vrátí aktualizovaný stav hry
+    gameModel.resetGame(); // volá resetovací metodu ve vašem modelu
+    res.status(200).json(gameModel.getState()); // vrátí aktualizovaný stav hry
 });
 app.post('/fourinarow/reset', (req, res) => {
-    gameModel.resetGame();  // volá resetovací metodu ve vašem modelu
-    res.status(200).json(gameModel.getState());  // vrátí aktualizovaný stav hry
+    gameModel.resetGame(); // volá resetovací metodu ve vašem modelu
+    res.status(200).json(gameModel.getState()); // vrátí aktualizovaný stav hry
 });
 app.post('/fourinarow/undo', (req, res) => {
     gameModel.undo();
@@ -373,20 +370,19 @@ app.post('/fourinarow/set-time', (req, res) => {
     const { timeLimit } = req.body;
 
     if (typeof timeLimit !== 'number' || timeLimit <= 0) {
-        console.error("Invalid time limit:", timeLimit); // Přidejte log
+        console.error('Invalid time limit:', timeLimit); // Přidejte log
         return res.status(400).json({ message: 'Invalid time limit' });
     }
 
     try {
         gameModel.setTimeLimit(timeLimit);
-        console.log("Server updated time limit:", gameModel.getState());
+        console.log('Server updated time limit:', gameModel.getState());
         res.status(200).json(gameModel.getState());
     } catch (error) {
-        console.error("Error setting time limit on server:", error);
+        console.error('Error setting time limit on server:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
 
 // ======================================== BLACKJACK START ========================================
 
@@ -441,7 +437,7 @@ app.post('/blackjack/start', (req, res) => {
     res.json({ deck, playerHand, dealerHand });
 });
 
-console.log("test 2");
+console.log('test 2');
 
 app.post('/blackjack/hit', (req, res) => {
     const { deck, playerHand } = req.body;
