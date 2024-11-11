@@ -4,22 +4,8 @@ class FourInARowModel {
         this.currentPlayer = 'red';
         this.movesHistory = [];
         this.winner = null;
-        this.message = 'Hráč Červený začíná.'; // Inicializace zprávy
-        this.observers = [];
-        this.notifyObservers(); // Oznámení při vytvoření instance
-        this.timeLimit = 0; // Inicializace časového limitu
-    }
-
-    getTimeLimit() {
-        return this.timeLimit;
-    }
-
-    addObserver(observer) {
-        this.observers.push(observer);
-    }
-
-    notifyObservers() {
-        this.observers.forEach(observer => observer(this.getState()));
+        this.message = 'Hráč Červený začíná.';
+        this.timeLimit = 0;
     }
 
     getState() {
@@ -29,7 +15,7 @@ class FourInARowModel {
             winner: this.winner,
             message: this.message,
             movesHistory: this.movesHistory,
-            timeLimit: this.timeLimit, // Přidáno, pokud chybělo
+            timeLimit: this.timeLimit,
         };
     }
 
@@ -37,9 +23,8 @@ class FourInARowModel {
         this.board = Array(6).fill(null).map(() => Array(7).fill(null));
         this.currentPlayer = 'red';
         this.winner = null;
-        this.message = 'Hráč Červený začíná.'; // Reset zprávy
+        this.message = 'Hráč Červený začíná.';
         this.movesHistory = [];
-        this.notifyObservers();
     }
 
     makeMove(column) {
@@ -60,7 +45,6 @@ class FourInARowModel {
                     this.message = `Hráč ${this.currentPlayer === 'red' ? 'Červený' : 'Žlutý'} je na tahu.`;
                 }
 
-                this.notifyObservers();
                 return true;
             }
         }
@@ -70,12 +54,11 @@ class FourInARowModel {
     undo() {
         if (this.movesHistory.length === 0) return; // Pokud není žádný tah k vrácení
 
-        const lastMove = this.movesHistory.pop(); // Odstraňte poslední tah z historie
-        this.board[lastMove.row][lastMove.column] = null; // Odstraňte žeton z herního pole
+        const lastMove = this.movesHistory.pop(); // Odstrani z historie
+        this.board[lastMove.row][lastMove.column] = null; // Odstrani žeton z pole
         this.currentPlayer = lastMove.player;
         this.winner = null;
         this.message = `Hráč ${this.currentPlayer === 'red' ? 'Červený' : 'Žlutý'} je na tahu.`;
-        this.notifyObservers();
     }
 
     settings(options) {
@@ -84,11 +67,9 @@ class FourInARowModel {
             this.timeLimit = options.timeLimit;
         }
 
-        this.notifyObservers();
     }
     setTimeLimit(timeLimit) {
         this.timeLimit = timeLimit;
-        this.notifyObservers();
         console.log("Časový limit nastaven na serveru:", this.timeLimit);
     }
 
@@ -124,3 +105,6 @@ class FourInARowModel {
 
 // Export třídy pomocí CommonJS
 module.exports = { FourInARowModel };
+
+
+

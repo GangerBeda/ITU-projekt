@@ -2,6 +2,12 @@ import React from 'react';
 import './FourInARowView.css';
 
 function FourInARowView({ gameState, remainingTime, makeMove, startNewGame, resetGame, undo, setTimeLimit }) {
+
+    console.log("GameState: ", gameState);
+    console.log("Current Player: ", gameState.currentPlayer);
+    console.log("Winner: ", gameState.winner);
+    console.log("Time:", gameState.timeLimit);
+
     return (
         <div>
             <div className="FourInARowView">
@@ -27,12 +33,17 @@ function FourInARowView({ gameState, remainingTime, makeMove, startNewGame, rese
             <button onClick={setTimeLimit}>Nastavit čas</button> {/* Tlačítko pro nastavení času */}
 
             <div className="game-info">
-                <p dangerouslySetInnerHTML={{__html: gameState.message}}></p>
-                <p>Zbývající čas na tah: {remainingTime !== null ? `${remainingTime} sekund` : 'Není nastaven'}</p>
-                {gameState.winner && <button onClick={startNewGame}>Nová hra</button>}
+                <p>{gameState.currentPlayer && `Hráč ${gameState.currentPlayer} je na tahu`}</p>
+                <p>Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}</p>
             </div>
+
+            {gameState.winner && <button onClick={startNewGame}>Nová hra</button>}
+
         </div>
     );
 }
 
 export default FourInARowView;
+
+
+

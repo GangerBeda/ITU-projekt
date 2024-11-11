@@ -1,126 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FourInARowModel } from '../models/FourInARowModel';
 import FourInARowView from '../views/FourInARowView';
 import SettingsPopup from '../views/Buttons/SettingsPopup';
-
 
 const model = new FourInARowModel();
 
 function FourInARowController() {
     const [gameState, setGameState] = useState(model.getState());
-    const [showSettings, setShowSettings] = useState(false); // Inicializace stavu pro zobrazení nastavení
+    const [showSettings, setShowSettings] = useState(false);
 
-    useEffect(() => {
-        // Přidání observeru, který aktualizuje stav komponenty při změnách v modelu
-        model.addObserver(setGameState);
-        return () => model.observers = []; // Reset observerů při odpojení
-    }, []);
-
-    const startNewGame = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/fourinarow/new-game', {
-                method: 'POST',
-            });
-            if (response.ok) {
-                const updatedState = await response.json();
-                setGameState(updatedState);  // aktualizuje stav hry na základě odpovědi ze serveru
-            } else {
-                console.error('Failed to start a new game');
-            }
-        } catch (error) {
-            console.error('Error starting new game:', error);
-        }
-    };
-    const resetGame = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/fourinarow/new-game', {
-                method: 'POST',
-            });
-            if (response.ok) {
-                const updatedState = await response.json();
-                setGameState(updatedState);  // aktualizuje stav hry na základě odpovědi ze serveru
-            } else {
-                console.error('Failed to start a new game');
-            }
-        } catch (error) {
-            console.error('Error starting new game:', error);
-        }
+    const updateGameState = () => {
+        setGameState(model.getState());
+        console.log("Updated GameState in Controller: ", model.getState());
     };
 
-
-    const makeMove = async (column) => {
-        try {
-            const response = await fetch('http://localhost:3001/fourinarow/makeMove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ column }),
-            });
-            if (response.ok) {
-                const updatedState = await response.json();
-                setGameState(updatedState); // Aktualizace stavu hry z odpovědi serveru
-            } else {
-                console.error('Move failed:', await response.json());
-            }
-        } catch (error) {
-            console.error('Error making move:', error);
-        }
+    const startNewGame = () => {
+        model.resetGame();
+        updateGameState();
+        console.log("New game started, GameState: ", model.getState());
     };
-    const undo = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/fourinarow/undo', {
-                method: 'POST',
-            });
-            if (response.ok) {
-                const updatedState = await response.json();
-                setGameState(updatedState); // Aktualizuje stav hry podle odpovědi serveru
-            } else {
-                console.error('Failed to undo move');
-            }
-        } catch (error) {
-            console.error('Error undoing move:', error);
-        }
+
+    const resetGame = () => {
+        model.resetGame();
+        updateGameState();
+        console.log("Game reset, GameState: ", model.getState());
+    };
+
+    const makeMove = (column) => {
+        model.makeMove(column);
+        updateGameState();
+        console.log("Move made in column:", column, "GameState: ", model.getState());
+    };
+
+    const undo = () => {
+        model.undo();
+        updateGameState();
+        console.log("Undo performed, GameState: ", model.getState());
     };
 
     const toggleSettings = () => {
-        setShowSettings(!showSettings); // Přepne stav pro zobrazení nastavení
+        setShowSettings(!showSettings);
     };
 
-    const setTimeLimit = async () => {
+    const setTimeLimit = () => {
         const time = prompt("Zadejte časový limit na tah (v sekundách):");
         if (time !== null && !isNaN(time) && Number(time) > 0) {
             const parsedTime = Number(time);
-            console.log("Nastavený čas na klientovi:", parsedTime);
-
-            try {
-                const response = await fetch('http://localhost:3001/fourinarow/set-time', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ timeLimit: parsedTime }),
-                });
-
-                if (response.ok) {
-                    const updatedState = await response.json();
-                    setGameState(updatedState); // Aktualizuje stav hry na základě odpovědi serveru
-                    console.log("Časový limit nastaven na serveru:", updatedState.timeLimit); // Ověřte, že updatedState.timeLimit není undefined
-                } else {
-                    console.error("Chyba při nastavení časového limitu na serveru");
-                }
-            } catch (error) {
-                console.error("Chyba při připojení k serveru:", error);
-            }
+            model.setTimeLimit(parsedTime);
+            updateGameState();
+            console.log("Časový limit nastaven na klientovi:", parsedTime);
         } else {
             console.log("Neplatný vstup nebo zrušeno");
         }
     };
 
-
-
-
-    // Předání dat a akcí do view
     return (
         <div>
             <button onClick={toggleSettings}>Nastavení</button>
@@ -130,12 +63,11 @@ function FourInARowController() {
                 startNewGame={startNewGame}
                 resetGame={resetGame}
                 undo={undo}
-                setTimeLimit={setTimeLimit} // Správný název předání funkce
+                setTimeLimit={setTimeLimit}
             />
             {showSettings && <SettingsPopup onClose={toggleSettings} />}
         </div>
     );
-
 }
 
 export default FourInARowController;
