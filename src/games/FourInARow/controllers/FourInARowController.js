@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FourInARowModel } from '../models/FourInARowModel';
 import FourInARowView from '../views/FourInARowView';
-import SettingsPopup from '../views/Buttons/SettingsPopup';
 
 const model = new FourInARowModel();
 
 function FourInARowController() {
     const [gameState, setGameState] = useState(model.getState());
     const [showSettings, setShowSettings] = useState(false);
+    const navigate = useNavigate(); // Inicializace navigace pomocí React Routeru
 
     const updateGameState = () => {
         setGameState(model.getState());
@@ -54,13 +55,12 @@ function FourInARowController() {
         }
     };
 
-    return (
-        <div>
-            <button onClick={toggleSettings}>Nastavení</button>
+    const goToMainMenu = () => {
+        navigate('/'); // Přesměruje na hlavní stránku (HomePage)
+        console.log("Returning to main menu");
+    };
 
-            {showSettings && (
-                <SettingsPopup onClose={toggleSettings} />
-            )}
+    return (
 
             <FourInARowView
                 gameState={gameState}
@@ -69,10 +69,12 @@ function FourInARowController() {
                 resetGame={resetGame}
                 undo={undo}
                 setTimeLimit={setTimeLimit}
+                goToMainMenu={goToMainMenu} // Předáme jako prop
+                toggleSettings={toggleSettings}   // Předáváme funkci toggleSettings
+                showSettings={showSettings}
             />
-        </div>
-    );
 
+    );
 }
 
 export default FourInARowController;

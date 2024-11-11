@@ -1,15 +1,10 @@
 import React from 'react';
 import './FourInARowView.css';
-
-function FourInARowView({ gameState, remainingTime, makeMove, startNewGame, resetGame, undo, setTimeLimit }) {
-
-    console.log("GameState: ", gameState);
-    console.log("Current Player: ", gameState.currentPlayer);
-    console.log("Winner: ", gameState.winner);
-    console.log("Time:", gameState.timeLimit);
+import SettingsPopup from './Buttons/SettingsPopup';
+function FourInARowView({ gameState, makeMove, startNewGame, resetGame, undo, setTimeLimit, goToMainMenu, showSettings, toggleSettings }) {
 
     return (
-        <div>
+        <div style={{ position: 'relative' }}>
             <div className="FourInARowView">
                 <div className="four-in-a-row-board">
                     {gameState.board.map((row, rowIndex) => (
@@ -28,9 +23,16 @@ function FourInARowView({ gameState, remainingTime, makeMove, startNewGame, rese
                 </div>
             </div>
 
+            <button onClick={goToMainMenu} className="menu-icon"></button>
+
+            <button onClick={toggleSettings} className="settings-button">Nastavení</button>
+            {showSettings && (
+                <SettingsPopup onClose={toggleSettings} />
+            )}
+
             <button onClick={resetGame}>Reset</button>
+            <button onClick={setTimeLimit}>Nastavit čas</button>
             <button onClick={undo}>Undo</button>
-            <button onClick={setTimeLimit}>Nastavit čas</button> {/* Tlačítko pro nastavení času */}
 
             <div className="game-info">
                 <p>{gameState.currentPlayer && `Hráč ${gameState.currentPlayer} je na tahu`}</p>
@@ -38,12 +40,8 @@ function FourInARowView({ gameState, remainingTime, makeMove, startNewGame, rese
             </div>
 
             {gameState.winner && <button onClick={startNewGame}>Nová hra</button>}
-
         </div>
     );
 }
 
 export default FourInARowView;
-
-
-

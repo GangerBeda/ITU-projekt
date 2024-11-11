@@ -19,6 +19,7 @@ class FourInARowModel {
         };
     }
 
+
     resetGame() {
         this.board = Array(6).fill(null).map(() => Array(7).fill(null));
         this.currentPlayer = 'red';
@@ -101,6 +102,7 @@ class FourInARowModel {
         }
         return false;
     }
+
 }
 
 // Export třídy pomocí CommonJS

@@ -45,3 +45,26 @@
     margin-top: 20px;
     font-size: 1.2rem;
 }
+/* Styl pro tlačítko nastavení bez efektu hover */
+.settings-button {
+    padding: 10px;
+    cursor: pointer;
+
+}
+
+
+/* Styl pro ikonu domečku bez efektu hover */
+.menu-icon {
+    background-image: url('./Icons/home_icon.png');
+    background-color: transparent;
+    background-position: center;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+
+
+
