@@ -19,7 +19,7 @@ const games = [
 function Menu() {
     return (
         <div className='menu-container'>
-            <h1>Game Hub</h1>
+            <h1>Games Hub</h1>
             {games.map((game) => (
                 <Link key={game.id} to={`/game/${game.id}`}>
                     <button className='menu-button'>{game.name}</button>
