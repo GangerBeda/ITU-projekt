@@ -57,6 +57,11 @@ function FourInARowController() {
     return (
         <div>
             <button onClick={toggleSettings}>Nastavení</button>
+
+            {showSettings && (
+                <SettingsPopup onClose={toggleSettings} />
+            )}
+
             <FourInARowView
                 gameState={gameState}
                 makeMove={makeMove}
@@ -65,9 +70,9 @@ function FourInARowController() {
                 undo={undo}
                 setTimeLimit={setTimeLimit}
             />
-            {showSettings && <SettingsPopup onClose={toggleSettings} />}
         </div>
     );
+
 }
 
 export default FourInARowController;
