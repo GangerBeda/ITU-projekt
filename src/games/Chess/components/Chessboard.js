@@ -19,7 +19,6 @@ const Chessboard = ({ fen, onMove, controlType }) => {
 
                 // Find if the move is a promotion
                 const move = moves.find(m => m.to === square);
-                console.log(move);
                 if (move && move.promotion) {
                     // It is a promotion move
                     setPromotionModalVisible(true);
@@ -63,7 +62,6 @@ const Chessboard = ({ fen, onMove, controlType }) => {
     };
 
     const handlePromotionSelect = (piece) => {
-        console.log('Selected piece:', piece);
         if (promotionMove) {
             // Update the promotion move with the selected piece
             onMove(promotionMove.from, promotionMove.to, piece);

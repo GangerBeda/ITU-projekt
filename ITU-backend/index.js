@@ -96,7 +96,6 @@ class GameState {
             // Only update time if last move time exists (game has started)
             if (this.lastMoveTime) {
                 const timePassed = currentTime - this.lastMoveTime;
-                console.log(timePassed);
                 if (this.chess.turn() === 'w') {
                     this.remainingTimeWhite = Math.max(0, this.remainingTimeWhite - timePassed);
                     if (this.remainingTimeWhite === 0) {
