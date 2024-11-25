@@ -17,6 +17,8 @@ const GamePage = ({ navigate }) => {
     const settingsLoaded = useRef(false);
 
     const timed = useRef(false);
+    const [notification, setNotification] = useState({ type: "", message: "" });
+    const timeoutRef = useRef(null);  // Reference to store timeout
 
     const loadSettings = () => {
         const savedSettings = localStorage.getItem('chessSettings');
@@ -31,7 +33,6 @@ const GamePage = ({ navigate }) => {
             });
         }
     };
-
 
     useEffect(() => {
         if (!settingsLoaded.current) {
@@ -56,28 +57,55 @@ const GamePage = ({ navigate }) => {
     }, [settings]);
 
 
+    // Update the useEffect hook that handles the timer
     useEffect(() => {
-        if (!gameState || !gameState.turn || !timed.current) return;
+        if (!gameState || !timed.current) return;
+
+        // Only start timer if game has started (after white's first move)
+        if (!gameState.gameStarted || gameState.gameOver) return;
+
+        // Clear existing timer
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
 
         const currentPlayer = gameState.turn === 'w' ? 'white' : 'black';
         const currentTimer = currentPlayer === 'white' ? 'remainingTimeWhite' : 'remainingTimeBlack';
 
-        const timer = setInterval(() => {
-            if (gameState.turn === 'w' && currentPlayer === 'white') {
-                setGameState(prev => ({
-                    ...prev,
-                    [currentTimer]: prev[currentTimer] - 1000
-                }));
-            } else if (gameState.turn === 'b' && currentPlayer === 'black') {
-                setGameState(prev => ({
-                    ...prev,
-                    [currentTimer]: prev[currentTimer] - 1000
-                }));
-            }
+        timerRef.current = setInterval(() => {
+            setGameState(prev => {
+                const newTime = prev[currentTimer] - 1000;
+                if (newTime <= 0) {
+                    clearInterval(timerRef.current);
+    
+                    // Notify backend about game over
+                    fetch('http://localhost:3001/chess/move', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            gameId: prev.gameId,
+                            from: null, // No move is made
+                            to: null,   // No move is made
+                        }),
+                    }).catch(console.error);
+    
+                    return {
+                        ...prev,
+                        [currentTimer]: 0,
+                        gameOver: true,
+                        winner: currentPlayer === 'white' ? 'black' : 'white',
+                    };
+                }
+                return { ...prev, [currentTimer]: newTime };
+            });
         }, 1000);
 
-        return () => clearInterval(timer);
-    }, [gameState?.turn, gameState?.remainingTimeWhite, gameState?.remainingTimeBlack, settings?.gameMode]);
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+        };
+    }, [gameState?.turn, gameState?.gameStarted, gameState?.gameOver]);
 
 
     const loadGame = async (savedState) => {
@@ -92,9 +120,9 @@ const GamePage = ({ navigate }) => {
             timed.current = savedState.gameMode === "timed" ? true : false;
 
             setGameState(data);
-        } catch (error) {
-            console.error('Error loading game:', error);
-            alert('Failed to load game');
+            showNotification("success", "Game loaded successfully!");
+    } catch (error) {
+            showNotification("error", "Failed to load the game.");
         }
     };
 
@@ -131,7 +159,11 @@ const GamePage = ({ navigate }) => {
         }
     };
 
-    const handleMove = async (from, to) => {
+    const handleMove = async (from, to, promotionPiece) => {
+        if (gameState?.gameOver) {
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:3001/chess/move', {
                 method: 'POST',
@@ -139,9 +171,17 @@ const GamePage = ({ navigate }) => {
                 body: JSON.stringify({
                     gameId: gameState.gameId,
                     from,
-                    to
+                    to,
+                    promotion: promotionPiece || null,
                 })
             });
+
+            if (!response.ok) {
+                const { error } = await response.json();
+                showNotification("error", "Illegal move! Try again.");
+                return;
+            }
+
             const data = await response.json();
             setGameState(prev => ({ ...prev, ...data }));
         } catch (error) {
@@ -161,10 +201,10 @@ const GamePage = ({ navigate }) => {
             const data = await response.json();
 
             localStorage.setItem('savedChessGame', JSON.stringify(data.savedState));
-            alert('Game saved successfully!');
+            showNotification("success", "Game saved successfully!");
         } catch (error) {
             console.error('Error saving game:', error);
-            alert('Failed to save game');
+            showNotification("error", 'Failed to save the game');
         }
     };
 
@@ -190,12 +230,42 @@ const GamePage = ({ navigate }) => {
         };
     }, [gameState?.gameId]);
 
+    const showNotification = (type, message) => {
+        // Clear any existing timeout to prevent rapid reset
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+    
+        setNotification({ type, message });
+    
+        // Set a new timeout for 3 seconds to hide the notification
+        timeoutRef.current = setTimeout(() => {
+            setNotification({ type: "", message: "" });
+        }, 3000);
+    };
+
     const formatTime = (milliseconds) => {
         if (!milliseconds && milliseconds !== 0) return '--:--';
         const totalSeconds = Math.floor(milliseconds / 1000);
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+     // Update the game over message to handle all end conditions
+    const getGameOverMessage = () => {
+        if (!gameState?.gameOver) return null;
+        
+        if (gameState.winner === 'draw') {
+            return "Game Over - It's a draw!";
+        }
+        
+        if (gameState.isCheckmate) {
+            return `${gameState.winner.charAt(0).toUpperCase() + gameState.winner.slice(1)} wins by checkmate!`;
+        }
+        
+        // Must be timeout
+        return `${gameState.winner.charAt(0).toUpperCase() + gameState.winner.slice(1)} wins by timeout!`;
     };
 
     if (settings === null) {
@@ -252,6 +322,36 @@ const GamePage = ({ navigate }) => {
                             alignItems: 'center',
                             maxWidth: '700px',
                         }}>
+                            {notification.message && (
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        top: "10px",
+                                        left: "50%",
+                                        transform: "translateX(-50%)",
+                                        padding: "10px 20px",
+                                        borderRadius: "8px",
+                                        zIndex: 1000,
+                                        fontSize: "16px",
+                                        fontWeight: "bold",
+                                        backgroundColor:
+                                            notification.type === "success" ? "#d4edda" :
+                                            notification.type === "info" ? "#cce5ff" :
+                                            notification.type === "error" ? "#f8d7da" : "#fff",
+                                        color:
+                                            notification.type === "success" ? "#155724" :
+                                            notification.type === "info" ? "#004085" :
+                                            notification.type === "error" ? "#721c24" : "#000",
+                                        border:
+                                            notification.type === "success" ? "1px solid #c3e6cb" :
+                                            notification.type === "info" ? "1px solid #b8daff" :
+                                            notification.type === "error" ? "1px solid #f5c6cb" : "none",
+                                        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)"
+                                    }}
+                                >
+                                    {notification.message}
+                                </div>
+                            )}
                             <div style={{
                                 width: '100%',
                                 display: 'flex',
@@ -284,6 +384,80 @@ const GamePage = ({ navigate }) => {
                                     Turn: {gameState?.turn === 'w' ? 'White' : 'Black'}
                                 </div>
                             </div>
+
+                            {gameState?.gameOver && (
+                                <div style={{
+                                    position: 'fixed',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    zIndex: 1000
+                                }}>
+                                    <div style={{
+                                        backgroundColor: 'white',
+                                        padding: '30px',
+                                        borderRadius: '12px',
+                                        textAlign: 'center',
+                                        maxWidth: '400px',
+                                        width: '90%'
+                                    }}>
+                                        <h2 style={{ marginBottom: '20px', color: '#333' }}>
+                                            {getGameOverMessage()}
+                                        </h2>
+                                        
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            gap: '15px'
+                                        }}>
+                                            <button 
+                                                onClick={() => {
+                                                    startNewGame();
+                                                    showNotification("info", "New game started!");
+                                                }}
+                                                style={{
+                                                    padding: '12px 24px',
+                                                    backgroundColor: '#333',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '18px',
+                                                    fontWeight: 'bold'
+                                                }}
+                                            >
+                                                New Game
+                                            </button>
+                                            
+                                            {/* Optional: Review Game Feature */}
+                                            <button 
+                                                onClick={() => {
+                                                    // Implement game review logic
+                                                    // This could open a modal showing final board state, move history, etc.
+                                                    alert('Game review feature coming soon!');
+                                                }}
+                                                style={{
+                                                    padding: '12px 24px',
+                                                    backgroundColor: '#2196F3',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '18px',
+                                                    fontWeight: 'bold'
+                                                }}
+                                            >
+                                                Review Game
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <Chessboard
                                 fen={gameState ? gameState.fen : undefined}
@@ -335,7 +509,11 @@ const GamePage = ({ navigate }) => {
                                     gap: '20px',
                                     marginLeft: 'auto'
                                 }}>
-                                    <button onClick={startNewGame} className="btn-secondary" style={{
+                                    <button onClick={() => {
+                                                    startNewGame();
+                                                    showNotification("info", "New game started!");
+                                                }} 
+                                                className="btn-secondary" style={{
                                         backgroundColor: '#f5f5f5',
                                         width: '40px',
                                         height: '40px',
