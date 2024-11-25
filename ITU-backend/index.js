@@ -145,7 +145,7 @@ app.post('/chess/start', (req, res) => {
 });
 
 app.post('/chess/move', (req, res) => {
-    const { gameId, from, to, promotion } = req.body; // Add promotion here
+    const { gameId, from, to, promotion } = req.body;
     const game = games.get(gameId);
 
     if (!game) {
@@ -163,7 +163,6 @@ app.post('/chess/move', (req, res) => {
 
     try {
         let move;
-        // Handle promotion if provided
         if (promotion) {
             move = game.chess.move({ from, to, promotion }); // Handle pawn promotion
         } else {
@@ -216,7 +215,6 @@ app.post('/chess/save', (req, res) => {
     };
     
 
-    // In production, save to database
     res.json({ savedState });
 });
 

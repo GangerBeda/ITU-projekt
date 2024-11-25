@@ -18,7 +18,7 @@ const GamePage = ({ navigate }) => {
 
     const timed = useRef(false);
     const [notification, setNotification] = useState({ type: "", message: "" });
-    const timeoutRef = useRef(null);  // Reference to store timeout
+    const timeoutRef = useRef(null);
 
     const loadSettings = () => {
         const savedSettings = localStorage.getItem('chessSettings');
@@ -57,7 +57,6 @@ const GamePage = ({ navigate }) => {
     }, [settings]);
 
 
-    // Update the useEffect hook that handles the timer
     useEffect(() => {
         if (!gameState || !timed.current) return;
 
@@ -434,12 +433,9 @@ const GamePage = ({ navigate }) => {
                                                 New Game
                                             </button>
                                             
-                                            {/* Optional: Review Game Feature */}
                                             <button 
                                                 onClick={() => {
-                                                    // Implement game review logic
-                                                    // This could open a modal showing final board state, move history, etc.
-                                                    alert('Game review feature coming soon!');
+                                                    showNotification('info', 'Game review feature coming soon!');
                                                 }}
                                                 style={{
                                                     padding: '12px 24px',
