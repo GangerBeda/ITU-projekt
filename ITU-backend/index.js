@@ -83,19 +83,46 @@ class GameState {
         this.startTime = Date.now();
         this.remainingTimeWhite = timeLimit ? timeLimit * 60 * 1000 : null;
         this.remainingTimeBlack = timeLimit ? timeLimit * 60 * 1000 : null;
-        this.lastMoveTime = Date.now();
+        this.lastMoveTime = null; // Initialize as null to indicate game hasn't started
+        this.gameStarted = false; // New flag to track if game has started
+        this.winner = null; // Track game winner
+        this.gameOver = false;
     }
 
     updateTime() {
-        if (this.gameMode === 'timed') {
+        if (this.gameMode === 'timed' && this.gameStarted) {
             const currentTime = Date.now();
-            const timePassed = currentTime - this.lastMoveTime;
-            if (this.chess.turn() === 'w') {
-                this.remainingTimeWhite -= timePassed;
-            } else {
-                this.remainingTimeBlack -= timePassed;
+            
+            // Only update time if last move time exists (game has started)
+            if (this.lastMoveTime) {
+                const timePassed = currentTime - this.lastMoveTime;
+                console.log(timePassed);
+                if (this.chess.turn() === 'w') {
+                    this.remainingTimeWhite = Math.max(0, this.remainingTimeWhite - timePassed);
+                    if (this.remainingTimeWhite === 0) {
+                        this.winner = 'black'; // Black wins if white runs out of time
+                        this.gameOver = true;
+                    }
+                } else {
+                    this.remainingTimeBlack = Math.max(0, this.remainingTimeBlack - timePassed);
+                    if (this.remainingTimeBlack === 0) {
+                        this.winner = 'white'; // White wins if black runs out of time
+                        this.gameOver = true;
+                    }
+                }
             }
+            
             this.lastMoveTime = currentTime;
+        }
+    }
+
+    checkGameEnd() {
+        if (this.chess.isCheckmate()) {
+            this.winner = this.chess.turn() === 'w' ? 'black' : 'white';
+            this.gameOver = true;
+        } else if (this.chess.isDraw() || this.chess.isStalemate() || this.chess.isInsufficientMaterial()) {
+            this.winner = 'draw';
+            this.gameOver = true;
         }
     }
 }
@@ -118,17 +145,38 @@ app.post('/chess/start', (req, res) => {
 });
 
 app.post('/chess/move', (req, res) => {
-    const { gameId, from, to } = req.body;
+    const { gameId, from, to, promotion } = req.body; // Add promotion here
     const game = games.get(gameId);
 
     if (!game) {
         return res.status(404).json({ error: 'Game not found' });
     }
 
+    if (game.gameOver) {
+        return res.status(400).json({ error: 'Game is already over' });
+    }
+
+    game.updateTime();
+    if (game.gameOver) {
+        return res.status(400).json({ error: `Game over: ${game.winner} wins` });
+    }
+
     try {
-        game.updateTime();
-        const move = game.chess.move({ from, to });
+        let move;
+        // Handle promotion if provided
+        if (promotion) {
+            move = game.chess.move({ from, to, promotion }); // Handle pawn promotion
+        } else {
+            move = game.chess.move({ from, to }); // Normal move
+        }
+
+        if (!game.gameStarted && game.chess.turn() === 'b') {
+            game.gameStarted = true;
+            game.lastMoveTime = Date.now();
+        }
+
         game.moveHistory.push(move);
+        game.checkGameEnd();
 
         const response = {
             fen: game.chess.fen(),
@@ -139,11 +187,14 @@ app.post('/chess/move', (req, res) => {
             moveHistory: game.moveHistory,
             remainingTimeWhite: game.remainingTimeWhite,
             remainingTimeBlack: game.remainingTimeBlack,
+            winner: game.winner,
+            gameStarted: game.gameStarted,
+            gameOver: game.gameOver
         };
 
         res.json(response);
     } catch (error) {
-        res.status(400).json({ error: 'Invalid move' });
+        res.status(400).json({ error: "Illegal move. Try again." });
     }
 });
 
@@ -163,6 +214,7 @@ app.post('/chess/save', (req, res) => {
         remainingTimeWhite: game.remainingTimeWhite,
         remainingTimeBlack: game.remainingTimeBlack,
     };
+    
 
     // In production, save to database
     res.json({ savedState });
