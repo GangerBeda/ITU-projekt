@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -10,6 +10,26 @@ const Settings = ({ navigate }) => {
         controlType: 'click',
         notation: 'compact'
     });
+
+    const [notification, setNotification] = useState({
+        type: "",
+        message: ""
+    });
+    const timeoutRef = useRef(null);
+
+    const showNotification = (type, message) => {
+        // Clear any existing timeout to prevent rapid reset
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+    
+        setNotification({ type, message });
+    
+        // Set a new timeout for 3 seconds to hide the notification
+        timeoutRef.current = setTimeout(() => {
+            setNotification({ type: "", message: "" });
+        }, 3000);
+    };
 
     useEffect(() => {
         const savedSettings = localStorage.getItem('chessSettings');
@@ -25,9 +45,9 @@ const Settings = ({ navigate }) => {
     const saveSettings = () => {
         try {
             localStorage.setItem('chessSettings', JSON.stringify(settings));
-            alert('Settings saved successfully');
-            navigate('/', { state: { settings } });
+            showNotification('success', 'Settings saved successfully');
         } catch (error) {
+            showNotification("error", "Failed to save settings.");
         }
     };
 
@@ -312,6 +332,41 @@ const Settings = ({ navigate }) => {
                             </div>
                         </div>
                     </div>
+                    {notification.message && (
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: "10px",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                padding: "10px 20px",
+                                borderRadius: "8px",
+
+                                zIndex: 9999,
+
+                                fontSize: "16px",
+                                fontWeight: "bold",
+                                backgroundColor:
+                                    notification.type === "success" ? "#d4edda" :
+                                    notification.type === "info" ? "#cce5ff" :
+                                    notification.type === "error" ? "#f8d7da" : "#fff",
+                                color:
+                                    notification.type === "success" ? "#155724" :
+                                    notification.type === "info" ? "#004085" :
+                                    notification.type === "error" ? "#721c24" : "#000",
+                                border:
+                                    notification.type === "success" ? "1px solid #c3e6cb" :
+                                    notification.type === "info" ? "1px solid #b8daff" :
+                                    notification.type === "error" ? "1px solid #f5c6cb" : "none",
+
+                                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+                                pointerEvents: "none", // Disable interaction with the notification
+
+                            }}
+                        >
+                            {notification.message}
+                        </div>
+                    )}
                 </div>
             </div>
         </DndProvider>

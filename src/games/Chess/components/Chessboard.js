@@ -15,46 +15,70 @@ const Chessboard = ({ fen, onMove, controlType }) => {
 
     const handleSquareClick = (square) => {
         if (controlType === 'click') {
-            if (selectedSquare) {
-                const chessInstance = new Chess(fen);
+            const chessInstance = new Chess(fen);
+    
+            if (!selectedSquare) {
+                // No square is selected yet, check if the clicked square has a piece of the current player
+                const piece = chessInstance.get(square);
+                if (piece && piece.color === chessInstance.turn()) {
+                    // Piece belongs to the current player, so allow selection
+                    setSelectedSquare(square);
+                    const possibleMoves = getPossibleMovesForSelectedPiece(chessInstance, square);
+                    setPossibleMoves(possibleMoves);
+                }
+            } else {
+                // A square is already selected, process the move
                 const moves = chessInstance.moves({ square: selectedSquare, verbose: true });
-
-                // Find if the move is a promotion
                 const move = moves.find(m => m.to === square);
-
+    
                 if (move && move.promotion) {
                     // It is a promotion move
                     setPromotionModalVisible(true);
                     setPromotionMove(move);
-
                 } else {
                     // Normal move
                     onMove(selectedSquare, square);
                 }
-
+    
                 setSelectedSquare(null);
                 setPossibleMoves([]);
-            } else {
-                setSelectedSquare(square);
-                const chessInstance = new Chess(fen);
-                const possibleMoves = getPossibleMovesForSelectedPiece(chessInstance, square);
-                setPossibleMoves(possibleMoves);
             }
         }
     };
 
     const handlePieceDrag = (square) => {
         if (controlType === 'drag') {
-            setSelectedSquare(square);
             const chessInstance = fen ? new Chess(fen) : null;
-            const possibleMoves = getPossibleMovesForSelectedPiece(chessInstance, square);
-            setPossibleMoves(possibleMoves);
+            const piece = chessInstance.get(square);
+    
+            if (piece && piece.color === chessInstance.turn()) {
+                // Piece belongs to the current player, so allow dragging
+                setSelectedSquare(square);
+                const possibleMoves = getPossibleMovesForSelectedPiece(chessInstance, square);
+                setPossibleMoves(possibleMoves);
+            } else {
+                // Don't allow dragging if it's not the current player's piece
+                setSelectedSquare(null);
+                setPossibleMoves([]);
+            }
         }
     };
-
+    
     const handlePieceDrop = (targetSquare) => {
         if (controlType === 'drag' && selectedSquare) {
-            onMove(selectedSquare, targetSquare);
+            const chessInstance = new Chess(fen);
+            const moves = chessInstance.moves({ square: selectedSquare, verbose: true });
+            const move = moves.find(m => m.to === targetSquare);
+    
+            if (move && move.promotion) {
+                // It is a promotion move
+                setPromotionModalVisible(true);
+                setPromotionMove(move);
+            } else {
+                // Normal move
+                onMove(selectedSquare, targetSquare);
+            }
+    
             setSelectedSquare(null);
             setPossibleMoves([]);
         }
@@ -84,6 +108,7 @@ const Chessboard = ({ fen, onMove, controlType }) => {
         const isSelected = selectedSquare === square;
         const isHighlighted = possibleMoves.includes(square);
         const hasPiece = !!piece;
+        const chessInstance = new Chess(fen);
 
         return (
             <div
@@ -101,7 +126,7 @@ const Chessboard = ({ fen, onMove, controlType }) => {
                         src={getPieceImageSrc(piece.color, piece.type)}
                         alt={`Piece ${piece.type}`}
                         className="chess-piece"
-                        draggable={controlType === 'drag'}
+                        draggable={controlType === 'drag' && piece.color === chessInstance.turn()} // Only allow drag for the current player's pieces
                         onDragStart={() => handlePieceDrag(square)}
                     />
                 )}

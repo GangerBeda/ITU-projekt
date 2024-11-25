@@ -165,6 +165,10 @@ const GamePage = ({ navigate }) => {
             return;
         }
 
+        if (from == to) {
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:3001/chess/move', {
                 method: 'POST',
