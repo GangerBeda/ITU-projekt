@@ -96,6 +96,7 @@ class GameState {
             // Only update time if last move time exists (game has started)
             if (this.lastMoveTime) {
                 const timePassed = currentTime - this.lastMoveTime;
+
                 if (this.chess.turn() === 'w') {
                     this.remainingTimeWhite = Math.max(0, this.remainingTimeWhite - timePassed);
                     if (this.remainingTimeWhite === 0) {
@@ -145,6 +146,7 @@ app.post('/chess/start', (req, res) => {
 
 app.post('/chess/move', (req, res) => {
     const { gameId, from, to, promotion } = req.body;
+
     const game = games.get(gameId);
 
     if (!game) {
@@ -162,6 +164,7 @@ app.post('/chess/move', (req, res) => {
 
     try {
         let move;
+
         if (promotion) {
             move = game.chess.move({ from, to, promotion }); // Handle pawn promotion
         } else {

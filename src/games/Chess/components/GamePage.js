@@ -18,6 +18,7 @@ const GamePage = ({ navigate }) => {
 
     const timed = useRef(false);
     const [notification, setNotification] = useState({ type: "", message: "" });
+
     const timeoutRef = useRef(null);
 
     const loadSettings = () => {
@@ -57,6 +58,7 @@ const GamePage = ({ navigate }) => {
     }, [settings]);
 
 
+    // Update the useEffect hook that handles the timer
     useEffect(() => {
         if (!gameState || !timed.current) return;
 
@@ -330,7 +332,9 @@ const GamePage = ({ navigate }) => {
                                         transform: "translateX(-50%)",
                                         padding: "10px 20px",
                                         borderRadius: "8px",
+
                                         zIndex: 9999,
+
                                         fontSize: "16px",
                                         fontWeight: "bold",
                                         backgroundColor:
@@ -345,8 +349,10 @@ const GamePage = ({ navigate }) => {
                                             notification.type === "success" ? "1px solid #c3e6cb" :
                                             notification.type === "info" ? "1px solid #b8daff" :
                                             notification.type === "error" ? "1px solid #f5c6cb" : "none",
+
                                         boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
-                                        pointerEvents: "none", // Optional: Disable interaction with the notification
+                                        pointerEvents: "none", // Disable interaction with the notification
+
                                     }}
                                 >
                                     {notification.message}
@@ -434,9 +440,11 @@ const GamePage = ({ navigate }) => {
                                                 New Game
                                             </button>
                                             
+
                                             <button 
                                                 onClick={() => {
                                                     showNotification('info', 'Game review feature coming soon!');
+
                                                 }}
                                                 style={{
                                                     padding: '12px 24px',

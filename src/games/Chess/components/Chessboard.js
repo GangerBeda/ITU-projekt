@@ -7,8 +7,10 @@ const Chessboard = ({ fen, onMove, controlType }) => {
     const [selectedSquare, setSelectedSquare] = useState(null);
     const [possibleMoves, setPossibleMoves] = useState([]);
     const [promotionModalVisible, setPromotionModalVisible] = useState(false);
+
     const [promotionPiece, setPromotionPiece] = useState(null); 
     const [promotionMove, setPromotionMove] = useState(null);
+
     const board = fen ? new Chess(fen).board() : null;
 
     const handleSquareClick = (square) => {
@@ -19,10 +21,12 @@ const Chessboard = ({ fen, onMove, controlType }) => {
 
                 // Find if the move is a promotion
                 const move = moves.find(m => m.to === square);
+
                 if (move && move.promotion) {
                     // It is a promotion move
                     setPromotionModalVisible(true);
                     setPromotionMove(move);
+
                 } else {
                     // Normal move
                     onMove(selectedSquare, square);
@@ -62,9 +66,11 @@ const Chessboard = ({ fen, onMove, controlType }) => {
     };
 
     const handlePromotionSelect = (piece) => {
+
         if (promotionMove) {
             // Update the promotion move with the selected piece
             onMove(promotionMove.from, promotionMove.to, piece);
+
         }
         setPromotionPiece(piece);
         setPromotionModalVisible(false);
