@@ -18,6 +18,33 @@
     text-shadow: 2px 2px #000;
 }
 
+/* Scoreboard styles */
+.scoreboard {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.score-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    width: 120px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.score {
+    font-weight: bold;
+    margin-left: auto;
+}
+
 .dealer-hand {
     display: flex;
     justify-content: center;

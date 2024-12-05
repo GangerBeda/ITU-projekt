@@ -33,6 +33,9 @@ function Blackjack() {
     const [gameOver, setGameOver] = useState(false);
     const [result, setResult] = useState("");
 
+    const [wins, setWins] = useState(0);
+    const [losses, setLosses] = useState(0);
+
     const gestureFieldRef = useRef(null);
     const lastTapRef = useRef(0);
     const initialXRef = useRef(null);
@@ -124,6 +127,9 @@ function Blackjack() {
             setPlayerHand(response.data.playerHand);
             setResult(response.data.message);
             setGameOver(true);
+            if (response.data.message.includes('Player busts')) {
+                setLosses((prev) => prev + 1);
+            }
         } else {
             console.log("game continue");
             setPlayerHand(response.data.playerHand);
@@ -142,6 +148,12 @@ function Blackjack() {
         setDealerHand(response.data.dealerHand);
         setResult(response.data.message);
         setGameOver(true);
+
+        if (response.data.message.includes('Player wins')) {
+            setWins((prev) => prev + 1);
+        } else if (response.data.message.includes('Dealer wins')) {
+            setLosses((prev) => prev + 1);
+        }
     };
 
     return (
@@ -175,6 +187,16 @@ function Blackjack() {
                 ))}
             </div>
             <h2>Your hand: {calculateHandValue(playerHand)}</h2>
+            <div className="scoreboard">
+                <div className="score-container">
+                        <span>Wins:</span>
+                        <span className="score">{wins}</span>
+                    </div>
+                    <div className="score-container">
+                        <span>Losses:</span>
+                        <span className="score">{losses}</span>
+                    </div>
+                </div>
         </div>
     );
 }
