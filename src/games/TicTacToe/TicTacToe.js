@@ -118,7 +118,7 @@ const TicTacToe = () => {
                 <InfoButton />
             </div>
             <h1>{!isClassicMode && blindMode ? "Blind Mode is On" : ""}</h1>
-            <p className="score" > {isXNext ? "X" : "O"} Is on move</p>
+            <p className="score-TicTacToe" > {isXNext ? "X" : "O"} Is on move</p>
             {isClassicMode ? (
                 <ClassicBoard
                     board={classicBoard}
@@ -136,8 +136,8 @@ const TicTacToe = () => {
                 />
                 </div>
             )}
-            <p className="score">Score</p>
-            <p className="score">X: {score.X} ---------- O: {score.O}</p>
+            <p className="score-TicTacToe">Score</p>
+            <p className="score-TicTacToe">X: {score.X} ---------- O: {score.O}</p>
             {ultimateWinner && !isClassicMode && <p className="winner">Winner: {ultimateWinner}</p>}
             {classicWinner && isClassicMode && <p className="winner">Winner: {classicWinner}</p>}
         </div>
