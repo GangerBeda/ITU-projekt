@@ -5,6 +5,7 @@ import PanelPlayers from './panel/PanelPlayers';
 
 export default function Panel(props) {
     const [panel, setPanel] = useState('resources');
+
     return (
         <div className='panel'>
             {panel === 'resources' ? (

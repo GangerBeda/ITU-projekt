@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { HexGrid, Layout, Hexagon, GridGenerator, Pattern } from 'react-hexgrid';
+import { HexGrid, Layout, Hexagon, GridGenerator } from 'react-hexgrid';
 import './Board.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faBookOpen } from '@fortawesome/free-solid-svg-icons';
@@ -12,67 +12,34 @@ const INVALID_HEXES_SETTLERS = [
 ];
 const INVALID_HEXES_PATHS = [7, 9, 11, 22, 24, 26, 28, 41, 43, 45, 47, 49, 62, 64, 66, 68, 79, 81, 83];
 
-const NEIGHBORS = {
-    // MATERIAL: [SETTLERS],
-    16: [13, 14, 23, 32, 31, 21],
-    23: [31, 41, 52, 53, 43, 32],
-    29: [52, 61, 70, 71, 63, 53],
-    10: [7, 14, 23, 24, 16, 8],
-    17: [23, 32, 43, 44, 34, 24],
-    24: [43, 53, 63, 64, 55, 44],
-    30: [63, 71, 79, 80, 73, 64],
-    5: [2, 8, 16, 17, 10, 3],
-    11: [16, 24, 34, 35, 26, 17],
-    18: [34, 44, 55, 56, 46, 35],
-    25: [55, 64, 73, 74, 66, 56],
-    31: [73, 80, 87, 88, 82, 74],
-    6: [10, 17, 26, 27, 19, 11],
-    12: [26, 35, 46, 47, 37, 27],
-    19: [46, 56, 66, 67, 58, 47],
-    26: [66, 74, 82, 83, 76, 67],
-    7: [27, 37, 38, 29, 20, 19],
-    13: [37, 47, 58, 59, 49, 38],
-    20: [58, 67, 76, 77, 69, 59],
-};
-
 const convertToColor = (materialType) => {
-    switch (materialType) {
-        case 'wood':
-            return '#060';
-        case 'brick':
-            return '#900';
-        case 'sheep':
-            return '#0c0';
-        case 'wheat':
-            return '#990';
-        case 'ore':
-            return '#999';
-        default:
-            return '#000';
-    }
+    const colors = {
+        wood: '#060',
+        brick: '#900',
+        sheep: '#0c0',
+        wheat: '#990',
+        ore: '#999',
+    };
+    return colors[materialType] || '#000';
 };
 
 const convertToHoverColor = (materialType) => {
-    switch (materialType) {
-        case 'wood':
-            return '#090';
-        case 'brick':
-            return '#c00';
-        case 'sheep':
-            return '#0f0';
-        case 'wheat':
-            return '#cc0';
-        case 'ore':
-            return '#ccc';
-        default:
-            return '#333';
-    }
+    const hoverColors = {
+        wood: '#090',
+        brick: '#c00',
+        sheep: '#0f0',
+        wheat: '#cc0',
+        ore: '#ccc',
+    };
+    return hoverColors[materialType] || '#333';
 };
 
 export default function Board(props) {
     const [hoveredHex, setHoveredHex] = useState(null);
     const [hexColors, setHexColors] = useState({});
     const [hexHoverColors, setHexHoverColors] = useState({});
+    const [materialTypes, setMaterialTypes] = useState([]);
+    const [numberTokens, setNumberTokens] = useState([]);
 
     useEffect(() => {
         axios
@@ -80,23 +47,29 @@ export default function Board(props) {
             .then((response) => {
                 setHexColors(response.data.hexColors);
                 setHexHoverColors(response.data.hexHoverColors);
+                setMaterialTypes(response.data.materialTypes);
+                setNumberTokens(response.data.numberTokens);
             })
             .catch(() => {
-                const initialColors = {};
-                for (let i = 0; i < 100; i++) {
-                    initialColors[`path-${i}`] = '#222';
-                    initialColors[`material-${i}`] = '#222';
-                    initialColors[`settler-${i}`] = '#222';
-                }
-                setHexColors(initialColors);
-
-                const initialHoverColors = {};
-                for (let i = 0; i < 100; i++) {
-                    initialHoverColors[`path-${i}`] = '#555';
-                    initialHoverColors[`material-${i}`] = '#555';
-                    initialHoverColors[`settler-${i}`] = '#555';
-                }
-                setHexHoverColors(initialHoverColors);
+                axios
+                    .post('http://localhost:3001/catan/init', {})
+                    .then(() => {
+                        // Now try fetching the state again
+                        axios
+                            .get('http://localhost:3001/catan/state')
+                            .then((response) => {
+                                setHexColors(response.data.hexColors);
+                                setHexHoverColors(response.data.hexHoverColors);
+                                setMaterialTypes(response.data.materialTypes);
+                                setNumberTokens(response.data.numberTokens);
+                            })
+                            .catch(() => {
+                                console.log('Load failed');
+                            });
+                    })
+                    .catch((error) => {
+                        console.log('Initialization failed:', error);
+                    });
             });
     }, []);
 
@@ -109,10 +82,6 @@ export default function Board(props) {
     };
 
     const hexClicked = (grid, i) => {
-        /*
-        console.log(grid, i);
-        return;
-        */
         setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
         setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
 
@@ -150,12 +119,11 @@ export default function Board(props) {
                                     fill:
                                         grid === 'material'
                                             ? hoveredHex === `${grid}-${i}`
-                                                ? convertToHoverColor(props.materialTypes[j])
-                                                : convertToColor(props.materialTypes[j])
+                                                ? convertToHoverColor(materialTypes[j])
+                                                : convertToColor(materialTypes[j])
                                             : hoveredHex === `${grid}-${i}`
                                             ? getHexHoverColor(grid, i)
                                             : getHexColor(grid, i, props.activePlayerColor),
-
                                     stroke: '#000',
                                     strokeWidth: 0.2,
                                     display: 'flex',
@@ -166,7 +134,7 @@ export default function Board(props) {
                             >
                                 {grid === 'material' ? (
                                     <text x='0' y='0' fill='black' fontSize='5px'>
-                                        {props.numberTokens[j++]}
+                                        {numberTokens[j++]}
                                     </text>
                                 ) : null}
                             </Hexagon>
