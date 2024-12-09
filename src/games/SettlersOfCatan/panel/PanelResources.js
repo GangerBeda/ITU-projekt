@@ -41,20 +41,70 @@ const getSettlersForMaterial = (materialId) => {
 };
 
 export default function PanelResources(props) {
-    const [activePlayerCards, setActivePlayerCards] = useState({
-        resource: {
-            wood: 0,
-            brick: 0,
-            sheep: 0,
-            wheat: 0,
-            ore: 0,
+    const [playerCards, setPlayerCards] = useState({
+        '#f00': {
+            resource: {
+                wood: 0,
+                brick: 0,
+                sheep: 0,
+                wheat: 0,
+                ore: 0,
+            },
+            development: {
+                knight: 0,
+                road_building: 0,
+                year_of_plenty: 0,
+                monopoly: 0,
+                victory_point: 0,
+            },
         },
-        development: {
-            knight: 0,
-            road_building: 0,
-            year_of_plenty: 0,
-            monopoly: 0,
-            victory_point: 0,
+        '#00f': {
+            resource: {
+                wood: 0,
+                brick: 0,
+                sheep: 0,
+                wheat: 0,
+                ore: 0,
+            },
+            development: {
+                knight: 0,
+                road_building: 0,
+                year_of_plenty: 0,
+                monopoly: 0,
+                victory_point: 0,
+            },
+        },
+        '#0f0': {
+            resource: {
+                wood: 0,
+                brick: 0,
+                sheep: 0,
+                wheat: 0,
+                ore: 0,
+            },
+            development: {
+                knight: 0,
+                road_building: 0,
+                year_of_plenty: 0,
+                monopoly: 0,
+                victory_point: 0,
+            },
+        },
+        '#ff0': {
+            resource: {
+                wood: 0,
+                brick: 0,
+                sheep: 0,
+                wheat: 0,
+                ore: 0,
+            },
+            development: {
+                knight: 0,
+                road_building: 0,
+                year_of_plenty: 0,
+                monopoly: 0,
+                victory_point: 0,
+            },
         },
     });
 
@@ -70,12 +120,6 @@ export default function PanelResources(props) {
         axios
             .get('http://localhost:3001/catan/state')
             .then((response) => {
-                response.data.numberTokens.forEach((token, index) => {
-                    if (token === roll) {
-                        console.log(token, response.data.materialTypes[index]);
-                    }
-                });
-
                 let j = 0;
 
                 for (let i = 0; i < 32; i++) {
@@ -84,7 +128,29 @@ export default function PanelResources(props) {
                     }
 
                     if (response.data.numberTokens[j] == roll) {
-                        console.log(i, NEIGHBORS[i]);
+                        let material = response.data.materialTypes[j];
+                        let indices = NEIGHBORS[i];
+
+                        indices.forEach((index) => {
+                            let color = response.data.hexColors[`settler-${index}`];
+
+                            if (color !== '#222') {
+                                setPlayerCards((prevPlayerCards) => {
+                                    const updatedPlayerData = {
+                                        ...prevPlayerCards[color],
+                                        resource: {
+                                            ...prevPlayerCards[color].resource,
+                                            [material]: prevPlayerCards[color].resource[material] + 1,
+                                        },
+                                    };
+
+                                    return {
+                                        ...prevPlayerCards,
+                                        [color]: updatedPlayerData,
+                                    };
+                                });
+                            }
+                        });
                     }
                     j++;
                 }
@@ -118,11 +184,18 @@ export default function PanelResources(props) {
             <h1>Cards</h1>
             <div className='separator' />
             <div className='card-container'>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
+                {['#060', '#900', '#0c0', '#990', '#999'].map((color, index) => (
+                    <div
+                        key={index}
+                        className='card'
+                        style={{
+                            backgroundColor: color,
+                            color: 'white',
+                        }}
+                    >
+                        {Object.values(playerCards[props.activePlayerColor].resource)[index]}
+                    </div>
+                ))}
             </div>
             <div className='card-container'>
                 <div className='card'>0</div>
