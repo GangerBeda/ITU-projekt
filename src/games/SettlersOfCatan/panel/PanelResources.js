@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const NEIGHBORS = {
     // MATERIAL: [SETTLERS],
@@ -22,6 +23,8 @@ const NEIGHBORS = {
     13: [37, 47, 58, 59, 49, 38],
     20: [58, 67, 76, 77, 69, 59],
 };
+
+const INVALID_HEXES_MATERIALS = [0, 1, 2, 3, 4, 8, 9, 14, 15, 21, 22, 27, 28, 32, 33, 34, 35, 36];
 
 const getMaterialsForSettler = (settlerId) => {
     const materials = [];
@@ -63,6 +66,32 @@ export default function PanelResources(props) {
         props.setRoll2(roll2);
 
         let roll = roll1 + roll2;
+
+        axios
+            .get('http://localhost:3001/catan/state')
+            .then((response) => {
+                response.data.numberTokens.forEach((token, index) => {
+                    if (token === roll) {
+                        console.log(token, response.data.materialTypes[index]);
+                    }
+                });
+
+                let j = 0;
+
+                for (let i = 0; i < 32; i++) {
+                    if (INVALID_HEXES_MATERIALS.includes(i)) {
+                        continue;
+                    }
+
+                    if (response.data.numberTokens[j] == roll) {
+                        console.log(i, NEIGHBORS[i]);
+                    }
+                    j++;
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const endTurn = (event) => {

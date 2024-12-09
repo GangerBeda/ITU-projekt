@@ -82,6 +82,8 @@ export default function Board(props) {
     };
 
     const hexClicked = (grid, i) => {
+        console.log(grid, i);
+
         setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
         setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
 
@@ -89,6 +91,8 @@ export default function Board(props) {
             .post('http://localhost:3001/catan/build', {
                 hexColors: { ...hexColors, [`${grid}-${i}`]: props.activePlayerColor },
                 hexHoverColors: { ...hexHoverColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') },
+                materialTypes: Array.from(materialTypes),
+                numberTokens: Array.from(numberTokens),
             })
             .catch((error) => {
                 console.log('Request failed:', error);
