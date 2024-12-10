@@ -6,26 +6,33 @@ import SettingsPopup from '../views/Buttons/SettingsPopup';
 
 const model = new FourInARowModel();
 
+
 function FourInARowController() {
     const [gameState, setGameState] = useState(model.getState());
     const [showSettings, setShowSettings] = useState(false); // Inicializace stavu pro zobrazení nastavení
 
     useEffect(() => {
-            console.log("Updated GameState in Controller: ", gameState);
-        // Přidání observeru na model pro zajištění synchronizace s view
-        const observer = (state) => {
-            setGameState(state); // Při změně modelu se aktualizuje view
+        console.log("useEffect pouzito")
+        const fetchState = async () => {
+            try {
+                // Načítání aktuálního stavu
+                const response = await fetch('http://localhost:3001/fourinarow/current-state');
+                if (response.ok) {
+                    const updatedState = await response.json();
+                    setGameState(updatedState);  // Nastavení stavu
+                } else {
+                    console.error("Chyba při načítání stavu");
+                }
+            } catch (error) {
+                console.error("Chyba při připojení k serveru:", error);
+            }
         };
-        
-    
-        // Čistící funkce, která odstraní observer při odpojení komponenty
-        return () => {
-            model.observers = model.observers.filter((obs) => obs !== observer);
-        };
-    }, []);
-    
 
+        fetchState(); // načítání stavu
+    }, []);         // jen pri spusteni
+    
     const startNewGame = async () => {
+        console.log("Starting new game")
         try {
             const response = await fetch('http://localhost:3001/fourinarow/new-game', {
                 method: 'POST',
@@ -33,21 +40,23 @@ function FourInARowController() {
             if (response.ok) {
                 const updatedState = await response.json();
                 setGameState(updatedState);  // aktualizuje stav hry na základě odpovědi ze serveru
+                console.log("updated state in startNewGame");
             } else {
-                console.error('Failed to start a new game');
             }
         } catch (error) {
             console.error('Error starting new game:', error);
         }
     };
     const resetGame = async () => {
+        console.log("Reseting game")
         try {
-            const response = await fetch('http://localhost:3001/fourinarow/new-game', {
+            const response = await fetch('http://localhost:3001/fourinarow/reset', {
                 method: 'POST',
             });
             if (response.ok) {
                 const updatedState = await response.json();
-                setGameState(updatedState);  // aktualizuje stav hry na základě odpovědi ze serveru
+                setGameState(updatedState);
+                console.log("Updated state in resetGame");
             } else {
                 console.error('Failed to start a new game');
             }
@@ -70,6 +79,7 @@ function FourInARowController() {
                 const updatedState = await response.json();
                 setGameState(updatedState); // Aktualizace stavu hry z odpovědi serveru
             } else {
+
                 console.error('Move failed:', await response.json());
             }
         } catch (error) {
@@ -91,7 +101,6 @@ function FourInARowController() {
             console.error('Error undoing move:', error);
         }
     };
-
     const toggleSettings = () => {
         setShowSettings(!showSettings); // Přepne stav pro zobrazení nastavení
     };

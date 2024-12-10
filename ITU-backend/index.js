@@ -456,8 +456,9 @@ app.listen(port, () => {
 // 4 in a Row
 const gameModel = new FourInARowModel(); // vytvoření instance modelu
 
-app.get('/', (req, res) => {
-    res.send('Server běží! Připojte se na /api/makeMove pro tah.');
+//  ADDED vrací aktuální stav hry, po refreshi
+app.get('/fourinarow/current-state', (req, res) => {
+    res.status(200).json(gameModel.getState());
 });
 
 app.post('/fourinarow/makeMove', (req, res) => {

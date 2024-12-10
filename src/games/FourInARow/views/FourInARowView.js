@@ -3,10 +3,8 @@ import './FourInARowView.css';
 
 function FourInARowView({ gameState, remainingTime, makeMove, startNewGame, resetGame, undo, setTimeLimit }) {
 
-console.log("GameState: ", gameState);
-console.log("Current Player: ", gameState.currentPlayer);
-console.log("Winner: ", gameState.winner);
-console.log("Time:", gameState.timeLimit);
+console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 2x bcs vyvojovy rezim
+
 
     return (
         <div>
@@ -35,12 +33,20 @@ console.log("Time:", gameState.timeLimit);
             <button onClick={setTimeLimit}>Nastavit čas</button> {/* Tlačítko pro nastavení času */}
 
             <div className="game-info">
-                <p>{gameState.currentPlayer && `Hráč ${gameState.currentPlayer} je na tahu`}</p>
+                <p>{`${gameState.message}`}</p>
                 <p>Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}</p>
             </div>
             
-            {gameState.winner && <button onClick={startNewGame}>Nová hra</button>}
-            
+            {(gameState.winner || gameState.full) && (
+                <button
+                    onClick={() => {
+                        resetGame();
+                        console.log("Tlačítko 'Nová hra' bylo kliknuto!");
+                    }}
+                >Nová hra
+                </button>
+            )}
+
         </div>
     );
 }
