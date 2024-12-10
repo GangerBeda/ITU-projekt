@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const NEIGHBORS = {
@@ -108,6 +108,28 @@ export default function PanelResources(props) {
         },
     });
 
+    useEffect(() => {
+        const fetchPlayerData = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/player');
+                setPlayerCards(response.data.playerCards);
+                props.setActivePlayerColor(response.data.activePlayerColor);
+            } catch (err) {
+                try {
+                    await axios.post('http://localhost:3001/catan/init', {});
+
+                    const response = await axios.get('http://localhost:3001/catan/player');
+                    setPlayerCards(response.data.playerCards);
+                    props.setActivePlayerColor(response.data.activePlayerColor);
+                } catch (initErr) {
+                    console.error('Initialization failed:', initErr);
+                }
+            }
+        };
+
+        fetchPlayerData();
+    }, []);
+
     const onRoll = (event) => {
         event.preventDefault();
         let roll1 = Math.floor((Math.random() * 10000) % 6) + 1;
@@ -154,6 +176,15 @@ export default function PanelResources(props) {
                     }
                     j++;
                 }
+
+                axios
+                    .post('http://localhost:3001/catan/updatePlayer', {
+                        playerCards: playerCards,
+                        activePlayerColor: props.activePlayerColor,
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             })
             .catch((err) => {
                 console.log(err);

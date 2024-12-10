@@ -42,35 +42,29 @@ export default function Board(props) {
     const [numberTokens, setNumberTokens] = useState([]);
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/catan/state')
-            .then((response) => {
+        const fetchCatanState = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/state');
                 setHexColors(response.data.hexColors);
                 setHexHoverColors(response.data.hexHoverColors);
                 setMaterialTypes(response.data.materialTypes);
                 setNumberTokens(response.data.numberTokens);
-            })
-            .catch(() => {
-                axios
-                    .post('http://localhost:3001/catan/init', {})
-                    .then(() => {
-                        // Now try fetching the state again
-                        axios
-                            .get('http://localhost:3001/catan/state')
-                            .then((response) => {
-                                setHexColors(response.data.hexColors);
-                                setHexHoverColors(response.data.hexHoverColors);
-                                setMaterialTypes(response.data.materialTypes);
-                                setNumberTokens(response.data.numberTokens);
-                            })
-                            .catch(() => {
-                                console.log('Load failed');
-                            });
-                    })
-                    .catch((error) => {
-                        console.log('Initialization failed:', error);
-                    });
-            });
+            } catch (err) {
+                try {
+                    await axios.post('http://localhost:3001/catan/init', {});
+
+                    const response = await axios.get('http://localhost:3001/catan/state');
+                    setHexColors(response.data.hexColors);
+                    setHexHoverColors(response.data.hexHoverColors);
+                    setMaterialTypes(response.data.materialTypes);
+                    setNumberTokens(response.data.numberTokens);
+                } catch (initErr) {
+                    console.error('Initialization failed:', initErr);
+                }
+            }
+        };
+
+        fetchCatanState();
     }, []);
 
     const getHexColor = (grid, i) => {

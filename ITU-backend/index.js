@@ -106,10 +106,21 @@ app.post('/catan/init', (req, res) => {
             console.error('Error writing to file', err);
             return res.status(500).json({ message: 'Failed to save gameObj' });
         }
+    });
 
-        res.status(201).json({
-            message: 'Init successful',
-        });
+    fs.writeFile(
+        'db/playerObj.json',
+        `{"playerCards":{"#f00":{"resource":{"wood":0,"brick":0,"sheep":0,"wheat":0,"ore":0},"development":{"knight":0,"road_building":0,"year_of_plenty":0,"monopoly":0,"victory_point":0}},"#00f":{"resource":{"wood":0,"brick":0,"sheep":0,"wheat":0,"ore":0},"development":{"knight":0,"road_building":0,"year_of_plenty":0,"monopoly":0,"victory_point":0}},"#0f0":{"resource":{"wood":0,"brick":0,"sheep":0,"wheat":0,"ore":0},"development":{"knight":0,"road_building":0,"year_of_plenty":0,"monopoly":0,"victory_point":0}},"#ff0":{"resource":{"wood":0,"brick":0,"sheep":0,"wheat":0,"ore":0},"development":{"knight":0,"road_building":0,"year_of_plenty":0,"monopoly":0,"victory_point":0}}},"activePlayerColor":"#f00"}`,
+        (err) => {
+            if (err) {
+                console.error('Error writing to file', err);
+                return res.status(500).json({ message: 'Failed to save playerObj' });
+            }
+        }
+    );
+
+    res.status(201).json({
+        message: 'Init successful',
     });
 });
 
@@ -124,6 +135,17 @@ app.post('/catan/updatePlayer', (req, res) => {
             message: 'Player object received and saved successfully',
             data: req.body,
         });
+    });
+});
+
+app.get('/catan/player', (req, res) => {
+    fs.readFile('db/playerObj.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file', err);
+            return res.status(500).json({ message: 'Failed to read playerObj' });
+        }
+
+        res.status(200).json(JSON.parse(data));
     });
 });
 
