@@ -12,6 +12,7 @@
     z-index: 1000;
 }
 
+
 /* Styl popup okna */
 .popup-content {
     background-color: white;
@@ -24,9 +25,4 @@
     text-align: center;
 }
 
-button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    font-size: 16px;
-    cursor: pointer;
-}
+

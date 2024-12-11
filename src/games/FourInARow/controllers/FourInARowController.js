@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FourInARowModel } from '../models/FourInARowModel';
 import FourInARowView from '../views/FourInARowView';
 import SettingsPopup from '../views/Buttons/SettingsPopup';
+import { useNavigate } from 'react-router-dom'; //home
 
 
 const model = new FourInARowModel();
@@ -10,9 +11,10 @@ const model = new FourInARowModel();
 function FourInARowController() {
     const [gameState, setGameState] = useState(model.getState());
     const [showSettings, setShowSettings] = useState(false); // Inicializace stavu pro zobrazení nastavení
+    const navigate = useNavigate(); // Inicializace navigace pomocí React Routeru home
 
     useEffect(() => {
-        console.log("useEffect pouzito")
+        console.log("useEffect pouzito, NACTENI/REFRESH")
         const fetchState = async () => {
             try {
                 // Načítání aktuálního stavu
@@ -102,11 +104,11 @@ function FourInARowController() {
         }
     };
     const toggleSettings = () => {
-        setShowSettings(!showSettings); // Přepne stav pro zobrazení nastavení
+        setShowSettings(!showSettings); // inicializace na false, toggle
     };
 
     const setTimeLimit = async () => {
-        const time = prompt("Zadejte časový limit na tah (v sekundách):");
+        const time = prompt("Zadejte časový limit na tah (v sekundách):"); //TODO server vypisuje obsah pouze po zadani cassu checknout
         if (time !== null && !isNaN(time) && Number(time) > 0) {
             const parsedTime = Number(time);
             console.log("Nastavený čas na klientovi:", parsedTime);
@@ -135,13 +137,16 @@ function FourInARowController() {
         }
     };
 
-
+    const goToMainMenu = () => {
+        navigate('/'); // Přesměruje na hlavní stránku (HomePage)
+        console.log("Returning to main menu");
+    };
 
 
     // Předání dat a akcí do view
     return (
         <div>
-            <button onClick={toggleSettings}>Nastavení</button>
+
             <FourInARowView
                 gameState={gameState}
                 makeMove={makeMove}
@@ -149,8 +154,11 @@ function FourInARowController() {
                 resetGame={resetGame}
                 undo={undo}
                 setTimeLimit={setTimeLimit} // Správný název předání funkce
+                toggleSettings={toggleSettings}
+                showNewGameButton={gameState.winner || gameState.full}
+                goToMainMenu={goToMainMenu}
             />
-            {showSettings && <SettingsPopup onClose={toggleSettings} />}
+                {showSettings && <SettingsPopup onClose={toggleSettings} />}
         </div>
     );
 
