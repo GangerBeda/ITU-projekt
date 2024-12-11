@@ -148,7 +148,7 @@ export default function Board(props) {
             {renderHexGrid('path', { x: 4, y: 4 }, 1.375, false, INVALID_HEXES_PATHS, 5)}
             {renderHexGrid('material', { x: 10, y: 10 }, 1.1, false, INVALID_HEXES_MATERIALS, 3)}
             {renderHexGrid('settler', { x: 2, y: 2 }, 3.175, true, INVALID_HEXES_SETTLERS, 5)}
-            <div className='statebox'>
+            <div className='statebox' style={{ backgroundColor: props.activePlayerColor }}>
                 <p>Game State</p>
             </div>
             <div className='dice-container'>

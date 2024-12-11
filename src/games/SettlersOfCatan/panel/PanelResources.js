@@ -193,7 +193,8 @@ export default function PanelResources(props) {
 
     const endTurn = (event) => {
         event.preventDefault();
-        props.setActivePlayerColor((prevColor) => {
+
+        const nextColor = (prevColor) => {
             switch (prevColor) {
                 case '#f00':
                     return '#00f';
@@ -206,7 +207,20 @@ export default function PanelResources(props) {
                 default:
                     return '#f00';
             }
-        });
+        };
+
+        const updatedColor = nextColor(props.activePlayerColor);
+
+        props.setActivePlayerColor(updatedColor);
+
+        axios
+            .post('http://localhost:3001/catan/updatePlayer', {
+                playerCards: playerCards,
+                activePlayerColor: updatedColor,
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     return (
