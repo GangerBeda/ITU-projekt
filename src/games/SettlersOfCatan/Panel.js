@@ -15,6 +15,8 @@ export default function Panel(props) {
                     setRoll2={props.setRoll2}
                     activePlayerColor={props.activePlayerColor}
                     setActivePlayerColor={props.setActivePlayerColor}
+                    gameState={props.gameState}
+                    setGameState={props.setGameState}
                 />
             ) : (
                 <PanelPlayers setPanel={setPanel} />

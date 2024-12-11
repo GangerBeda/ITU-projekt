@@ -132,6 +132,11 @@ export default function PanelResources(props) {
 
     const onRoll = (event) => {
         event.preventDefault();
+
+        if (props.gameState.text !== 'Rolling dice') {
+            return;
+        }
+
         let roll1 = Math.floor((Math.random() * 10000) % 6) + 1;
         let roll2 = Math.floor((Math.random() * 10000) % 6) + 1;
         props.setRoll1(roll1);
@@ -189,10 +194,16 @@ export default function PanelResources(props) {
             .catch((err) => {
                 console.log(err);
             });
+
+        props.setGameState({ text: 'Playing', phase: props.gameState.phase });
     };
 
     const endTurn = (event) => {
         event.preventDefault();
+
+        if (props.gameState.text !== 'Ending turn' && props.gameState.text !== 'Playing') {
+            return;
+        }
 
         const nextColor = (prevColor) => {
             switch (prevColor) {
@@ -221,6 +232,18 @@ export default function PanelResources(props) {
             .catch((error) => {
                 console.log(error);
             });
+
+        if (props.gameState.text === 'Ending turn') {
+            if (props.gameState.phase === 1 && props.activePlayerColor === '#ff0') {
+                props.setGameState({ text: 'Rolling dice', phase: props.activePlayerColor === '#ff0' ? props.gameState.phase + 1 : props.gameState.phase });
+            } else if (props.gameState.phase < 2) {
+                props.setGameState({ text: 'Placing settler', phase: props.activePlayerColor === '#ff0' ? props.gameState.phase + 1 : props.gameState.phase });
+            } else {
+                props.setGameState({ text: 'Rolling dice', phase: props.gameState.phase });
+            }
+        } else {
+            props.setGameState({ text: 'Rolling dice', phase: props.gameState.phase });
+        }
     };
 
     return (

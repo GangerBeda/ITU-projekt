@@ -76,7 +76,18 @@ export default function Board(props) {
     };
 
     const hexClicked = (grid, i) => {
-        console.log(grid, i);
+        if (grid === 'material') {
+            // TODO: handle robber logic
+            return;
+        } else if (grid !== 'settler' && props.gameState.text === 'Placing settler') {
+            return;
+        } else if (grid != 'path' && props.gameState.text === 'Placing road') {
+            return;
+        } else if (props.gameState.text === 'Ending turn') {
+            return;
+        } else if (props.gameState.text === 'Rolling dice') {
+            return;
+        }
 
         setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
         setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
@@ -91,6 +102,12 @@ export default function Board(props) {
             .catch((error) => {
                 console.log('Request failed:', error);
             });
+
+        if (props.gameState.text === 'Placing settler') {
+            props.setGameState({ text: 'Placing road', phase: props.gameState.phase });
+        } else if (props.gameState.text === 'Placing road') {
+            props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
+        }
     };
 
     const renderHexGrid = (grid, size, spacing, flat, invalidHexes, hexRadius) => {
@@ -149,7 +166,7 @@ export default function Board(props) {
             {renderHexGrid('material', { x: 10, y: 10 }, 1.1, false, INVALID_HEXES_MATERIALS, 3)}
             {renderHexGrid('settler', { x: 2, y: 2 }, 3.175, true, INVALID_HEXES_SETTLERS, 5)}
             <div className='statebox' style={{ backgroundColor: props.activePlayerColor }}>
-                <p>Game State</p>
+                <p>{props.gameState.text}</p>
             </div>
             <div className='dice-container'>
                 <img className='dice' src={require(`./images/Dice/${props.roll1}.png`)} alt={`Dice showing ${props.roll1}`} width={100} height={100} />
