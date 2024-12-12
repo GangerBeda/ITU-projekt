@@ -1,3 +1,13 @@
+/*
+ * ITU Games Hub
+ * @brief Main application entry point for the ITU Games Hub backend server ??? ig 
+ * @author Da Costa Menezes Kristián || xdacos01
+ * @author 
+ * @author 
+ * @author 
+ * @author 
+ */
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -149,24 +159,44 @@ app.get('/catan/player', (req, res) => {
     });
 });
 
-// CHESS
-const games = new Map();
+/* 
+ * In-memory storage for active chess game.
+ * Key: gameId (string)
+ * Value: ChessGameState instance
+ */
+const chessGame = new Map();
 
-class GameState {
+/**
+ * GameState Class for Chess
+ * 
+ * Represents the state of a single chess game, including the chess instance,
+ * game mode (timed or untimed), time limits, move history, and game status.
+ */
+class ChessGameState {
+    /**
+     * Constructs a new ChessGameState instance.
+     * 
+     * @param {string} mode - The game mode ('timed' or 'untimed')
+     * @param {number|null} timeLimit - The time limit per player in minutes (if timed)
+     */
     constructor(mode, timeLimit = null) {
-        this.chess = new Chess();
-        this.gameMode = mode;
-        this.timeLimit = timeLimit;
-        this.moveHistory = [];
-        this.startTime = Date.now();
-        this.remainingTimeWhite = timeLimit ? timeLimit * 60 * 1000 : null;
-        this.remainingTimeBlack = timeLimit ? timeLimit * 60 * 1000 : null;
+        this.chess = new Chess(); // Initialize chess.js instance
+        this.gameMode = mode; // Set game mode
+        this.timeLimit = timeLimit; // Set time limit
+        this.moveHistory = []; // Initialize move history
+        this.startTime = Date.now(); // Record game start time
+        this.remainingTimeWhite = timeLimit ? timeLimit * 60 * 1000 : null; // Remaining time for White
+        this.remainingTimeBlack = timeLimit ? timeLimit * 60 * 1000 : null; // Remaining time for Black
         this.lastMoveTime = null; // Initialize as null to indicate game hasn't started
-        this.gameStarted = false; // New flag to track if game has started
+        this.gameStarted = false; // Flag to track if game has started
         this.winner = null; // Track game winner
-        this.gameOver = false;
+        this.gameOver = false; // Flag to indicate if the game is over
     }
 
+    /**
+     * Updates the remaining time for the current player based on elapsed time.
+     * If time runs out, sets the winner accordingly and marks the game as over.
+     */
     updateTime() {
         if (this.gameMode === 'timed' && this.gameStarted) {
             const currentTime = Date.now();
@@ -178,40 +208,65 @@ class GameState {
                 if (this.chess.turn() === 'w') {
                     this.remainingTimeWhite = Math.max(0, this.remainingTimeWhite - timePassed);
                     if (this.remainingTimeWhite === 0) {
-                        this.winner = 'black'; // Black wins if white runs out of time
+                        this.winner = 'black'; // Black wins if White runs out of time
                         this.gameOver = true;
                     }
                 } else {
                     this.remainingTimeBlack = Math.max(0, this.remainingTimeBlack - timePassed);
                     if (this.remainingTimeBlack === 0) {
-                        this.winner = 'white'; // White wins if black runs out of time
+                        this.winner = 'white'; // White wins if Black runs out of time
                         this.gameOver = true;
                     }
                 }
             }
 
-            this.lastMoveTime = currentTime;
+            this.lastMoveTime = currentTime; // Update the last move time to current
         }
     }
 
+    /**
+     * Checks if the chess game has ended due to checkmate, draw, stalemate, or insufficient material.
+     * Updates the game state accordingly.
+     */
     checkGameEnd() {
         if (this.chess.isCheckmate()) {
-            this.winner = this.chess.turn() === 'w' ? 'black' : 'white';
+            this.winner = this.chess.turn() === 'w' ? 'black' : 'white'; // Opposite player wins
             this.gameOver = true;
         } else if (this.chess.isDraw() || this.chess.isStalemate() || this.chess.isInsufficientMaterial()) {
-            this.winner = 'draw';
+            this.winner = 'draw'; // Game is a draw
             this.gameOver = true;
         }
     }
 }
 
-// Routes
-app.post('/chess/start', (req, res) => {
-    const { mode, timeLimit } = req.body;
-    const gameId = Date.now().toString();
-    const game = new GameState(mode, timeLimit);
-    games.set(gameId, game);
+/* ============================
+   Chess Game Routes
+   ============================ */
 
+/**
+ * Route: POST /chess/start
+ * 
+ * Starts a new chess game by creating a new ChessGameState instance and storing it.
+ * 
+ * Request Body:
+ * - mode: 'timed' or 'untimed'
+ * - timeLimit: number (minutes) or null
+ * 
+ * Response:
+ * - gameId: string
+ * - fen: string (Forsyth-Edwards Notation)
+ * - turn: 'w' or 'b'
+ * - gameMode: string
+ * - remainingTimeWhite: number|null (milliseconds)
+ * - remainingTimeBlack: number|null (milliseconds)
+ */
+app.post('/chess/start', (req, res) => {
+    const { mode, timeLimit } = req.body; // Extract mode and timeLimit from request
+    const gameId = Date.now().toString(); // Generate a unique gameId based on current timestamp
+    const game = new ChessGameState(mode, timeLimit); // Create a new ChessGameState instance
+    chessGame.set(gameId, game); // Store the game in the in-memory Map
+
+    // Respond with initial game state
     res.json({
         gameId,
         fen: game.chess.fen(),
@@ -222,22 +277,50 @@ app.post('/chess/start', (req, res) => {
     });
 });
 
+/**
+ * Route: POST /chess/move
+ * 
+ * Processes a move made by a player in a specific chess game.
+ * 
+ * Request Body:
+ * - gameId: string
+ * - from: string (source square, e.g., 'e2')
+ * - to: string (target square, e.g., 'e4')
+ * - promotion: string|null (piece to promote to, e.g., 'q')
+ * 
+ * Response:
+ * - fen: string (updated FEN)
+ * - turn: 'w' or 'b'
+ * - isCheck: boolean
+ * - isCheckmate: boolean
+ * - isDraw: boolean
+ * - moveHistory: array of move objects
+ * - remainingTimeWhite: number|null (milliseconds)
+ * - remainingTimeBlack: number|null (milliseconds)
+ * - winner: string|null ('white', 'black', 'draw')
+ * - gameStarted: boolean
+ * - gameOver: boolean
+ */
 app.post('/chess/move', (req, res) => {
-    const { gameId, from, to, promotion } = req.body;
+    const { gameId, from, to, promotion } = req.body; // Extract move details from request
 
-    const game = games.get(gameId);
+    const game = chessGame.get(gameId); // Retrieve the game state
 
     if (!game) {
-        return res.status(404).json({ error: 'Game not found' });
+        return res.status(404).json({ error: 'Game not found' }); // Handle invalid gameId
     }
 
     if (game.gameOver) {
-        return res.status(400).json({ error: 'Game is already over' });
+        return res.status(400).json({ error: 'Game is already over' }); // Prevent moves if game is over
     }
 
-    game.updateTime();
+    if (!game.gameStarted) {
+        game.gameStarted = true; // Mark game as started on first move
+    }
+
+    game.updateTime(); // Update remaining time based on elapsed time
     if (game.gameOver) {
-        return res.status(400).json({ error: `Game over: ${game.winner} wins` });
+        return res.status(400).json({ error: `Game over: ${game.winner} wins` }); // Handle game over after time update
     }
 
     try {
@@ -246,17 +329,18 @@ app.post('/chess/move', (req, res) => {
         if (promotion) {
             move = game.chess.move({ from, to, promotion }); // Handle pawn promotion
         } else {
-            move = game.chess.move({ from, to }); // Normal move
+            move = game.chess.move({ from, to }); // Handle regular move
         }
 
         if (!game.gameStarted && game.chess.turn() === 'b') {
-            game.gameStarted = true;
-            game.lastMoveTime = Date.now();
+            game.gameStarted = true; // Ensure gameStarted is true after first move
+            game.lastMoveTime = Date.now(); // Set lastMoveTime to current timestamp
         }
 
-        game.moveHistory.push(move);
-        game.checkGameEnd();
+        game.moveHistory.push(move); // Add move to history
+        game.checkGameEnd(); // Check if the move ended the game
 
+        // Prepare response with updated game state
         const response = {
             fen: game.chess.fen(),
             turn: game.chess.turn(),
@@ -271,44 +355,74 @@ app.post('/chess/move', (req, res) => {
             gameOver: game.gameOver,
         };
 
-        res.json(response);
+        res.json(response); // Send response to the client
     } catch (error) {
-        res.status(400).json({ error: 'Illegal move. Try again.' });
+        res.status(400).json({ error: 'Illegal move. Try again.' }); // Handle invalid moves
     }
 });
 
+
+/**
+ * Route: POST /chess/save
+ * 
+ * Saves the current state of a chess game.
+ * 
+ * Request Body:
+ * - gameId: string
+ * 
+ * Response:
+ * - savedState: object containing the game's FEN, mode, time limits, move history, and remaining times
+ */
 app.post('/chess/save', (req, res) => {
-    const { gameId } = req.body;
-    const game = games.get(gameId);
+    const { gameId } = req.body; // Extract gameId from request
+    const game = chessGame.get(gameId); // Retrieve the game state
 
     if (!game) {
-        return res.status(404).json({ error: 'Game not found' });
+        return res.status(404).json({ error: 'Game not found' }); // Handle invalid gameId
     }
 
     const savedState = {
-        fen: game.chess.fen(),
-        gameMode: game.gameMode,
-        timeLimit: game.timeLimit,
-        moveHistory: game.moveHistory,
-        remainingTimeWhite: game.remainingTimeWhite,
-        remainingTimeBlack: game.remainingTimeBlack,
+        fen: game.chess.fen(), // Current board state in FEN
+        gameMode: game.gameMode, // Game mode ('timed' or 'untimed')
+        timeLimit: game.timeLimit, // Time limit per player (if timed)
+        moveHistory: game.moveHistory, // History of moves made
+        remainingTimeWhite: game.remainingTimeWhite, // Remaining time for White
+        remainingTimeBlack: game.remainingTimeBlack, // Remaining time for Black
     };
 
-    res.json({ savedState });
+    res.json({ savedState }); // Send saved state to the client
 });
 
+/**
+ * Route: POST /chess/load
+ * 
+ * Loads a previously saved chess game state.
+ * 
+ * Request Body:
+ * - savedState: object containing the game's FEN, mode, time limits, move history, and remaining times
+ * 
+ * Response:
+ * - gameId: string
+ * - fen: string (Forsyth-Edwards Notation)
+ * - turn: 'w' or 'b'
+ * - gameMode: string
+ * - moveHistory: array of move objects
+ * - remainingTimeWhite: number|null (milliseconds)
+ * - remainingTimeBlack: number|null (milliseconds)
+ */
 app.post('/chess/load', (req, res) => {
-    const { savedState } = req.body;
-    const gameId = Date.now().toString();
-    const game = new GameState(savedState.gameMode, savedState.timeLimit);
+    const { savedState } = req.body; // Extract savedState from request
+    const gameId = Date.now().toString(); // Generate a unique gameId based on current timestamp
+    const game = new ChessGameState(savedState.gameMode, savedState.timeLimit); // Create a new ChessGameState instance with saved settings
 
-    game.chess.load(savedState.fen);
-    game.moveHistory = savedState.moveHistory;
-    game.remainingTimeWhite = savedState.remainingTimeWhite;
-    game.remainingTimeBlack = savedState.remainingTimeBlack;
+    game.chess.load(savedState.fen); // Load the FEN into the chess.js instance
+    game.moveHistory = savedState.moveHistory; // Restore move history
+    game.remainingTimeWhite = savedState.remainingTimeWhite; // Restore White's remaining time
+    game.remainingTimeBlack = savedState.remainingTimeBlack; // Restore Black's remaining time
 
-    games.set(gameId, game);
+    chessGame.set(gameId, game); // Store the loaded game in the in-memory Map
 
+    // Respond with the loaded game state
     res.json({
         gameId,
         fen: game.chess.fen(),
@@ -320,10 +434,21 @@ app.post('/chess/load', (req, res) => {
     });
 });
 
+/**
+ * Route: POST /chess/exit
+ * 
+ * Exits and removes a chess game from the server.
+ * 
+ * Request Body:
+ * - gameId: string
+ * 
+ * Response:
+ * - success: boolean
+ */
 app.post('/chess/exit', (req, res) => {
-    const { gameId } = req.body;
-    games.delete(gameId);
-    res.json({ success: true });
+    const { gameId } = req.body; // Extract gameId from request
+    chessGame.delete(gameId); // Remove the game from the in-memory Map
+    res.json({ success: true }); // Confirm successful deletion
 });
 
 // ULTIMATE TIC TAC TOE

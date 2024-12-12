@@ -1,37 +1,63 @@
+/*
+ * ITU Games Hub
+ * @brief Home Page component for the Chess Game
+ * @author Da Costa Menezes Kristián || xdacos01
+ */
+
 import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useNavigate } from 'react-router-dom';
 
-const HomePage = ({ navigate, rootNavigate }) => {
+/**
+ * HomePage Component
+ * 
+ * Renders the main menu for the Chess Game, allowing users to start a new game,
+ * load an existing game, navigate to settings, or return to the root page.
+ * Utilizes React DnD for drag-and-drop functionality.
+ * 
+ * @param {Object} props - Component properties
+ * @param {Function} props.navigate - Function to navigate between routes
+ * @param {Function} props.rootNavigate - Function to navigate to the root
+ * @returns {JSX.Element} The rendered HomePage component
+ */
+const HomePage = ({ navigate }) => {
+
+    /**
+     * Starts a new game by navigating to the play route with a new game state.
+     */
     const startNewGame = () => {
         navigate('/play', { state: { isNew: true } });
     };
 
+    /**
+     * Loads an existing game by navigating to the play route with load parameter.
+     */
     const loadGame = () => {
         navigate('/play?load=true', { state: { isNew: false } });
     };
 
+    /**
+     * Navigates to the settings page.
+     */
     const goToSettings = () => {
         navigate('/settings');
     };
 
+    /**
+     * Redirects the user to the root URL.
+     */
     const goToRoot = () => {
         window.location.href = '/';
     };
 
-
     return (
         <DndProvider backend={HTML5Backend}>
-            <div style={{
-                position: 'relative',
-                width: '100%'
-            }}>
+            <div style={{ position: 'relative', width: '100%' }}>
+                {/* Home Button */}
                 <button
                     onClick={goToRoot}
                     className="btn-primary"
                     style={{
-
                         backgroundImage: `url(${require('../assets/images/icons/home_icon.png')})`,
                         position: 'absolute',
                         top: '20px',
@@ -46,6 +72,7 @@ const HomePage = ({ navigate, rootNavigate }) => {
                     }}
                 ></button>
 
+                {/* Main Container */}
                 <div
                     style={{
                         backgroundColor: '#D3D3D3',
@@ -57,6 +84,7 @@ const HomePage = ({ navigate, rootNavigate }) => {
                         padding: '20px'
                     }}
                 >
+                    {/* Card Container */}
                     <div style={{
                         backgroundColor: '#E5E5E5',
                         display: 'flex',
@@ -65,6 +93,7 @@ const HomePage = ({ navigate, rootNavigate }) => {
                         width: '400px',
                         marginBottom: '12rem',
                     }}>
+                        {/* Card Content */}
                         <div style={{
                             backgroundColor: 'white',
                             borderRadius: '12px',
@@ -72,6 +101,7 @@ const HomePage = ({ navigate, rootNavigate }) => {
                             padding: '50px',
                             boxShadow: '0 3px 6px rgba(0,0,0,0.1)'
                         }}>
+                            {/* Card Header */}
                             <div style={{
                                 backgroundColor: 'white',
                                 margin: '-30px -30px 30px -30px',
@@ -93,9 +123,11 @@ const HomePage = ({ navigate, rootNavigate }) => {
                                 </h2>
                             </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}> {}
+                            {/* Action Buttons */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                                {/* New Game Button */}
                                 <div>
-                                    <div style={{ display: 'flex' }}> {}
+                                    <div style={{ display: 'flex' }}>
                                         <button
                                             onClick={startNewGame}
                                             style={{
@@ -115,8 +147,9 @@ const HomePage = ({ navigate, rootNavigate }) => {
                                     </div>
                                 </div>
 
+                                {/* Load Game Button */}
                                 <div>
-                                    <div style={{ display: 'flex' }}> {}
+                                    <div style={{ display: 'flex' }}>
                                         <button
                                             onClick={loadGame}
                                             style={{
@@ -136,8 +169,9 @@ const HomePage = ({ navigate, rootNavigate }) => {
                                     </div>
                                 </div>
 
+                                {/* Settings Button */}
                                 <div>
-                                    <div style={{ display: 'flex' }}> {}
+                                    <div style={{ display: 'flex' }}>
                                         <button
                                             onClick={goToSettings}
                                             style={{
@@ -156,17 +190,13 @@ const HomePage = ({ navigate, rootNavigate }) => {
                                         </button>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </DndProvider>
     );
-
 };
 
 export default HomePage;
