@@ -3,7 +3,7 @@ import axios from 'axios';
 import { HexGrid, Layout, Hexagon, GridGenerator } from 'react-hexgrid';
 import './Board.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faBookOpen, faRedo } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
 const INVALID_HEXES_MATERIALS = [0, 1, 2, 3, 4, 8, 9, 14, 15, 21, 22, 27, 28, 32, 33, 34, 35, 36];
@@ -218,6 +218,23 @@ export default function Board(props) {
                 <FontAwesomeIcon icon={faHome} className='home-icon' />
             </Link>
             <FontAwesomeIcon icon={faBookOpen} className='rules-icon' />
+            <FontAwesomeIcon
+                icon={faRedo}
+                className='reset-icon'
+                onClick={async () => {
+                    try {
+                        await axios.post('http://localhost:3001/catan/init', {});
+
+                        const response = await axios.get('http://localhost:3001/catan/state');
+                        setHexColors(response.data.hexColors);
+                        setHexHoverColors(response.data.hexHoverColors);
+                        setMaterialTypes(response.data.materialTypes);
+                        setNumberTokens(response.data.numberTokens);
+                    } catch (initErr) {
+                        console.error('Initialization failed:', initErr);
+                    }
+                }}
+            />
         </div>
     );
 }
