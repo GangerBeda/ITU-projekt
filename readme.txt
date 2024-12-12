@@ -6,7 +6,6 @@ Adresár src/ obsahuje všetky zdrojové súbory frontendovej časti aplikácie.
 
 Hlavné Adresáre a Súbory:
 - Hlavné súbory:
-
     - App.js, App.css, App.test.js: Hlavné komponenty a štýly aplikácie.
     - index.js, index.css: Vstupné body aplikácie.
 
@@ -30,6 +29,5 @@ Hlavné Adresáre a Súbory:
         - index.js: Hlavný backend server.
 - Databáza:
     - Adresár db/: (Implementoval <xplagi00>) 
-
 - Modely:
     - Adresár models/: (Implementoval <xplagi00>) 
