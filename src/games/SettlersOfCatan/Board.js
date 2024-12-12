@@ -83,9 +83,9 @@ export default function Board(props) {
 
                 if (resources.wood < 1 || resources.brick < 1) {
                     alert('Not enough resources, 1 wood & 1 brick required'); // TODO: change to something fancy
-                    // TODO: subtract resources, probably some new endpoint
                     return true;
                 }
+                // TODO: subtract resources, probably some new endpoint
             } catch (error) {
                 console.error('Error fetching player data:', error);
             }
@@ -96,9 +96,9 @@ export default function Board(props) {
 
                 if (resources.wood < 1 || resources.brick < 1 || resources.sheep < 1 || resources.wheat < 1) {
                     alert('Not enough resources, 1 wood, 1 brick, 1 sheep & 1 wheat required'); // TODO: change to something fancy
-                    // TODO: subtract resources, probably some new endpoint
                     return true;
                 }
+                // TODO: subtract resources, probably some new endpoint
             } catch (error) {
                 console.error('Error fetching player data:', error);
             }

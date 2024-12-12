@@ -137,9 +137,37 @@ export default function PanelResources(props) {
 
             if (resources.sheep < 1 || resources.wheat < 1 || resources.ore < 1) {
                 alert('Not enough resources, 1 sheep, 1 wheat & 1 ore required'); // TODO: change to something fancy
-                // TODO: subtract resources, probably no endpoint required
                 return true;
             }
+
+            setPlayerCards((prevPlayerCards) => {
+                const updatedPlayerData = {
+                    ...prevPlayerCards[props.activePlayerColor],
+                    resource: {
+                        ...prevPlayerCards[props.activePlayerColor].resource,
+                        sheep: prevPlayerCards[props.activePlayerColor].resource.sheep - 1,
+                        wheat: prevPlayerCards[props.activePlayerColor].resource.wheat - 1,
+                        ore: prevPlayerCards[props.activePlayerColor].resource.ore - 1,
+                    },
+                };
+
+                axios
+                    .post('http://localhost:3001/catan/updatePlayer', {
+                        playerCards: {
+                            ...prevPlayerCards,
+                            [props.activePlayerColor]: updatedPlayerData,
+                        },
+                        activePlayerColor: props.activePlayerColor,
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+                return {
+                    ...prevPlayerCards,
+                    [props.activePlayerColor]: updatedPlayerData,
+                };
+            });
         } catch (error) {
             console.error('Error fetching player data:', error);
         }
@@ -169,15 +197,131 @@ export default function PanelResources(props) {
                         },
                     };
 
+                    axios
+                        .post('http://localhost:3001/catan/updatePlayer', {
+                            playerCards: {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: updatedPlayerData,
+                            },
+                            activePlayerColor: props.activePlayerColor,
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
                     return {
                         ...prevPlayerCards,
                         [props.activePlayerColor]: updatedPlayerData,
                     };
                 });
             } else if (devCard < 19) {
+                setPlayerCards((prevPlayerCards) => {
+                    const updatedPlayerData = {
+                        ...prevPlayerCards[props.activePlayerColor],
+                        development: {
+                            ...prevPlayerCards[props.activePlayerColor].development,
+                            road_building: prevPlayerCards[props.activePlayerColor].development.road_building + 1,
+                        },
+                    };
+
+                    axios
+                        .post('http://localhost:3001/catan/updatePlayer', {
+                            playerCards: {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: updatedPlayerData,
+                            },
+                            activePlayerColor: props.activePlayerColor,
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
+                    return {
+                        ...prevPlayerCards,
+                        [props.activePlayerColor]: updatedPlayerData,
+                    };
+                });
             } else if (devCard < 21) {
+                setPlayerCards((prevPlayerCards) => {
+                    const updatedPlayerData = {
+                        ...prevPlayerCards[props.activePlayerColor],
+                        development: {
+                            ...prevPlayerCards[props.activePlayerColor].development,
+                            year_of_plenty: prevPlayerCards[props.activePlayerColor].development.year_of_plenty + 1,
+                        },
+                    };
+
+                    axios
+                        .post('http://localhost:3001/catan/updatePlayer', {
+                            playerCards: {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: updatedPlayerData,
+                            },
+                            activePlayerColor: props.activePlayerColor,
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
+                    return {
+                        ...prevPlayerCards,
+                        [props.activePlayerColor]: updatedPlayerData,
+                    };
+                });
             } else if (devCard < 23) {
+                setPlayerCards((prevPlayerCards) => {
+                    const updatedPlayerData = {
+                        ...prevPlayerCards[props.activePlayerColor],
+                        development: {
+                            ...prevPlayerCards[props.activePlayerColor].development,
+                            monopoly: prevPlayerCards[props.activePlayerColor].development.monopoly + 1,
+                        },
+                    };
+
+                    axios
+                        .post('http://localhost:3001/catan/updatePlayer', {
+                            playerCards: {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: updatedPlayerData,
+                            },
+                            activePlayerColor: props.activePlayerColor,
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
+                    return {
+                        ...prevPlayerCards,
+                        [props.activePlayerColor]: updatedPlayerData,
+                    };
+                });
             } else {
+                setPlayerCards((prevPlayerCards) => {
+                    const updatedPlayerData = {
+                        ...prevPlayerCards[props.activePlayerColor],
+                        development: {
+                            ...prevPlayerCards[props.activePlayerColor].development,
+                            victory_point: prevPlayerCards[props.activePlayerColor].development.victory_point + 1,
+                        },
+                    };
+
+                    axios
+                        .post('http://localhost:3001/catan/updatePlayer', {
+                            playerCards: {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: updatedPlayerData,
+                            },
+                            activePlayerColor: props.activePlayerColor,
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
+                    return {
+                        ...prevPlayerCards,
+                        [props.activePlayerColor]: updatedPlayerData,
+                    };
+                });
             }
         });
     };

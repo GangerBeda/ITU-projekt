@@ -3,13 +3,13 @@
     "#f00": {
       "resource": {
         "wood": 0,
-        "brick": 2,
-        "sheep": 2,
-        "wheat": 1,
+        "brick": 4,
+        "sheep": 1,
+        "wheat": 0,
         "ore": 0
       },
       "development": {
-        "knight": 0,
+        "knight": 4,
         "road_building": 0,
         "year_of_plenty": 0,
         "monopoly": 0,
@@ -19,30 +19,30 @@
     "#00f": {
       "resource": {
         "wood": 4,
-        "brick": 2,
-        "sheep": 0,
-        "wheat": 3,
-        "ore": 13
+        "brick": 4,
+        "sheep": 4,
+        "wheat": 0,
+        "ore": 11
       },
       "development": {
-        "knight": 0,
+        "knight": 2,
         "road_building": 0,
         "year_of_plenty": 0,
         "monopoly": 0,
-        "victory_point": 0
+        "victory_point": 1
       }
     },
     "#0f0": {
       "resource": {
         "wood": 4,
         "brick": 3,
-        "sheep": 3,
-        "wheat": 2,
-        "ore": 7
+        "sheep": 0,
+        "wheat": 4,
+        "ore": 5
       },
       "development": {
-        "knight": 0,
-        "road_building": 0,
+        "knight": 2,
+        "road_building": 1,
         "year_of_plenty": 0,
         "monopoly": 0,
         "victory_point": 0
@@ -52,7 +52,7 @@
       "resource": {
         "wood": 3,
         "brick": 0,
-        "sheep": 7,
+        "sheep": 9,
         "wheat": 0,
         "ore": 0
       },
@@ -65,5 +65,5 @@
       }
     }
   },
-  "activePlayerColor": "#0f0"
+  "activePlayerColor": "#f00"
 }
