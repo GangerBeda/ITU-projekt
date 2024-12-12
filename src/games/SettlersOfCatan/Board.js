@@ -160,7 +160,14 @@ export default function Board(props) {
                     {GridGenerator.hexagon(hexRadius).map((hex, i) =>
                         invalidHexes.includes(i) ? (
                             grid === 'material' ? (
-                                <Hexagon id={`${grid}-${i}`} key={`${grid}-${i}`} q={hex.q} r={hex.r} s={hex.s} cellStyle={{ fill: '#09f' }} />
+                                <Hexagon
+                                    id={`${grid}-${i}`}
+                                    key={`${grid}-${i}`}
+                                    q={hex.q}
+                                    r={hex.r}
+                                    s={hex.s}
+                                    cellStyle={{ fill: '#09f', cursor: 'default' }}
+                                />
                             ) : null
                         ) : (
                             <Hexagon

@@ -9,6 +9,7 @@
 
 .hexagon {
     pointer-events: auto;
+    cursor: pointer;
 }
 
 .hexagon:hover {
