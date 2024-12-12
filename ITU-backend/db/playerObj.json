@@ -3,9 +3,9 @@
     "#f00": {
       "resource": {
         "wood": 0,
-        "brick": 0,
-        "sheep": 0,
-        "wheat": 0,
+        "brick": 2,
+        "sheep": 2,
+        "wheat": 1,
         "ore": 0
       },
       "development": {
@@ -18,11 +18,11 @@
     },
     "#00f": {
       "resource": {
-        "wood": 0,
-        "brick": 0,
+        "wood": 4,
+        "brick": 2,
         "sheep": 0,
-        "wheat": 0,
-        "ore": 0
+        "wheat": 3,
+        "ore": 13
       },
       "development": {
         "knight": 0,
@@ -34,11 +34,11 @@
     },
     "#0f0": {
       "resource": {
-        "wood": 0,
-        "brick": 0,
-        "sheep": 0,
-        "wheat": 0,
-        "ore": 0
+        "wood": 4,
+        "brick": 3,
+        "sheep": 3,
+        "wheat": 2,
+        "ore": 7
       },
       "development": {
         "knight": 0,
@@ -50,9 +50,9 @@
     },
     "#ff0": {
       "resource": {
-        "wood": 0,
+        "wood": 3,
         "brick": 0,
-        "sheep": 0,
+        "sheep": 7,
         "wheat": 0,
         "ore": 0
       },
@@ -65,5 +65,5 @@
       }
     }
   },
-  "activePlayerColor": "#f00"
+  "activePlayerColor": "#0f0"
 }

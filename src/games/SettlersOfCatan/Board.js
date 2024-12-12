@@ -75,39 +75,81 @@ export default function Board(props) {
         return hexHoverColors[`${grid}-${i}`] || '#555';
     };
 
+    const checkResources = async (grid, phase) => {
+        if (grid === 'path' && phase >= 2) {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/player');
+                const resources = response.data.playerCards[response.data.activePlayerColor].resource;
+
+                if (resources.wood < 1 || resources.brick < 1) {
+                    alert('Not enough resources, 1 wood & 1 brick required'); // TODO: change to something fancy
+                    // TODO: subtract resources, probably some new endpoint
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error fetching player data:', error);
+            }
+        } else if (grid === 'settler' && phase >= 2) {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/player');
+                const resources = response.data.playerCards[response.data.activePlayerColor].resource;
+
+                if (resources.wood < 1 || resources.brick < 1 || resources.sheep < 1 || resources.wheat < 1) {
+                    alert('Not enough resources, 1 wood, 1 brick, 1 sheep & 1 wheat required'); // TODO: change to something fancy
+                    // TODO: subtract resources, probably some new endpoint
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error fetching player data:', error);
+            }
+        }
+        return false;
+    };
+
     const hexClicked = (grid, i) => {
         if (grid === 'material') {
             // TODO: handle robber logic
             return;
-        } else if (grid !== 'settler' && props.gameState.text === 'Placing settler') {
-            return;
-        } else if (grid != 'path' && props.gameState.text === 'Placing road') {
-            return;
-        } else if (props.gameState.text === 'Ending turn') {
-            return;
-        } else if (props.gameState.text === 'Rolling dice') {
+        }
+
+        if (
+            (grid !== 'settler' && props.gameState.text === 'Placing settler') ||
+            (grid !== 'path' && props.gameState.text === 'Placing road') ||
+            props.gameState.text === 'Ending turn' ||
+            props.gameState.text === 'Rolling dice'
+        ) {
             return;
         }
 
-        setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
-        setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
+        checkResources(grid, props.gameState.phase).then((ret) => {
+            if (ret) {
+                return;
+            }
 
-        axios
-            .post('http://localhost:3001/catan/build', {
-                hexColors: { ...hexColors, [`${grid}-${i}`]: props.activePlayerColor },
-                hexHoverColors: { ...hexHoverColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') },
-                materialTypes: Array.from(materialTypes),
-                numberTokens: Array.from(numberTokens),
-            })
-            .catch((error) => {
-                console.log('Request failed:', error);
-            });
+            setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
+            setHexHoverColors((prevColors) => ({
+                ...prevColors,
+                [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9'),
+            }));
 
-        if (props.gameState.text === 'Placing settler') {
-            props.setGameState({ text: 'Placing road', phase: props.gameState.phase });
-        } else if (props.gameState.text === 'Placing road') {
-            props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
-        }
+            axios
+                .post('http://localhost:3001/catan/build', {
+                    hexColors: { ...hexColors, [`${grid}-${i}`]: props.activePlayerColor },
+                    hexHoverColors: { ...hexHoverColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') },
+                    materialTypes: Array.from(materialTypes),
+                    numberTokens: Array.from(numberTokens),
+                })
+                .catch((error) => {
+                    console.error('Request failed:', error);
+                });
+
+            // Update game state
+            if (props.gameState.text === 'Placing settler') {
+                props.setGameState({ text: 'Placing road', phase: props.gameState.phase });
+            } else if (props.gameState.text === 'Placing road') {
+                props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
+            }
+        });
     };
 
     const renderHexGrid = (grid, size, spacing, flat, invalidHexes, hexRadius) => {

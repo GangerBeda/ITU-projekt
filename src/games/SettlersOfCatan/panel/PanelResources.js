@@ -130,6 +130,58 @@ export default function PanelResources(props) {
         fetchPlayerData();
     }, []);
 
+    const checkResources = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/catan/player');
+            const resources = response.data.playerCards[response.data.activePlayerColor].resource;
+
+            if (resources.sheep < 1 || resources.wheat < 1 || resources.ore < 1) {
+                alert('Not enough resources, 1 sheep, 1 wheat & 1 ore required'); // TODO: change to something fancy
+                // TODO: subtract resources, probably no endpoint required
+                return true;
+            }
+        } catch (error) {
+            console.error('Error fetching player data:', error);
+        }
+        return false;
+    };
+
+    const onBuy = (event) => {
+        checkResources().then((ret) => {
+            if (ret) {
+                return;
+            }
+
+            let devCard = Math.floor((Math.random() * 10000) % 25);
+            // 14x - knight         0-13
+            // 5x - VP              14-18
+            // 2x - road building   19-20
+            // 2x - year of plenty  21-22
+            // 2x - monopoly        23-24
+
+            if (devCard < 14) {
+                setPlayerCards((prevPlayerCards) => {
+                    const updatedPlayerData = {
+                        ...prevPlayerCards[props.activePlayerColor],
+                        development: {
+                            ...prevPlayerCards[props.activePlayerColor].development,
+                            knight: prevPlayerCards[props.activePlayerColor].development.knight + 1,
+                        },
+                    };
+
+                    return {
+                        ...prevPlayerCards,
+                        [props.activePlayerColor]: updatedPlayerData,
+                    };
+                });
+            } else if (devCard < 19) {
+            } else if (devCard < 21) {
+            } else if (devCard < 23) {
+            } else {
+            }
+        });
+    };
+
     const onRoll = (event) => {
         event.preventDefault();
 
@@ -266,14 +318,14 @@ export default function PanelResources(props) {
                 ))}
             </div>
             <div className='card-container'>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
-                <div className='card'>0</div>
+                <div className='card'>{playerCards[props.activePlayerColor].development.knight}</div>
+                <div className='card'>{playerCards[props.activePlayerColor].development.road_building}</div>
+                <div className='card'>{playerCards[props.activePlayerColor].development.year_of_plenty}</div>
+                <div className='card'>{playerCards[props.activePlayerColor].development.monopoly}</div>
+                <div className='card'>{playerCards[props.activePlayerColor].development.victory_point}</div>
             </div>
             <div className='separator' />
-            <button>Buy development card</button>
+            <button onClick={(event) => onBuy(event)}>Buy development card</button>
             <button>Trade</button>
             <div className='separator' />
             <button onClick={(event) => onRoll(event)}>Roll</button>
