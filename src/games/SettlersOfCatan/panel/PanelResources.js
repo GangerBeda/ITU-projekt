@@ -422,7 +422,6 @@ export default function PanelResources(props) {
 
         axios
             .post('http://localhost:3001/catan/updatePlayer', {
-                playerCards: playerCards,
                 activePlayerColor: updatedColor,
             })
             .catch((error) => {

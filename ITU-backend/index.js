@@ -125,17 +125,43 @@ app.post('/catan/init', (req, res) => {
 });
 
 app.post('/catan/updatePlayer', (req, res) => {
-    fs.writeFile('db/playerObj.json', JSON.stringify(req.body, null, 2), (err) => {
-        if (err) {
-            console.error('Error writing to file', err);
-            return res.status(500).json({ message: 'Failed to save playerObj' });
-        }
+    const playerData = req.body;
 
-        res.status(201).json({
-            message: 'Player object received and saved successfully',
-            data: req.body,
+    if (!playerData.playerCards) {
+        fs.readFile('db/playerObj.json', 'utf8', (err, data) => {
+            if (err) {
+                console.error('Error reading file', err);
+                return res.status(500).json({ message: 'Failed to read playerObj' });
+            }
+
+            const existingData = JSON.parse(data);
+            playerData.playerCards = existingData.playerCards;
+
+            fs.writeFile('db/playerObj.json', JSON.stringify(playerData, null, 2), (err) => {
+                if (err) {
+                    console.error('Error writing to file', err);
+                    return res.status(500).json({ message: 'Failed to save playerObj' });
+                }
+
+                res.status(201).json({
+                    message: 'Player object received and saved successfully',
+                    data: playerData,
+                });
+            });
         });
-    });
+    } else {
+        fs.writeFile('db/playerObj.json', JSON.stringify(playerData, null, 2), (err) => {
+            if (err) {
+                console.error('Error writing to file', err);
+                return res.status(500).json({ message: 'Failed to save playerObj' });
+            }
+
+            res.status(201).json({
+                message: 'Player object received and saved successfully',
+                data: playerData,
+            });
+        });
+    }
 });
 
 app.get('/catan/player', (req, res) => {
