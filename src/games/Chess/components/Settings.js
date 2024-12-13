@@ -1,9 +1,27 @@
+/*
+ * ITU Games Hub
+ * @brief Settings component for configuring game preferences
+ * @author Da Costa Menezes Kristián || xdacos01
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
+/**
+ * Settings Component
+ * 
+ * Allows users to configure game settings such as game mode (timed or untimed),
+ * time control, control type (click or drag & drop), and notation style (compact or detailed).
+ * Saves settings to localStorage and provides feedback notifications upon saving.
+ * 
+ * @param {Object} props - Component properties
+ * @param {Function} props.navigate - Function to navigate between routes
+ * @returns {JSX.Element} The rendered Settings component
+ */
 const Settings = ({ navigate }) => {
+    // State to hold current settings
     const [settings, setSettings] = useState({
         gameMode: 'timed',
         timeLimit: 5,
@@ -11,12 +29,22 @@ const Settings = ({ navigate }) => {
         notation: 'compact'
     });
 
+    // State to handle notification messages
     const [notification, setNotification] = useState({
         type: "",
         message: ""
     });
+
+    // Reference to manage notification timeout
     const timeoutRef = useRef(null);
 
+    /**
+     * Displays a notification with the specified type and message.
+     * Automatically hides the notification after 3 seconds.
+     * 
+     * @param {string} type - The type of notification ('success', 'info', 'error')
+     * @param {string} message - The notification message
+     */
     const showNotification = (type, message) => {
         // Clear any existing timeout to prevent rapid reset
         if (timeoutRef.current) {
@@ -31,6 +59,10 @@ const Settings = ({ navigate }) => {
         }, 3000);
     };
 
+    /**
+     * Loads saved settings from localStorage when the component mounts.
+     * If no saved settings are found, retains the default settings.
+     */
     useEffect(() => {
         const savedSettings = localStorage.getItem('chessSettings');
         if (savedSettings) {
@@ -38,19 +70,31 @@ const Settings = ({ navigate }) => {
                 const parsed = JSON.parse(savedSettings);
                 setSettings(parsed);
             } catch (error) {
+                console.error('Error parsing saved settings:', error);
             }
         }
     }, []);
 
+    /**
+     * Saves the current settings to localStorage and displays a success notification.
+     * If saving fails, displays an error notification.
+     */
     const saveSettings = () => {
         try {
             localStorage.setItem('chessSettings', JSON.stringify(settings));
             showNotification('success', 'Settings saved successfully');
         } catch (error) {
+            console.error('Error saving settings:', error);
             showNotification("error", "Failed to save settings.");
         }
     };
 
+    /**
+     * Updates a specific setting based on user interaction.
+     * 
+     * @param {string} key - The setting key to update (e.g., 'gameMode', 'timeLimit')
+     * @param {any} value - The new value for the setting
+     */
     const handleSettingChange = (key, value) => {
         setSettings(prev => {
             const newSettings = { ...prev, [key]: value };
@@ -58,10 +102,16 @@ const Settings = ({ navigate }) => {
         });
     };
 
+    /**
+     * Navigates back to the main menu.
+     */
     const goBack = () => {
         navigate('/');
     };
 
+    /**
+     * Redirects the user to the root URL.
+     */
     const goToRoot = () => {
         window.location.href = '/';
     };
@@ -72,6 +122,7 @@ const Settings = ({ navigate }) => {
                 position: 'relative',
                 width: '100%'
             }}>
+                {/* Home Button */}
                 <button
                     onClick={goToRoot}
                     className="btn-primary"
@@ -91,6 +142,7 @@ const Settings = ({ navigate }) => {
                     }}
                 ></button>
 
+                {/* Main Container */}
                 <div style={{
                     backgroundColor: '#D3D3D3',
                     minHeight: '100vh',
@@ -100,6 +152,7 @@ const Settings = ({ navigate }) => {
                     alignItems: 'center',
                     padding: '3rem',
                 }}>
+                    {/* Settings Card */}
                     <div style={{
                         backgroundColor: '#E5E5E5',
                         display: 'flex',
@@ -108,6 +161,7 @@ const Settings = ({ navigate }) => {
                         width: '525px',
                         marginBottom: '15rem',
                     }}>
+                        {/* Card Content */}
                         <div style={{
                             backgroundColor: 'white',
                             borderRadius: '12px',
@@ -115,6 +169,7 @@ const Settings = ({ navigate }) => {
                             padding: '30px',
                             boxShadow: '0 3px 6px rgba(0,0,0,0.1)'
                         }}>
+                            {/* Card Header */}
                             <div style={{
                                 backgroundColor: '#3B52E4',
                                 margin: '-30px -30px 30px -30px',
@@ -124,6 +179,7 @@ const Settings = ({ navigate }) => {
                                 alignItems: 'center',
                                 gap: '15px'
                             }}>
+                                {/* Back Arrow */}
                                 <span style={{
                                     color: 'white',
                                     cursor: 'pointer',
@@ -132,6 +188,7 @@ const Settings = ({ navigate }) => {
                                 }} onClick={goBack}>
                                     ←
                                 </span>
+                                {/* Settings Title */}
                                 <h2 style={{
                                     color: 'white',
                                     margin: 0,
@@ -142,7 +199,9 @@ const Settings = ({ navigate }) => {
                                 </h2>
                             </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}> { }
+                            {/* Settings Options */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                                {/* Game Mode Selection */}
                                 <div>
                                     <label style={{
                                         display: 'block',
@@ -152,7 +211,8 @@ const Settings = ({ navigate }) => {
                                     }}>
                                         Game Mode
                                     </label>
-                                    <div style={{ display: 'flex', gap: '12px' }}> { }
+                                    <div style={{ display: 'flex', gap: '12px' }}>
+                                        {/* Without Timer Button */}
                                         <button
                                             onClick={() => handleSettingChange('gameMode', 'untimed')}
                                             style={{
@@ -169,6 +229,7 @@ const Settings = ({ navigate }) => {
                                         >
                                             Without Timer
                                         </button>
+                                        {/* With Timer Button */}
                                         <button
                                             onClick={() => handleSettingChange('gameMode', 'timed')}
                                             style={{
@@ -188,6 +249,7 @@ const Settings = ({ navigate }) => {
                                     </div>
                                 </div>
 
+                                {/* Time Control Selection (Visible only if gameMode is 'timed') */}
                                 {settings.gameMode === 'timed' && (
                                     <div>
                                         <label style={{
@@ -198,7 +260,8 @@ const Settings = ({ navigate }) => {
                                         }}>
                                             Time Control
                                         </label>
-                                        <div style={{ display: 'flex', gap: '12px' }}> { }
+                                        <div style={{ display: 'flex', gap: '12px' }}>
+                                            {/* Time Limit Buttons */}
                                             {[5, 10, 15].map(time => (
                                                 <button
                                                     key={time}
@@ -222,6 +285,7 @@ const Settings = ({ navigate }) => {
                                     </div>
                                 )}
 
+                                {/* Control Type Selection */}
                                 <div>
                                     <label style={{
                                         display: 'block',
@@ -231,7 +295,8 @@ const Settings = ({ navigate }) => {
                                     }}>
                                         Control Type
                                     </label>
-                                    <div style={{ display: 'flex', gap: '12px' }}> { }
+                                    <div style={{ display: 'flex', gap: '12px' }}>
+                                        {/* Click Control Button */}
                                         <button
                                             onClick={() => handleSettingChange('controlType', 'click')}
                                             style={{
@@ -248,6 +313,7 @@ const Settings = ({ navigate }) => {
                                         >
                                             Click
                                         </button>
+                                        {/* Drag & Drop Control Button */}
                                         <button
                                             onClick={() => handleSettingChange('controlType', 'drag')}
                                             style={{
@@ -267,6 +333,7 @@ const Settings = ({ navigate }) => {
                                     </div>
                                 </div>
 
+                                {/* Notation Style Selection */}
                                 <div>
                                     <label style={{
                                         display: 'block',
@@ -276,7 +343,8 @@ const Settings = ({ navigate }) => {
                                     }}>
                                         Notation
                                     </label>
-                                    <div style={{ display: 'flex', gap: '12px' }}> { }
+                                    <div style={{ display: 'flex', gap: '12px' }}>
+                                        {/* Compact Mode Button */}
                                         <button
                                             onClick={() => handleSettingChange('notation', 'compact')}
                                             style={{
@@ -293,6 +361,7 @@ const Settings = ({ navigate }) => {
                                         >
                                             Compact Mode
                                         </button>
+                                        {/* Detailed Mode Button */}
                                         <button
                                             onClick={() => handleSettingChange('notation', 'detailed')}
                                             style={{
@@ -312,6 +381,7 @@ const Settings = ({ navigate }) => {
                                     </div>
                                 </div>
 
+                                {/* Save Settings Button */}
                                 <button
                                     onClick={saveSettings}
                                     style={{
@@ -332,19 +402,20 @@ const Settings = ({ navigate }) => {
                             </div>
                         </div>
                     </div>
+                    {/* Notification Message */}
                     {notification.message && (
                         <div
                             style={{
                                 position: "absolute",
-                                top: "10px",
+                                top: "60px",
                                 left: "50%",
                                 transform: "translateX(-50%)",
-                                padding: "10px 20px",
+                                padding: "15px 25px",
                                 borderRadius: "8px",
 
                                 zIndex: 9999,
 
-                                fontSize: "16px",
+                                fontSize: "20px",
                                 fontWeight: "bold",
                                 backgroundColor:
                                     notification.type === "success" ? "#d4edda" :
@@ -359,9 +430,10 @@ const Settings = ({ navigate }) => {
                                     notification.type === "info" ? "1px solid #b8daff" :
                                     notification.type === "error" ? "1px solid #f5c6cb" : "none",
 
-                                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
-                                pointerEvents: "none", // Disable interaction with the notification
+                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                                pointerEvents: "none",
 
+                                transition: "all 0.3s ease",
                             }}
                         >
                             {notification.message}
@@ -370,7 +442,10 @@ const Settings = ({ navigate }) => {
                 </div>
             </div>
         </DndProvider>
-    );
-};
+        );
+    };
 
 export default Settings;
+
+
+

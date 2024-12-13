@@ -1,26 +1,42 @@
+/*
+ * ITU Games Hub
+ * @brief Game Page component for the Chess Game
+ * @author Da Costa Menezes Kristián || xdacos01
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Chessboard from './Chessboard';
 
+/**
+ * GamePage Component
+ * 
+ * Manages the game state, including starting new games, loading saved games,
+ * handling moves, saving game progress, and displaying notifications.
+ * Utilizes React DnD for drag-and-drop functionality and handles game timers.
+ * 
+ * @param {Object} props - Component properties
+ * @param {Function} props.navigate - Function to navigate between routes
+ * @returns {JSX.Element} The rendered GamePage component
+ */
 const GamePage = ({ navigate }) => {
-    const location = useLocation();
-    const shouldLoadGame = new URLSearchParams(location.search).get('load');
+    const location = useLocation(); // Hook to access the current location
+    const shouldLoadGame = new URLSearchParams(location.search).get('load'); // Determine if a saved game should be loaded
 
-    const [gameState, setGameState] = useState(null);
+    const [gameState, setGameState] = useState(null); // State to hold the current game state
+    const [settings, setSettings] = useState(null); // State to hold game settings
+    const [notification, setNotification] = useState({ type: "", message: "" }); // State for notifications
 
-    const [settings, setSettings] = useState(null);
+    const timerRef = useRef(null); // Reference for the game timer
+    const settingsLoaded = useRef(false); // Reference to check if settings are loaded
+    const timed = useRef(false); // Reference to determine if the game mode is timed
+    const timeoutRef = useRef(null); // Reference for notification timeout
 
-    const timerRef = useRef(null);
-
-    const settingsLoaded = useRef(false);
-
-    const timed = useRef(false);
-    const [notification, setNotification] = useState({ type: "", message: "" });
-
-    const timeoutRef = useRef(null);
-
+    /**
+     * Loads game settings from localStorage or sets default settings.
+     */
     const loadSettings = () => {
         const savedSettings = localStorage.getItem('chessSettings');
         if (savedSettings) {
@@ -35,6 +51,7 @@ const GamePage = ({ navigate }) => {
         }
     };
 
+    // Load settings and initialize game state
     useEffect(() => {
         if (!settingsLoaded.current) {
             loadSettings();
@@ -57,12 +74,13 @@ const GamePage = ({ navigate }) => {
         }
     }, [settings]);
 
-
-    // Update the useEffect hook that handles the timer
+    /**
+     * Handles the game timer, updating remaining time and handling timeouts.
+     */
     useEffect(() => {
         if (!gameState || !timed.current) return;
 
-        // Only start timer if game has started (after white's first move)
+        // Start timer only if the game has started and is not over
         if (!gameState.gameStarted || gameState.gameOver) return;
 
         // Clear existing timer
@@ -73,13 +91,14 @@ const GamePage = ({ navigate }) => {
         const currentPlayer = gameState.turn === 'w' ? 'white' : 'black';
         const currentTimer = currentPlayer === 'white' ? 'remainingTimeWhite' : 'remainingTimeBlack';
 
+        // Update the timer every second
         timerRef.current = setInterval(() => {
             setGameState(prev => {
                 const newTime = prev[currentTimer] - 1000;
                 if (newTime <= 0) {
                     clearInterval(timerRef.current);
-    
-                    // Notify backend about game over
+
+                    // Notify backend about game over due to timeout
                     fetch('http://localhost:3001/chess/move', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -89,7 +108,7 @@ const GamePage = ({ navigate }) => {
                             to: null,   // No move is made
                         }),
                     }).catch(console.error);
-    
+
                     return {
                         ...prev,
                         [currentTimer]: 0,
@@ -101,6 +120,7 @@ const GamePage = ({ navigate }) => {
             });
         }, 1000);
 
+        // Cleanup timer on component unmount or dependency change
         return () => {
             if (timerRef.current) {
                 clearInterval(timerRef.current);
@@ -108,7 +128,11 @@ const GamePage = ({ navigate }) => {
         };
     }, [gameState?.turn, gameState?.gameStarted, gameState?.gameOver]);
 
-
+    /**
+     * Loads a saved game state from the backend.
+     * 
+     * @param {Object} savedState - The saved game state
+     */
     const loadGame = async (savedState) => {
         try {
             const response = await fetch('http://localhost:3001/chess/load', {
@@ -118,27 +142,39 @@ const GamePage = ({ navigate }) => {
             });
             const data = await response.json();
 
-            timed.current = savedState.gameMode === "timed" ? true : false;
+            timed.current = savedState.gameMode === "timed";
 
             setGameState(data);
             showNotification("success", "Game loaded successfully!");
-    } catch (error) {
+        } catch (error) {
             showNotification("error", "Failed to load the game.");
         }
     };
 
+    /**
+     * Navigates to the settings page.
+     */
     const goToSettings = () => {
         navigate('/settings');
     };
 
+    /**
+     * Redirects the user to the root URL.
+     */
     const goToRoot = () => {
         window.location.href = '/';
     };
 
+    /**
+     * Navigates back to the main menu.
+     */
     const goBack = () => {
         navigate('/');
     };
 
+    /**
+     * Starts a new game by requesting the backend to create a new game state.
+     */
     const startNewGame = async () => {
         try {
             const response = await fetch('http://localhost:3001/chess/start', {
@@ -150,7 +186,7 @@ const GamePage = ({ navigate }) => {
                 })
             });
 
-            timed.current = settings.gameMode === "timed" ? true : false;
+            timed.current = settings.gameMode === "timed";
 
             const data = await response.json();
 
@@ -160,12 +196,19 @@ const GamePage = ({ navigate }) => {
         }
     };
 
+    /**
+     * Handles a move made by the player, sending it to the backend.
+     * 
+     * @param {string} from - The source square
+     * @param {string} to - The target square
+     * @param {string} promotionPiece - The piece to promote to, if applicable
+     */
     const handleMove = async (from, to, promotionPiece) => {
         if (gameState?.gameOver) {
             return;
         }
 
-        if (from == to) {
+        if (from === to) {
             return;
         }
 
@@ -194,6 +237,9 @@ const GamePage = ({ navigate }) => {
         }
     };
 
+    /**
+     * Saves the current game state to the backend and localStorage.
+     */
     const handleSave = async () => {
         try {
             const response = await fetch('http://localhost:3001/chess/save', {
@@ -213,6 +259,9 @@ const GamePage = ({ navigate }) => {
         }
     };
 
+    /**
+     * Exits the current game by notifying the backend.
+     */
     const handleExit = async () => {
         if (gameState?.gameId) {
             try {
@@ -229,12 +278,19 @@ const GamePage = ({ navigate }) => {
         }
     };
 
+    // Cleanup on component unmount
     useEffect(() => {
         return () => {
             handleExit();
         };
     }, [gameState?.gameId]);
 
+    /**
+     * Displays a notification with the specified type and message.
+     * 
+     * @param {string} type - The type of notification ('success', 'info', 'error')
+     * @param {string} message - The notification message
+     */
     const showNotification = (type, message) => {
         // Clear any existing timeout to prevent rapid reset
         if (timeoutRef.current) {
@@ -249,15 +305,25 @@ const GamePage = ({ navigate }) => {
         }, 3000);
     };
 
+    /**
+     * Formats time from milliseconds to MM:SS format.
+     * 
+     * @param {number} milliseconds - Time in milliseconds
+     * @returns {string} Formatted time string
+     */
     const formatTime = (milliseconds) => {
-        if (!milliseconds && milliseconds !== 0) return '--:--';
+        if (milliseconds === null || milliseconds === undefined) return '--:--';
         const totalSeconds = Math.floor(milliseconds / 1000);
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
-     // Update the game over message to handle all end conditions
+    /**
+     * Generates the game over message based on the game state.
+     * 
+     * @returns {string|null} The game over message or null if the game is not over
+     */
     const getGameOverMessage = () => {
         if (!gameState?.gameOver) return null;
         
@@ -288,11 +354,11 @@ const GamePage = ({ navigate }) => {
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
+                {/* Home Button */}
                 <button
                     onClick={goToRoot}
                     className="btn-primary"
                     style={{
-
                         backgroundImage: `url(${require('../assets/images/icons/home_icon.png')})`,
                         position: 'absolute',
                         top: '20px',
@@ -307,7 +373,7 @@ const GamePage = ({ navigate }) => {
                     }}
                 ></button>
 
-                { }
+                {/* Main Game Container */}
                 <div style={{
                     backgroundColor: 'white',
                     borderRadius: '24px',
@@ -327,19 +393,20 @@ const GamePage = ({ navigate }) => {
                             alignItems: 'center',
                             maxWidth: '700px',
                         }}>
+                            {/* Notification Message */}
                             {notification.message && (
                                 <div
                                     style={{
                                         position: "absolute",
-                                        top: "10px",
+                                        top: "60px",
                                         left: "50%",
                                         transform: "translateX(-50%)",
-                                        padding: "10px 20px",
+                                        padding: "15px 25px",
                                         borderRadius: "8px",
 
                                         zIndex: 9999,
 
-                                        fontSize: "16px",
+                                        fontSize: "20px",
                                         fontWeight: "bold",
                                         backgroundColor:
                                             notification.type === "success" ? "#d4edda" :
@@ -354,14 +421,17 @@ const GamePage = ({ navigate }) => {
                                             notification.type === "info" ? "1px solid #b8daff" :
                                             notification.type === "error" ? "1px solid #f5c6cb" : "none",
 
-                                        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
-                                        pointerEvents: "none", // Disable interaction with the notification
+                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                                        pointerEvents: "none",
 
+                                        transition: "all 0.3s ease",
                                     }}
                                 >
                                     {notification.message}
                                 </div>
                             )}
+
+                            {/* Timer and Turn Display */}
                             <div style={{
                                 width: '100%',
                                 display: 'flex',
@@ -370,6 +440,7 @@ const GamePage = ({ navigate }) => {
                                 marginBottom: '10px',
                                 marginTop: '20px'
                             }}>
+                                {/* Black Player Timer */}
                                 <div style={{
                                     backgroundColor: '#000',
                                     color: '#fff',
@@ -380,6 +451,8 @@ const GamePage = ({ navigate }) => {
                                 }}>
                                     Black: {formatTime(gameState?.remainingTimeBlack)}
                                 </div>
+
+                                {/* Current Turn Indicator */}
                                 <div style={{
                                     backgroundColor: gameState?.turn === 'w' ? '#f5f5f5' : '#000',
                                     color: gameState?.turn === 'w' ? '#000' : '#fff',
@@ -395,6 +468,7 @@ const GamePage = ({ navigate }) => {
                                 </div>
                             </div>
 
+                            {/* Game Over Modal */}
                             {gameState?.gameOver && (
                                 <div style={{
                                     position: 'fixed',
@@ -425,6 +499,7 @@ const GamePage = ({ navigate }) => {
                                             justifyContent: 'center',
                                             gap: '15px'
                                         }}>
+                                            {/* New Game Button */}
                                             <button 
                                                 onClick={() => {
                                                     startNewGame();
@@ -444,11 +519,10 @@ const GamePage = ({ navigate }) => {
                                                 New Game
                                             </button>
                                             
-
+                                            {/* Review Game Button */}
                                             <button 
                                                 onClick={() => {
                                                     showNotification('info', 'Game review feature coming soon!');
-
                                                 }}
                                                 style={{
                                                     padding: '12px 24px',
@@ -468,12 +542,14 @@ const GamePage = ({ navigate }) => {
                                 </div>
                             )}
 
+                            {/* Chessboard Component */}
                             <Chessboard
                                 fen={gameState ? gameState.fen : undefined}
                                 onMove={handleMove}
                                 controlType={settings.controlType}
                             />
 
+                            {/* White Player Timer */}
                             <div style={{
                                 width: '100%',
                                 display: 'flex',
@@ -493,12 +569,14 @@ const GamePage = ({ navigate }) => {
                                 </div>
                             </div>
 
+                            {/* Action Buttons */}
                             <div style={{
                                 display: 'flex',
                                 gap: '20px',
                                 width: '100%',
                                 marginTop: '20px'
                             }}>
+                                {/* Back Button */}
                                 <div style={{ flex: '0 0 auto' }}>
                                     <button onClick={goBack} className="btn-secondary" style={{
                                         backgroundColor: '#f5f5f5',
@@ -513,26 +591,31 @@ const GamePage = ({ navigate }) => {
                                     }}>
                                     </button>
                                 </div>
+                                
+                                {/* Right-side Action Buttons */}
                                 <div style={{
                                     display: 'flex',
                                     gap: '20px',
                                     marginLeft: 'auto'
                                 }}>
+                                    {/* Restart Button */}
                                     <button onClick={() => {
-                                                    startNewGame();
-                                                    showNotification("info", "New game started!");
-                                                }} 
-                                                className="btn-secondary" style={{
-                                        backgroundColor: '#f5f5f5',
-                                        width: '40px',
-                                        height: '40px',
-                                        border: "2px solid black",
-                                        borderRadius: "4px",
-                                        backgroundImage: `url(${require('../assets/images/icons/restart_icon.png')})`,
-                                        backgroundSize: '30px 30px',
-                                        backgroundRepeat: 'no-repeat',
-                                        backgroundPosition: 'center'
-                                    }}></button>
+                                            startNewGame();
+                                            showNotification("info", "New game started!");
+                                        }} 
+                                        className="btn-secondary" style={{
+                                            backgroundColor: '#f5f5f5',
+                                            width: '40px',
+                                            height: '40px',
+                                            border: "2px solid black",
+                                            borderRadius: "4px",
+                                            backgroundImage: `url(${require('../assets/images/icons/restart_icon.png')})`,
+                                            backgroundSize: '30px 30px',
+                                            backgroundRepeat: 'no-repeat',
+                                            backgroundPosition: 'center'
+                                        }}></button>
+
+                                    {/* Save Button */}
                                     <button onClick={handleSave} className="btn-secondary" style={{
                                         backgroundColor: '#f5f5f5',
                                         width: '40px',
@@ -544,6 +627,8 @@ const GamePage = ({ navigate }) => {
                                         backgroundRepeat: 'no-repeat',
                                         backgroundPosition: 'center'
                                     }}></button>
+
+                                    {/* Settings Button */}
                                     <button onClick={goToSettings} className="btn-secondary" style={{
                                         backgroundColor: '#f5f5f5',
                                         width: '40px',
@@ -559,7 +644,7 @@ const GamePage = ({ navigate }) => {
                             </div>
                         </div>
 
-                        { }
+                        {/* Move History Panel */}
                         <div style={{
                             width: settings.notation === 'detailed' ? '200px' : '140px',
                             height: '680px',
@@ -571,7 +656,6 @@ const GamePage = ({ navigate }) => {
                             fontSize: '18px',
                             color: '#000',
                             border: "2px solid black",
-                            borderRadius: "4px",
                             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
                             marginTop: '80px',
                         }}>
@@ -601,6 +685,7 @@ const GamePage = ({ navigate }) => {
             </div>
         </DndProvider>
     );
+
 };
 
 export default GamePage;
