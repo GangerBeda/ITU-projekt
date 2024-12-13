@@ -367,6 +367,15 @@ export default function PanelResources(props) {
                                         },
                                     };
 
+                                    axios
+                                        .post('http://localhost:3001/catan/updatePlayer', {
+                                            playerCards: { ...prevPlayerCards, [color]: updatedPlayerData },
+                                            activePlayerColor: props.activePlayerColor,
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+
                                     return {
                                         ...prevPlayerCards,
                                         [color]: updatedPlayerData,
@@ -377,15 +386,6 @@ export default function PanelResources(props) {
                     }
                     j++;
                 }
-
-                axios
-                    .post('http://localhost:3001/catan/updatePlayer', {
-                        playerCards: playerCards,
-                        activePlayerColor: props.activePlayerColor,
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
             })
             .catch((err) => {
                 console.log(err);
