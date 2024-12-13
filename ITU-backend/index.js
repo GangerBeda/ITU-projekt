@@ -1,13 +1,3 @@
-/*
- * ITU Games Hub
- * @brief Main application entry point for the ITU Games Hub backend server ??? ig 
- * @author Da Costa Menezes Kristián || xdacos01
- * @author 
- * @author 
- * @author 
- * @author 
- */
-
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
