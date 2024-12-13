@@ -85,7 +85,8 @@ export default function Board(props) {
                     alert('Not enough resources, 1 wood & 1 brick required'); // TODO: change to something fancy
                     return true;
                 }
-                // TODO: subtract resources, probably some new endpoint
+
+                await axios.post('http://localhost:3001/catan/buildRoad', { activePlayerColor: props.activePlayerColor });
             } catch (error) {
                 console.error('Error fetching player data:', error);
             }
@@ -98,11 +99,17 @@ export default function Board(props) {
                     alert('Not enough resources, 1 wood, 1 brick, 1 sheep & 1 wheat required'); // TODO: change to something fancy
                     return true;
                 }
-                // TODO: subtract resources, probably some new endpoint
+                await axios.post('http://localhost:3001/catan/buildSettleman', { activePlayerColor: props.activePlayerColor });
             } catch (error) {
                 console.error('Error fetching player data:', error);
             }
         }
+
+        props.setGameState((prevState) => ({
+            ...prevState,
+            phase: prevState.phase + 1,
+        }));
+
         return false;
     };
 
@@ -237,6 +244,8 @@ export default function Board(props) {
                         setHexHoverColors(response.data.hexHoverColors);
                         setMaterialTypes(response.data.materialTypes);
                         setNumberTokens(response.data.numberTokens);
+
+                        props.setGameState({ text: 'Placing settler', phase: 0 });
                     } catch (initErr) {
                         console.error('Initialization failed:', initErr);
                     }

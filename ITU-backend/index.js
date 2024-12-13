@@ -149,6 +149,96 @@ app.get('/catan/player', (req, res) => {
     });
 });
 
+app.post('/catan/buildRoad', (req, res) => {
+    fs.readFile('db/playerObj.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file:', err);
+            return res.status(500).json({ message: 'Failed to read playerObj' });
+        }
+
+        try {
+            const playerData = JSON.parse(data);
+
+            const activePlayerColor = playerData.activePlayerColor;
+            if (!activePlayerColor || !playerData.playerCards[activePlayerColor]) {
+                return res.status(404).json({ message: 'Active player not found' });
+            }
+
+            const activePlayer = playerData.playerCards[activePlayerColor];
+
+            if (activePlayer.resource.brick < 1 || activePlayer.resource.wood < 1) {
+                return res.status(400).json({ message: 'Not enough resources to build a road' });
+            }
+
+            activePlayer.resource.brick -= 1;
+            activePlayer.resource.wood -= 1;
+
+            playerData.playerCards[activePlayerColor] = activePlayer;
+
+            fs.writeFile('db/playerObj.json', JSON.stringify(playerData, null, 2), (err) => {
+                if (err) {
+                    console.error('Error writing to file:', err);
+                    return res.status(500).json({ message: 'Failed to save playerObj' });
+                }
+
+                res.status(201).json({
+                    message: 'Road built successfully',
+                    player: activePlayer,
+                });
+            });
+        } catch (parseError) {
+            console.error('Error parsing JSON:', parseError);
+            return res.status(500).json({ message: 'Failed to parse playerObj' });
+        }
+    });
+});
+
+app.post('/catan/buildSettleman', (req, res) => {
+    fs.readFile('db/playerObj.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file:', err);
+            return res.status(500).json({ message: 'Failed to read playerObj' });
+        }
+
+        try {
+            const playerData = JSON.parse(data);
+
+            const activePlayerColor = playerData.activePlayerColor;
+            if (!activePlayerColor || !playerData.playerCards[activePlayerColor]) {
+                return res.status(404).json({ message: 'Active player not found' });
+            }
+
+            const activePlayer = playerData.playerCards[activePlayerColor];
+
+            if (activePlayer.resource.brick < 1 || activePlayer.resource.wood < 1 || activePlayer.resource.wheat < 1 || activePlayer.resource.sheep < 1) {
+                return res.status(400).json({ message: 'Not enough resources to build a settleman' });
+            }
+
+            activePlayer.resource.brick -= 1;
+            activePlayer.resource.wood -= 1;
+            activePlayer.resource.wheat -= 1;
+            activePlayer.resource.sheep -= 1;
+
+            playerData.playerCards[activePlayerColor] = activePlayer;
+
+            fs.writeFile('db/playerObj.json', JSON.stringify(playerData, null, 2), (err) => {
+                if (err) {
+                    console.error('Error writing to file:', err);
+                    return res.status(500).json({ message: 'Failed to save playerObj' });
+                }
+
+                res.status(201).json({
+                    message: 'Settleman built successfully',
+                    player: activePlayer,
+                });
+            });
+        } catch (parseError) {
+            console.error('Error parsing JSON:', parseError);
+            return res.status(500).json({ message: 'Failed to parse playerObj' });
+        }
+    });
+});
+
 // CHESS
 const games = new Map();
 

@@ -128,7 +128,7 @@ export default function PanelResources(props) {
         };
 
         fetchPlayerData();
-    }, []);
+    }, [props.activePlayerColor, props.gameState]);
 
     const checkResources = async () => {
         try {
