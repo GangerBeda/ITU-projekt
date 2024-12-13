@@ -231,7 +231,11 @@ export default function Board(props) {
             <Link key={''} to={'/'} className='home-icon-container'>
                 <FontAwesomeIcon icon={faHome} className='home-icon' />
             </Link>
-            <FontAwesomeIcon icon={faBookOpen} className='rules-icon' />
+            <FontAwesomeIcon
+                icon={faBookOpen}
+                className='rules-icon'
+                onClick={() => window.open('https://www.catan.com/understand-catan/game-rules', '_blank')}
+            />
             <FontAwesomeIcon
                 icon={faRedo}
                 className='reset-icon'
