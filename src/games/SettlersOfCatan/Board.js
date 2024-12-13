@@ -3,7 +3,7 @@ import axios from 'axios';
 import { HexGrid, Layout, Hexagon, GridGenerator } from 'react-hexgrid';
 import './Board.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faBookOpen, faRedo } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
 const INVALID_HEXES_MATERIALS = [0, 1, 2, 3, 4, 8, 9, 14, 15, 21, 22, 27, 28, 32, 33, 34, 35, 36];
@@ -75,39 +75,88 @@ export default function Board(props) {
         return hexHoverColors[`${grid}-${i}`] || '#555';
     };
 
+    const checkResources = async (grid, phase) => {
+        if (grid === 'path' && phase >= 2) {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/player');
+                const resources = response.data.playerCards[response.data.activePlayerColor].resource;
+
+                if (resources.wood < 1 || resources.brick < 1) {
+                    alert('Not enough resources, 1 wood & 1 brick required'); // TODO: change to something fancy
+                    return true;
+                }
+
+                await axios.post('http://localhost:3001/catan/buildRoad', { activePlayerColor: props.activePlayerColor });
+            } catch (error) {
+                console.error('Error fetching player data:', error);
+            }
+        } else if (grid === 'settler' && phase >= 2) {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/player');
+                const resources = response.data.playerCards[response.data.activePlayerColor].resource;
+
+                if (resources.wood < 1 || resources.brick < 1 || resources.sheep < 1 || resources.wheat < 1) {
+                    alert('Not enough resources, 1 wood, 1 brick, 1 sheep & 1 wheat required'); // TODO: change to something fancy
+                    return true;
+                }
+                await axios.post('http://localhost:3001/catan/buildSettleman', { activePlayerColor: props.activePlayerColor });
+            } catch (error) {
+                console.error('Error fetching player data:', error);
+            }
+        }
+
+        props.setGameState((prevState) => ({
+            ...prevState,
+            phase: prevState.phase + 1,
+        }));
+
+        return false;
+    };
+
     const hexClicked = (grid, i) => {
         if (grid === 'material') {
             // TODO: handle robber logic
             return;
-        } else if (grid !== 'settler' && props.gameState.text === 'Placing settler') {
-            return;
-        } else if (grid != 'path' && props.gameState.text === 'Placing road') {
-            return;
-        } else if (props.gameState.text === 'Ending turn') {
-            return;
-        } else if (props.gameState.text === 'Rolling dice') {
+        }
+
+        if (
+            (grid !== 'settler' && props.gameState.text === 'Placing settler') ||
+            (grid !== 'path' && props.gameState.text === 'Placing road') ||
+            props.gameState.text === 'Ending turn' ||
+            props.gameState.text === 'Rolling dice'
+        ) {
             return;
         }
 
-        setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
-        setHexHoverColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') }));
+        checkResources(grid, props.gameState.phase).then((ret) => {
+            if (ret) {
+                return;
+            }
 
-        axios
-            .post('http://localhost:3001/catan/build', {
-                hexColors: { ...hexColors, [`${grid}-${i}`]: props.activePlayerColor },
-                hexHoverColors: { ...hexHoverColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') },
-                materialTypes: Array.from(materialTypes),
-                numberTokens: Array.from(numberTokens),
-            })
-            .catch((error) => {
-                console.log('Request failed:', error);
-            });
+            setHexColors((prevColors) => ({ ...prevColors, [`${grid}-${i}`]: props.activePlayerColor }));
+            setHexHoverColors((prevColors) => ({
+                ...prevColors,
+                [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9'),
+            }));
 
-        if (props.gameState.text === 'Placing settler') {
-            props.setGameState({ text: 'Placing road', phase: props.gameState.phase });
-        } else if (props.gameState.text === 'Placing road') {
-            props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
-        }
+            axios
+                .post('http://localhost:3001/catan/build', {
+                    hexColors: { ...hexColors, [`${grid}-${i}`]: props.activePlayerColor },
+                    hexHoverColors: { ...hexHoverColors, [`${grid}-${i}`]: props.activePlayerColor.replace('f', '9') },
+                    materialTypes: Array.from(materialTypes),
+                    numberTokens: Array.from(numberTokens),
+                })
+                .catch((error) => {
+                    console.error('Request failed:', error);
+                });
+
+            // Update game state
+            if (props.gameState.text === 'Placing settler') {
+                props.setGameState({ text: 'Placing road', phase: props.gameState.phase });
+            } else if (props.gameState.text === 'Placing road') {
+                props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
+            }
+        });
     };
 
     const renderHexGrid = (grid, size, spacing, flat, invalidHexes, hexRadius) => {
@@ -118,7 +167,14 @@ export default function Board(props) {
                     {GridGenerator.hexagon(hexRadius).map((hex, i) =>
                         invalidHexes.includes(i) ? (
                             grid === 'material' ? (
-                                <Hexagon id={`${grid}-${i}`} key={`${grid}-${i}`} q={hex.q} r={hex.r} s={hex.s} cellStyle={{ fill: '#09f' }} />
+                                <Hexagon
+                                    id={`${grid}-${i}`}
+                                    key={`${grid}-${i}`}
+                                    q={hex.q}
+                                    r={hex.r}
+                                    s={hex.s}
+                                    cellStyle={{ fill: '#09f', cursor: 'default' }}
+                                />
                             ) : null
                         ) : (
                             <Hexagon
@@ -176,6 +232,25 @@ export default function Board(props) {
                 <FontAwesomeIcon icon={faHome} className='home-icon' />
             </Link>
             <FontAwesomeIcon icon={faBookOpen} className='rules-icon' />
+            <FontAwesomeIcon
+                icon={faRedo}
+                className='reset-icon'
+                onClick={async () => {
+                    try {
+                        await axios.post('http://localhost:3001/catan/init', {});
+
+                        const response = await axios.get('http://localhost:3001/catan/state');
+                        setHexColors(response.data.hexColors);
+                        setHexHoverColors(response.data.hexHoverColors);
+                        setMaterialTypes(response.data.materialTypes);
+                        setNumberTokens(response.data.numberTokens);
+
+                        props.setGameState({ text: 'Placing settler', phase: 0 });
+                    } catch (initErr) {
+                        console.error('Initialization failed:', initErr);
+                    }
+                }}
+            />
         </div>
     );
 }
