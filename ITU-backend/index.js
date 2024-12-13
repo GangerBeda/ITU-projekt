@@ -119,6 +119,13 @@ app.post('/catan/init', (req, res) => {
         }
     );
 
+    fs.writeFile('db/gameState.json', '{"gameState": { "text": "Placing settler", "phase": 0 }}', (err) => {
+        if (err) {
+            console.error('Error writing to file', err);
+            return res.status(500).json({ message: 'Failed to save gameState' });
+        }
+    });
+
     res.status(201).json({
         message: 'Init successful',
     });
@@ -174,7 +181,6 @@ app.get('/catan/player', (req, res) => {
         res.status(200).json(JSON.parse(data));
     });
 });
-
 
 app.post('/catan/buildRoad', (req, res) => {
     fs.readFile('db/playerObj.json', 'utf8', (err, data) => {
@@ -266,8 +272,35 @@ app.post('/catan/buildSettleman', (req, res) => {
     });
 });
 
+app.post('/catan/gameState', (req, res) => {
+    const receivedObject = req.body;
+
+    fs.writeFile('db/gameState.json', JSON.stringify(receivedObject, null, 2), (err) => {
+        if (err) {
+            console.error('Error writing to file', err);
+            return res.status(500).json({ message: 'Failed to save gameState' });
+        }
+
+        res.status(201).json({
+            message: 'Object received and saved successfully',
+            data: receivedObject,
+        });
+    });
+});
+
+app.get('/catan/gameState', (req, res) => {
+    fs.readFile('db/gameState.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file', err);
+            return res.status(500).json({ message: 'Failed to read gameState' });
+        }
+
+        res.status(200).json(JSON.parse(data));
+    });
+});
+
 // CHESS
-/* 
+/*
  * In-memory storage for active chess game.
  * Key: gameId (string)
  * Value: ChessGameState instance
@@ -276,14 +309,14 @@ const chessGame = new Map();
 
 /**
  * GameState Class for Chess
- * 
+ *
  * Represents the state of a single chess game, including the chess instance,
  * game mode (timed or untimed), time limits, move history, and game status.
  */
 class ChessGameState {
     /**
      * Constructs a new ChessGameState instance.
-     * 
+     *
      * @param {string} mode - The game mode ('timed' or 'untimed')
      * @param {number|null} timeLimit - The time limit per player in minutes (if timed)
      */
@@ -353,13 +386,13 @@ class ChessGameState {
 
 /**
  * Route: POST /chess/start
- * 
+ *
  * Starts a new chess game by creating a new ChessGameState instance and storing it.
- * 
+ *
  * Request Body:
  * - mode: 'timed' or 'untimed'
  * - timeLimit: number (minutes) or null
- * 
+ *
  * Response:
  * - gameId: string
  * - fen: string (Forsyth-Edwards Notation)
@@ -387,15 +420,15 @@ app.post('/chess/start', (req, res) => {
 
 /**
  * Route: POST /chess/move
- * 
+ *
  * Processes a move made by a player in a specific chess game.
- * 
+ *
  * Request Body:
  * - gameId: string
  * - from: string (source square, e.g., 'e2')
  * - to: string (target square, e.g., 'e4')
  * - promotion: string|null (piece to promote to, e.g., 'q')
- * 
+ *
  * Response:
  * - fen: string (updated FEN)
  * - turn: 'w' or 'b'
@@ -469,15 +502,14 @@ app.post('/chess/move', (req, res) => {
     }
 });
 
-
 /**
  * Route: POST /chess/save
- * 
+ *
  * Saves the current state of a chess game.
- * 
+ *
  * Request Body:
  * - gameId: string
- * 
+ *
  * Response:
  * - savedState: object containing the game's FEN, mode, time limits, move history, and remaining times
  */
@@ -503,12 +535,12 @@ app.post('/chess/save', (req, res) => {
 
 /**
  * Route: POST /chess/load
- * 
+ *
  * Loads a previously saved chess game state.
- * 
+ *
  * Request Body:
  * - savedState: object containing the game's FEN, mode, time limits, move history, and remaining times
- * 
+ *
  * Response:
  * - gameId: string
  * - fen: string (Forsyth-Edwards Notation)
@@ -544,12 +576,12 @@ app.post('/chess/load', (req, res) => {
 
 /**
  * Route: POST /chess/exit
- * 
+ *
  * Exits and removes a chess game from the server.
- * 
+ *
  * Request Body:
  * - gameId: string
- * 
+ *
  * Response:
  * - success: boolean
  */

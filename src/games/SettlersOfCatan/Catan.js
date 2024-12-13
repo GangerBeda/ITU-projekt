@@ -1,13 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import Board from './Board';
 import Panel from './Panel';
+import axios from 'axios';
 
 export default function Catan() {
     const [activePlayerColor, setActivePlayerColor] = useState('#f00');
-    const [gameState, setGameState] = useState({ text: 'Placing settler', phase: 0 });
+    const [gameState, setGameState] = useState({ text: 'Placing settler', phase: -1 });
 
     const [roll1, setRoll1] = useState(1);
     const [roll2, setRoll2] = useState(1);
+
+    useEffect(() => {
+        const fetchGameState = async () => {
+            await axios.post('http://localhost:3001/catan/gameState', gameState);
+        };
+
+        if (gameState.phase != -1) {
+            console.log(gameState);
+            fetchGameState();
+        }
+    }, [gameState]);
+
+    useEffect(() => {
+        const fetchGameState = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/gameState');
+                setGameState(response.data);
+            } catch (err) {
+                try {
+                    await axios.post('http://localhost:3001/catan/init', {});
+
+                    const response = await axios.get('http://localhost:3001/catan/gameState');
+                    setGameState(response.data);
+                } catch (initErr) {
+                    console.error('Initialization failed:', initErr);
+                }
+            }
+        };
+
+        fetchGameState();
+    }, []);
 
     return (
         <>
