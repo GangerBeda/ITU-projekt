@@ -94,7 +94,7 @@ class FourInARowModel {
         this.currentPlayer = lastMove.player;
         this.winner = null;
         this.full = false;
-        this.message = ` je na tahu.`;
+        this.message = `hráč je na tahu.`;
 
         this.turnColour = `${this.currentPlayer}-turn`;
         this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
