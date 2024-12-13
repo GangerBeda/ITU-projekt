@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import './Blackjack.css';
+import cheatsheet from './cheatsheet.png';
+import sheetICON from './cheatsheetICO.png';
+import homeICON from './home.png';
 
 const calculateHandValue = (hand) => {
     let value = 0;
@@ -44,6 +48,9 @@ function Blackjack() {
     const hitButtonRef = useRef(null);
     const standButtonRef = useRef(null);
     const playAgainButtonRef = useRef(null);
+
+    const [showHelpModal, setShowHelpModal] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
 
     useEffect(() => {
         startNewRound();
@@ -197,6 +204,59 @@ function Blackjack() {
                         <span className="score">{losses}</span>
                     </div>
                 </div>
+            
+            {/* Home button */}
+            <Link to="/">
+                <button className="blackjack-home-button">
+                    <img src={homeICON} width="40px" height="40px" />
+                </button>
+            </Link>
+
+            {/* Help buttons */}
+            <button className="blackjack-help-button" onClick={() => setShowHelpModal(true)}>
+                <b>?</b>
+            </button>
+             <button className="blackjack-cheatsheet-button" onClick={() => setShowImageModal(true)}>
+                <img src={sheetICON} width="40px" height="40px" />
+            </button>
+
+            {/* Modal window (help) */}
+            {showHelpModal && (
+                <div className="blackjack-modal-overlay" onClick={() => setShowHelpModal(false)}>
+                    <div className="blackjack-modal-content" onClick={e => e.stopPropagation()}>
+                        <h2>How to Play Blackjack</h2>
+                        <p>
+                            The aim is to get as close to 21 as possible without going over.
+                            <br /> 
+                            - "Hit": Get another card.
+                            <br />
+                            - "Stand": Stop and let the dealer draw.
+                            <br />
+                            Dealer draws until reaching at least 17. 
+                            <br />
+                            If you go over 21, you bust and lose.
+                            <br />
+                            Control the game with buttons, or with gestures.
+                            <br />
+                            Double tap the gesture field to hit. 
+                            <br />
+                            Swipe (press mouse, move and release within a short time period) to stand.
+                        </p>
+                        <button onClick={() => setShowHelpModal(false)}>Close</button>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal cheat sheet */}
+            {showImageModal && (
+                <div className="modal-overlay" onClick={() => setShowImageModal(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <img src={cheatsheet} alt="Cheatsheet" />
+                        <button onClick={() => setShowImageModal(false)}>Close</button>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
