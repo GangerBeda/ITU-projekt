@@ -16,7 +16,6 @@ export default function Catan() {
         };
 
         if (gameState.phase != -1) {
-            console.log(gameState);
             fetchGameState();
         }
     }, [gameState]);
