@@ -8,117 +8,109 @@
     
 }
 
-.Board {
-    width: fit-content;
-    min-width: 35%;
-    height: fit-content;
-    aspect-ratio: 1 / 1;    /* ctverec kolem desky */
+    .Board {
+        width: clamp(40vw, 50vh, 60vw);  /*(min, preferred, max) */
+        height: fit-content;
+        aspect-ratio: 1 / 1;    /* ctverec kolem desky */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: grey;
+        border: 0.5vw solid black; /* Ohraničení kolem herního pole */
+    }
+        .board-row {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+        }
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: grey;
-    border: 3px solid black; /* Ohraničení kolem herního pole */
-    margin-bottom: 20px; /* Mezera mezi herním polem a tlačítky */
+            .board-cell {
+                width: 14.28%; /* 1/7 šířky desky */
+                aspect-ratio: 1 / 1;  /* kruh */
+                margin: 0.5%; /* Mezera mezi buňkami */
+                background-color: #e0e0e0;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: background-color 0.4s;
+            }
 
+                .board-cell:hover {
+                    background-color: #ccc;
+                }
 
-}
-.board-row {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-}
+                .board-cell.red .piece {
+                    background-color: red;
+                    border-radius: 50%;
+                    width: 100%;
+                    height: 100%;
+                }
 
-.board-cell {
-    width: 4vw;
-    aspect-ratio: 1 / 1;  /* kruh */
-    background-color: #e0e0e0;
-    margin: 0.5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+                .board-cell.yellow .piece {
+                    background-color: yellow;
+                    border-radius: 50%;
+                    width: 100%;
+                    height: 100%;
+                }
 
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.4s;
-}
+    .buttons-container-board {
+        display: flex;
+        gap: 2vw; /* Mezera mezi tlačítky */
+        margin-bottom: 1vh;
+    }
 
-.board-cell:hover {
-    background-color: #ccc;
-}
+    .buttons-container-top {
+        display: flex;
+        position: absolute;
+        top: 0.5vh;
+        right: 0.5vw;
+        gap: 0.5vw; /* Mezera mezi tlačítky */
+        margin-bottom: 30px; /* Mezera pod tlačítky */
+    }
 
-.board-cell.red .piece {
-    background-color: red;
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-}
+    /* home button */
+    .goToMainMenu {
+        background-image: url('./Icons/home_icon.png');
+        position: absolute;
+        top: 0.5vh;
+        left: 0.5vw;
+    }
 
-.board-cell.yellow .piece {
-    background-color: yellow;
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-}
+    .button {
+        background-size: 100% 100%;
+        border-radius: 0%; /* čtvercová tlačítka */
+        background-color: transparent; /* bez pozadí */
+        background-position: center; /*obrázek na střed */
+        border: none;
+        cursor: pointer; /* změní kurzor na ruku */
+        width: 4vw; /* Nastaví šířku tlačítka */
+        aspect-ratio: 1 / 1; /* stejná výška a šířka */
+    }
 
+    .settings {
+        background-image: url('./Icons/settings_icon.png');
+        padding: 10px;
+    }
 
-.gameInfo {
-    margin-top: 20px;
-    font-size: 1.2rem;
-}
-.buttons-container {
-    display: flex;
-    gap: 2vw; /* Mezera mezi tlačítky */
-    margin-bottom: 20px; /* Mezera pod tlačítky */
-}
+    .resetButton{
+        background-image: url('./Icons/restart_icon.png');
+        
+    }
+    
+    .undoButton{
+        background-image: url('./Icons/Undo.png');
+    }
 
-.button {
-    border-radius: 0%; /* Odstraní zaoblení, tlačítka budou čtvercová */
-    background-color: transparent; /* Bez pozadí */
-    background-position: center; /* Umístí obrázek na střed tlačítka */
-    background-size: cover; /* Zajistí, že obrázek vyplní celé tlačítko */
-    border: none; /* Odstraní rámeček kolem tlačítka */
-    cursor: pointer; /* Změní kurzor na ruku */
-    width: 4vw; /* Nastaví šířku tlačítka */
-    aspect-ratio: 1 / 1; /* Zajišťuje, že tlačítko bude čtvercové */
-}
+    .timerButton{
+        background-image: url('./Icons/timer_icon.png');
 
-.settings {
-    background-image: url('./Icons/settings_icon.png');
-    padding: 10px;
-    cursor: pointer;
+    }
 
-}
-/* home button */
-.goToMainMenu {
-    background-image: url('./Icons/home_icon.png');
-    background-size: 95%;
-
-    position: absolute;
-    top: 20px;
-    left: 20px;
-
-}
-.resetButton{
-    background-image: url('./Icons/restart_icon.png');
-    width: 4vw;
-    aspect-ratio: 1 / 1;
-
-}
-
-.undoButton{
-    background-image: url('./Icons/Undo.png');
-    width: 4vw;
-    aspect-ratio: 1 / 1;
-}
-
-.timerButton{
-    background-image: url('./Icons/timer_icon.png');
-    width: 4vw;
-    aspect-ratio: 1 / 1;
-}
-
+    .gameInfo {
+        font-size: 2vw;
+        text-align: left;
+        margin-left: 1vw
+    }
 
 
 
