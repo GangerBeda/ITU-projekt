@@ -8,6 +8,7 @@ class FourInARowModel {
         this.message = 'Hráč Červený začíná.'; // Inicializace zprávy
         this.observers = [];
         this.timeLimit = 0; // Inicializace časového limitu
+        this.turnColour = 'red'
     }
 
     // getTimeLimit() {
@@ -31,6 +32,7 @@ class FourInARowModel {
             message: this.message,
             movesHistory: this.movesHistory,
             timeLimit: this.timeLimit, // Přidáno, pokud chybělo
+            turnColour: this.turnColour
         };
     }
 
@@ -41,12 +43,14 @@ class FourInARowModel {
         this.full = false;
         this.message = 'Hráč Červený začíná.'; // Reset zprávy
         this.movesHistory = [];
+
+
         //this.notifyObservers();
     }
 
     makeMove(column) {
         if (this.winner || this.full) {
-            return;  // Pokud už je vítěz nebo je pole plné, nevykonáme tah
+            return;
         }
     
         for (let row = this.board.length - 1; row >= 0; row--) {
@@ -57,12 +61,15 @@ class FourInARowModel {
                 if (this.checkWinner(row, column, this.currentPlayer)) {
                     this.winner = this.currentPlayer;
                     this.message = ` ${this.winner === 'red' ? 'Červený' : 'Žlutý'} hráč vyhrál! Hra je ukončena. Začněte novou hru.`;
+                    this.turnColour = ''; // Žádný hráč už není na tahu
                 } else if (this.checkFull()) {
                     this.full = true;  // Pokud je pole plné, nastavíme, že je hra ukončena
                     this.message = "Herní pole je plné, remíza! Začněte novou hru.";
+                    this.turnColour = ''; // Žádný hráč už není na tahu
                 } else {
                     this.currentPlayer = this.currentPlayer === 'red' ? 'yellow' : 'red';
                     this.message = `Hráč ${this.currentPlayer === 'red' ? 'Červený' : 'Žlutý'} je na tahu.`;
+                    this.turnColour = `${this.currentPlayer}-turn`;
                 }
     
                 return true;  // Vraťte `true`, pokud byl tah úspěšný

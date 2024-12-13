@@ -21,7 +21,7 @@ function FourInARowController() {
                 const response = await fetch('http://localhost:3001/fourinarow/current-state');
                 if (response.ok) {
                     const updatedState = await response.json();
-                    setGameState(updatedState);  // Nastavení stavu
+                    setGameState(updatedState);
                 } else {
                     console.error("Chyba při načítání stavu");
                 }

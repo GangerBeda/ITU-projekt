@@ -54,10 +54,14 @@ console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 
 
 
                 {/* Informace o hře */}
-                <div className="gameInfo">
-                    <p>{`${gameState.message}`}</p>
+
+                <div className={`gameInfo ${gameState.turnColour}`}>
+                    <p>{gameState.message}</p>
                     <p>Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}</p>
                 </div>
+
+
+
 
                  {/* Tlačítko pro novou hru */}
                 {showNewGameButton && (

@@ -1,6 +1,6 @@
 /* FourInARowView.css */
 .site {
-    background-color: rgb(187, 58, 58);
+    background-color: rgb(93, 86, 153);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -111,6 +111,17 @@
         text-align: left;
         margin-left: 1vw
     }
+    .gameInfo.red-turn p:first-child {
+        color: red;
+    }
+    
+    .gameInfo.yellow-turn p:first-child {
+        color: yellow;
+    }
+    
+    
+    
+    
 
 
 
