@@ -5,10 +5,11 @@ class FourInARowModel {
         this.movesHistory = [];
         this.winner = null;
         this.full = false;
-        this.message = 'Hráč Červený začíná.'; // Inicializace zprávy
+        this.message = 'hráč začíná.'; // Inicializace zprávy
         this.observers = [];
         this.timeLimit = 0; // Inicializace časového limitu
-        this.turnColour = 'red'
+        this.turnColour = 'red-turn'
+        this.highlightedPlayer ='Červený'
     }
 
     // getTimeLimit() {
@@ -32,7 +33,8 @@ class FourInARowModel {
             message: this.message,
             movesHistory: this.movesHistory,
             timeLimit: this.timeLimit, // Přidáno, pokud chybělo
-            turnColour: this.turnColour
+            turnColour: this.turnColour,
+            highlightedPlayer: this.highlightedPlayer
         };
     }
 
@@ -41,9 +43,10 @@ class FourInARowModel {
         this.currentPlayer = 'red';
         this.winner = null;
         this.full = false;
-        this.message = 'Hráč Červený začíná.'; // Reset zprávy
+        this.message = 'hráč začíná.'; // Reset zprávy
         this.movesHistory = [];
-
+        this.turnColour = 'red-turn'
+        this.highlightedPlayer ='Červený'
 
         //this.notifyObservers();
     }
@@ -60,18 +63,21 @@ class FourInARowModel {
     
                 if (this.checkWinner(row, column, this.currentPlayer)) {
                     this.winner = this.currentPlayer;
-                    this.message = ` ${this.winner === 'red' ? 'Červený' : 'Žlutý'} hráč vyhrál! Hra je ukončena. Začněte novou hru.`;
-                    this.turnColour = ''; // Žádný hráč už není na tahu
+                    this.highlightedPlayer = this.winner === 'red' ? 'Červený' : 'Žlutý';
+                    this.message = `hráč vyhrál! Hra je ukončena. Začněte novou hru.`;
+                    this.turnColour = `${this.winner}-turn`; 
                 } else if (this.checkFull()) {
                     this.full = true;  // Pokud je pole plné, nastavíme, že je hra ukončena
                     this.message = "Herní pole je plné, remíza! Začněte novou hru.";
                     this.turnColour = ''; // Žádný hráč už není na tahu
+                    this.highlightedPlayer = ''; // Žádný hráč
                 } else {
                     this.currentPlayer = this.currentPlayer === 'red' ? 'yellow' : 'red';
-                    this.message = `Hráč ${this.currentPlayer === 'red' ? 'Červený' : 'Žlutý'} je na tahu.`;
+                    this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
+                    this.message = `hráč je na tahu.`;
                     this.turnColour = `${this.currentPlayer}-turn`;
                 }
-    
+                
                 return true;  // Vraťte `true`, pokud byl tah úspěšný
             }
         }
@@ -88,7 +94,10 @@ class FourInARowModel {
         this.currentPlayer = lastMove.player;
         this.winner = null;
         this.full = false;
-        this.message = `Hráč ${this.currentPlayer === 'red' ? 'Červený' : 'Žlutý'} je na tahu.`;
+        this.message = ` je na tahu.`;
+
+        this.turnColour = `${this.currentPlayer}-turn`;
+        this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
        // this.notifyObservers();
     }
 

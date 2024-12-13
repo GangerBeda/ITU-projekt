@@ -14,7 +14,8 @@ function FourInARowView({
     goToMainMenu }) {
 
 console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 2x bcs vyvojovy rezim
-
+console.log(gameState.turnColour);
+console.log(gameState.highlightedPlayer);
 
     return (
         <div className="site">
@@ -55,9 +56,17 @@ console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 
 
                 {/* Informace o hře */}
 
-                <div className={`gameInfo ${gameState.turnColour}`}>
-                    <p>{gameState.message}</p>
-                    <p>Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}</p>
+                <div className={`gameInfo`}>
+                    <p>
+                        <span className={`player-colour ${gameState.turnColour}`}>  
+                            {gameState.highlightedPlayer}
+                        </span>
+                        {' '}{gameState.message}
+                    </p>
+
+                    <p>
+                        Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}
+                    </p>
                 </div>
 
 

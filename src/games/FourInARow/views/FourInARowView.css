@@ -111,13 +111,14 @@
         text-align: left;
         margin-left: 1vw
     }
-    .gameInfo.red-turn p:first-child {
+    .player-colour.red-turn {
         color: red;
     }
     
-    .gameInfo.yellow-turn p:first-child {
+    .player-colour.yellow-turn {
         color: yellow;
     }
+    
     
     
     
