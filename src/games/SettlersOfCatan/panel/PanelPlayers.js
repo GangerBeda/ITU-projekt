@@ -1,12 +1,18 @@
+// author: Jaroslav Synek <xsynekj00>
+// project: Games Hub
+// game: Settlers of Catan
+
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 export default function PanelPlayers(props) {
+    // state hooks
     const [playerCards, setPlayerCards] = useState(null);
     const [extraPoints, setExtraPoints] = useState(null);
 
+    // fetch when component mounts
     useEffect(() => {
         const fetchPlayerCards = async () => {
             try {
@@ -33,23 +39,28 @@ export default function PanelPlayers(props) {
 
         fetchData();
 
+        // fetch in 1 second intervals
         const intervalId = setInterval(fetchData, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
 
+    // calculate total resources from player card data
     const calculateTotalResources = (resources) => {
         return Object.values(resources).reduce((total, count) => total + count, 0);
     };
 
+    // calculate total developments from player card data
     const calculateTotalDevelopments = (developments) => {
         return Object.values(developments).reduce((total, count) => total + count, 0);
     };
 
+    // loading state if data is not yet fetched
     if (!playerCards || !extraPoints) {
         return <div>Loading...</div>;
     }
 
+    // define player order for styling
     const playerOrder = ['#f00', '#0f0', '#00f', '#ff0'];
 
     return (

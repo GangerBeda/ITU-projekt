@@ -1,6 +1,11 @@
+// author: Jaroslav Synek <xsynekj00>
+// project: Games Hub
+// game: Settlers of Catan
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// used to determine who should get resources
 const NEIGHBORS = {
     // MATERIAL: [SETTLERS],
     16: [13, 14, 23, 32, 31, 21],
@@ -24,23 +29,11 @@ const NEIGHBORS = {
     20: [58, 67, 76, 77, 69, 59],
 };
 
+// hex IDs that are not part of the board
 const INVALID_HEXES_MATERIALS = [0, 1, 2, 3, 4, 8, 9, 14, 15, 21, 22, 27, 28, 32, 33, 34, 35, 36];
 
-const getMaterialsForSettler = (settlerId) => {
-    const materials = [];
-    for (const materialId in NEIGHBORS) {
-        if (NEIGHBORS[materialId].includes(settlerId)) {
-            materials.push(Number(materialId));
-        }
-    }
-    return materials;
-};
-
-const getSettlersForMaterial = (materialId) => {
-    return NEIGHBORS[materialId] || [];
-};
-
 export default function PanelResources(props) {
+    // state hook
     const [playerCards, setPlayerCards] = useState({
         '#f00': {
             resource: {
@@ -108,6 +101,7 @@ export default function PanelResources(props) {
         },
     });
 
+    // fetch when different action is going to be taken or if different player is going to take such action
     useEffect(() => {
         const fetchPlayerData = async () => {
             try {
@@ -130,13 +124,14 @@ export default function PanelResources(props) {
         fetchPlayerData();
     }, [props.activePlayerColor, props.gameState]);
 
+    // check if player can buy dev card
     const checkResources = async () => {
         try {
             const response = await axios.get('http://localhost:3001/catan/player');
             const resources = response.data.playerCards[response.data.activePlayerColor].resource;
 
             if (resources.sheep < 1 || resources.wheat < 1 || resources.ore < 1) {
-                alert('Not enough resources, 1 sheep, 1 wheat & 1 ore required'); // TODO: change to something fancy
+                alert('Not enough resources, 1 sheep, 1 wheat & 1 ore required');
                 return true;
             }
 
@@ -174,6 +169,7 @@ export default function PanelResources(props) {
         return false;
     };
 
+    // when player tries to buy dev card
     const onBuy = (event) => {
         checkResources().then((ret) => {
             if (ret) {
@@ -326,6 +322,7 @@ export default function PanelResources(props) {
         });
     };
 
+    // roll dice and give resouces to players
     const onRoll = (event) => {
         event.preventDefault();
 
@@ -425,6 +422,7 @@ export default function PanelResources(props) {
         props.setGameState({ text: 'Playing', phase: props.gameState.phase });
     };
 
+    // set everything up so next player can play
     const endTurn = (event) => {
         event.preventDefault();
 
@@ -497,7 +495,7 @@ export default function PanelResources(props) {
                     style={{ border: '1px solid black', cursor: 'pointer' }}
                     onClick={() => {
                         if (playerCards[props.activePlayerColor].development.knight < 1) {
-                            alert('No knight development cards owned'); // TODO: change to something fancy
+                            alert('No knight development cards owned');
                             return true;
                         }
 
@@ -556,7 +554,7 @@ export default function PanelResources(props) {
                     style={{ border: '1px solid black', cursor: 'pointer' }}
                     onClick={() => {
                         if (playerCards[props.activePlayerColor].development.road_building < 1) {
-                            alert('No road building development cards owned'); // TODO: change to something fancy
+                            alert('No road building development cards owned');
                             return true;
                         }
 
@@ -606,7 +604,7 @@ export default function PanelResources(props) {
                     style={{ border: '1px solid black', cursor: 'pointer' }}
                     onClick={() => {
                         if (playerCards[props.activePlayerColor].development.year_of_plenty < 1) {
-                            alert('No year of plenty development cards owned'); // TODO: change to something fancy
+                            alert('No year of plenty development cards owned');
                             return true;
                         }
 
@@ -652,7 +650,7 @@ export default function PanelResources(props) {
                     style={{ border: '1px solid black', cursor: 'pointer' }}
                     onClick={() => {
                         if (playerCards[props.activePlayerColor].development.monopoly < 1) {
-                            alert('No monopoly development cards owned'); // TODO: change to something fancy
+                            alert('No monopoly development cards owned');
                             return true;
                         }
 
