@@ -1,0 +1,8 @@
+.tic-tac-toe-menu-button
+{
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 30px;
+    transition: background-color 0.3s;
+}

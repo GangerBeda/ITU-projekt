@@ -108,36 +108,48 @@ const TicTacToe = () => {
 
     return (
         <div className="tic-tac-toe">
-            <h1>{isClassicMode ? "Classic Tic-Tac-Toe" : "Ultimate Tic-Tac-Toe"}</h1>
-            <div className="buttons-board">
-                <HomeButton />
-                <RestartButton onClick={restartGame}/>
-                <ClassicTTTModeButton onClick={toggleGameMode} />
-                {!isClassicMode ? <BlindModeButton onClick={toggleBlindMode} /> : null}
-                <ResetScoreButton onClick={resetScore}/>
-                <InfoButton />
+            <div className="tic-tac-toe-header">
+                <span className={!isClassicMode ? 'active' : ''} onClick={() => toggleGameMode(false)}>Ultimate TicTacToe</span>
+                <span className={isClassicMode ? 'active' : ''} onClick={() => toggleGameMode(true)}>Classic TicTacToe</span>
             </div>
-            <h1>{!isClassicMode && blindMode ? "Blind Mode is On" : ""}</h1>
-            <p className="score-TicTacToe" > {isXNext ? "X" : "O"} Is on move</p>
-            {isClassicMode ? (
-                <ClassicBoard
-                    board={classicBoard}
-                    isXNext={classicIsXNext}
-                    onSquareClick={makeClassicMoveClick}
-                />
-            ) : (
-                <div>
-                <MainBoard
-                    subBoards={subBoards}
-                    mainBoard={mainBoard}
-                    onSquareClick={makeUltimateMoveClick}
-                    activeSubBoard={activeSubBoard}
-                    blindModeActive={blindMode}
-                />
+            <p className="" > {isXNext ? "X" : "O"} Is on move</p>
+            <div className="tic-tac-toe-main">
+                <div className="tic-tac-toe-filler"> </div>
+                <div className="tic-tac-toe-board">
+                    {isClassicMode ? (
+                        <ClassicBoard
+                            board={classicBoard}
+                            isXNext={classicIsXNext}
+                            onSquareClick={makeClassicMoveClick}
+                        />
+                    ) : (
+                        <div>
+                        <MainBoard
+                            subBoards={subBoards}
+                            mainBoard={mainBoard}
+                            onSquareClick={makeUltimateMoveClick}
+                            activeSubBoard={activeSubBoard}
+                            blindModeActive={blindMode}
+                        />
+                        </div>
+                    )}
                 </div>
-            )}
-            <p className="score-TicTacToe">Score</p>
-            <p className="score-TicTacToe">X: {score.X} ---------- O: {score.O}</p>
+                <div className="tic-tac-toe-menu">
+                    <div className="tic-tac-toe-menu-top">
+                        <HomeButton />
+                        <RestartButton onClick={restartGame} />
+                        {!isClassicMode ? <BlindModeButton onClick={toggleBlindMode} /> : null}
+                        <ResetScoreButton onClick={resetScore} />
+                        <InfoButton />
+                        <h1>{!isClassicMode && blindMode ? "Blind Mode is On" : ""}</h1>
+                    </div>
+                    <div className="tic-tac-toe-menu-separator"></div>
+                    <div className="tic-tac-toe-menu-bottom">
+                        <p className="score-TicTacToe">Score</p>
+                        <p className="score-TicTacToe">X: {score.X} ---------- O: {score.O}</p>
+                    </div>
+                </div>
+            </div>
             {ultimateWinner && !isClassicMode && <p className="winner">Winner: {ultimateWinner}</p>}
             {classicWinner && isClassicMode && <p className="winner">Winner: {classicWinner}</p>}
         </div>

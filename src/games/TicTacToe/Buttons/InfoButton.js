@@ -1,5 +1,5 @@
 import React from "react";
-import "./InfoButton.css";
+import "./MenuButtons.css";
 
 const InfoButton = () => {
     
@@ -8,7 +8,7 @@ const InfoButton = () => {
     };
 
     return (
-        <div className="info-button" onClick={handleClick}>
+        <div className="tic-tac-toe-menu-button" onClick={handleClick}>
             INFO
         </div>
     );
