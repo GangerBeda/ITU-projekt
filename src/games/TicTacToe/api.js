@@ -97,3 +97,21 @@ export const setScore = async (player, wins) => {
         console.error("Error setting score", error);
     }
 };
+
+export const whoIsNext = async (isClassicMode) => {
+    try {
+        const response = await fetch(`${BASE_URL}/is-next`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ isClassicMode }),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to get next player");
+        }
+        return response.json();
+    } catch (error) {
+        console.error("Error to get next player", error);
+    }
+};

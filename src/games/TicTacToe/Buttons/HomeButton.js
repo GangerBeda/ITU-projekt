@@ -11,8 +11,7 @@ const HomeButton = () => {
     };
 
     return (
-        <div className="tic-tac-toe-menu-button" onClick={handleClick}>
-            HOME
+        <div className="tic-tac-toe-menu-button-home" onClick={handleClick}>
         </div>
     );
 };

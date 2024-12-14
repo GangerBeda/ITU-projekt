@@ -785,7 +785,7 @@ app.post('/chess/exit', (req, res) => {
     res.json({ success: true }); // Confirm successful deletion
 });
 
-// ULTIMATE TIC TAC TOE
+// ======================================== TIC TAC TOE START ========================================
 
 const score = new Score();
 const gamesTTT = {
@@ -882,6 +882,7 @@ app.post('/tictactoe/ultimate-game/move', (req, res) => {
     }
 
     if (!game || !validateUltimateMove(game, subBoardIndex, cellIndex)) {
+        console.log('INVALID');
         return res.json({
             subBoards: game.subBoards,
             mainBoard: game.mainBoard,
@@ -895,6 +896,7 @@ app.post('/tictactoe/ultimate-game/move', (req, res) => {
     game.subBoards[subBoardIndex][cellIndex] = game.isXNext ? 'X' : 'O';
     game.isXNext = !game.isXNext;
 
+
     const subBoardWinner = calculateWinner(game.subBoards[subBoardIndex]);
     if (subBoardWinner) {
         game.mainBoard[subBoardIndex] = subBoardWinner;
@@ -902,6 +904,19 @@ app.post('/tictactoe/ultimate-game/move', (req, res) => {
 
     game.winner = calculateWinner(game.mainBoard);
     game.activeSubBoard = subBoardWinner ? null : cellIndex;
+
+    if (game.mainBoard[cellIndex] != null) {
+        console.log('ACTIVE SUB');
+        return res.json({
+            subBoards: game.subBoards,
+            mainBoard: game.mainBoard,
+            isXNext: game.isXNext,
+            activeSubBoard: null,
+            blindMode: game.blindMode,
+            winner: game.winner,
+        });
+    }
+
 
     if (game.winner) {
         score.scores[game.winner]++;
@@ -933,7 +948,7 @@ app.post('/tictactoe/set-score', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-
+// ======================================== TIC TAC TOE END ========================================
 // 4 in a Row
 const gameModel = new FourInARowModel(); // vytvoření instance modelu
 
