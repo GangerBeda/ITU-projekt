@@ -25,13 +25,6 @@ function FourInARowView({
     timerToggle,
     timerMessage }) {
 
-console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 2x bcs vyvojovy rezim
-console.log(gameState.turnColour);
-console.log(gameState.highlightedPlayer);
-console.log(gameState.remainingTime);
-console.log("thisok VIEW TimerOn",gameState.TimerOn);
-console.log("thisok VIEW TimerOnVypZap ",gameState.TimerOnVypZap);
-
     return (
         <div className="site">
 
@@ -108,7 +101,6 @@ console.log("thisok VIEW TimerOnVypZap ",gameState.TimerOnVypZap);
                             className="new-gameButton"
                             onClick={() => {
                                 resetGame();
-                                console.log("Tlačítko 'Záčít novou hru' bylo kliknuto!");
                             }}
                         >
                             Záčít novou hru

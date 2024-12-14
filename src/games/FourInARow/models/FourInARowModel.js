@@ -57,15 +57,63 @@ class FourInARowModel {
             TimerOnVypZap: this.TimerOnVypZap
         };
     }
+    makeMove(column) {
+        this.TimerOn = true;
+        // this.TimerOnVypZap = true; // --
+        this.gameStarted = true;
+        if (this.winner || this.full) {
+            return;
+        }
+    
+        for (let row = this.board.length - 1; row >= 0; row--) {
+            if (!this.board[row][column]) {
+                this.board[row][column] = this.currentPlayer;
+                this.movesHistory.push({ row, column, player: this.currentPlayer });
 
+                if (this.checkWinner(row, column, this.currentPlayer)) {
+                    this.winner = this.currentPlayer;
+                    this.highlightedPlayer = this.winner === 'red' ? 'Červený' : 'Žlutý';
+                    this.message = `hráč vyhrál! `;
+                    this.turnColour = `${this.winner}-turn`; 
+                    this.stopTimer(); // Zastavte časovač při výhře
+                } else if (this.checkFull()) {
+                    this.full = true;  // Pokud je pole plné, nastavíme, že je hra ukončena
+                    this.message = "Herní pole je plné, remíza!";
+                    this.turnColour = ''; // Žádný hráč už není na tahu
+                    this.highlightedPlayer = ''; // Žádný hráč
+                    this.stopTimer(); // 
+                } else {
 
+                    this.remainingTime = this.timeLimit;  // Reset času
+
+                    this.currentPlayer = this.currentPlayer === 'red' ? 'yellow' : 'red';
+                    this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
+                    this.message = `hráč je na tahu.`;
+                    this.turnColour = `${this.currentPlayer}-turn`;
+
+                    if(this.TimerOn === true){
+                        this.startTimer(); // Spusť časovač pro dalšího hráče
+                        this.TimerOn = true;
+                    } else{
+                        this.TimerOn = false;
+                    }
+                }
+                
+                return true;  // Vraťte `true`, pokud byl tah úspěšný
+            }
+        }
+    
+        return false;  // Pokud není možné provést tah, vrátí `false`
+    }
+    
         timerToggle(){
-            console.log("thisok.  1111 TimerOnVypZap pred ", this.TimerOnVypZap);
-            console.log("thisok.  2222TimerOn: pred podminkou", this.TimerOn);
+            console.log("\n");
+            console.log("Timer Toggled");
 
+            this.stopTimer();
             // Toggle the timer state
-            this.TimerOn = !this.TimerOn;
-            this.TimerOnVypZap = this.TimerOn;
+            // this.TimerOn = !this.TimerOn; //-
+            this.TimerOnVypZap = !this.TimerOnVypZap;
         
             // If timer is being turned on, reset the game state if needed
             if (this.TimerOn) {
@@ -102,15 +150,17 @@ class FourInARowModel {
         this.gameStarted = false;
     }
     //resetuje/pusti timer
-    startTimer() {
-        if (!this.gameStarted || this.timer){
+    startTimer() { // ignor, kdyz hra nezacala nebo kdyz uz se timer uz pustil nebo timer neni pusteny jinak se pust
+        if (!this.gameStarted || this.timer || !this.TimerOnVypZap ){
+            console.log("\n");
             console.log("Časovač nebyl spuštěn - podmínka nesplněna.");
-            console.log("Stav hry:", { gameStarted: this.gameStarted, timer: this.timer });
+            console.log("true, null, true" );
+            console.log("Stav hry:", { gameStarted: this.gameStarted, timer: this.timer, TimerOnVypZap: this.TimerOnVypZap });
             return;
         }
-
-
+        console.log("\n");
         console.log("Časovač spuštěn!");
+        console.log("Stav hry:", { gameStarted: this.gameStarted, timer: this.timer, TimerOnVypZap: this.TimerOnVypZap });
         console.log("Počáteční čas:", this.timeLimit);
 
         this.remainingTime = this.timeLimit; // Nastavte zbývající čas na časový limit
@@ -136,6 +186,7 @@ class FourInARowModel {
     //stopne timer
     stopTimer() {
         console.log("Pokus o zastavení časovače, timer:", this.timer);
+
         if (this.timer) {
             console.log("Časovač zastaven.");
             clearInterval(this.timer);
@@ -145,59 +196,12 @@ class FourInARowModel {
             console.log("Časovač nebyl aktivní, není co zastavit.");
         }
     }
-    makeMove(column) {
-        if (this.winner || this.full) {
-            return;
-        }
-    
-        for (let row = this.board.length - 1; row >= 0; row--) {
-            if (!this.board[row][column]) {
-                this.board[row][column] = this.currentPlayer;
-                this.movesHistory.push({ row, column, player: this.currentPlayer });
-                this.gameStarted = true;
-
-    
-                if (this.checkWinner(row, column, this.currentPlayer)) {
-                    this.winner = this.currentPlayer;
-                    this.highlightedPlayer = this.winner === 'red' ? 'Červený' : 'Žlutý';
-                    this.message = `hráč vyhrál! `;
-                    this.turnColour = `${this.winner}-turn`; 
-                    this.stopTimer(); // Zastavte časovač při výhře
-                } else if (this.checkFull()) {
-                    this.full = true;  // Pokud je pole plné, nastavíme, že je hra ukončena
-                    this.message = "Herní pole je plné, remíza!";
-                    this.turnColour = ''; // Žádný hráč už není na tahu
-                    this.highlightedPlayer = ''; // Žádný hráč
-                    this.stopTimer(); // 
-                } else {
-
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    this.remainingTime = this.timeLimit;  // Reset času
-
-                    this.currentPlayer = this.currentPlayer === 'red' ? 'yellow' : 'red';
-                    this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
-                    this.message = `hráč je na tahu.`;
-                    this.turnColour = `${this.currentPlayer}-turn`;
-
-                    if(this.TimerOn === true){
-                        this.startTimer(); // Spusť časovač pro dalšího hráče
-                        this.TimerOn = true;
-                    } else{
-                        this.TimerOn = false;
-                    }
-                }
-                
-                return true;  // Vraťte `true`, pokud byl tah úspěšný
-            }
-        }
-    
-        return false;  // Pokud není možné provést tah, vrátí `false`
-    }
     
 
     undo() {
         if (this.movesHistory.length === 0) return;
-    
+        
+        this.stopTimer(); // Zastavení časovače
         console.log("this.TimerOn Před undo - TimerOn:", this.TimerOn);
     
         this.remainingTime = this.timeLimit;  
@@ -226,10 +230,18 @@ class FourInARowModel {
 
     }
     setTimeLimit(timeLimit) {
+        this.TimerOnVypZap = true;
         this.timeLimit = timeLimit;
         this.remainingTime = this.timeLimit; // Aktualizace zbývajícího času
-        console.log("Časový limit nastaven na serveru:", this.timeLimit);
-        console.log("Časový limit nastaven:", this.timeLimit);
+        console.log("NA SERVERU Časový limit nastaven:", this.timeLimit);
+
+        // Pokud hra běží a časovač není aktivní, spusť časovač
+        if (this.gameStarted && !this.timer) {
+            console.log("Hra již začala, spouštím časovač automaticky.");
+            this.TimerOn = true;  // Zapnutí časovače
+            
+            this.startTimer();    // Spuštění časovače
+        }
     }
 
     checkFull() {

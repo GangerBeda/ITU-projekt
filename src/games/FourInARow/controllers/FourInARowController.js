@@ -14,7 +14,6 @@ function FourInARowController() {
     const navigate = useNavigate(); // Inicializace navigace pomocí React Routeru home
     
     useEffect(() => {
-        console.log("useEffect pouzito, NACTENI/REFRESH")
         const fetchState = async () => {
             try {
                 // Načítání aktuálního stavu
@@ -179,8 +178,8 @@ const makeMove = async (column) => {
     };
     
     const getTimerMessage = () => {
-        if (!gameState.TimerOn) return null;
-        if (!gameState.gameStarted) return 'Čas se spustí po prvním tahu.';
+        if (!gameState.TimerOnVypZap) return null;
+        if (!gameState.gameStarted) return 'Čas se spustí po tahu.';
         
         if (gameState.remainingTime > 0) {
             return `Zbývající čas na tah: ${gameState.remainingTime} sekund`;
