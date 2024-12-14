@@ -12,7 +12,7 @@ function FourInARowController() {
     const [gameState, setGameState] = useState(model.getState());
     const [showSettings, setShowSettings] = useState(false); // Inicializace stavu pro zobrazení nastavení
     const navigate = useNavigate(); // Inicializace navigace pomocí React Routeru home
-
+    
     useEffect(() => {
         console.log("useEffect pouzito, NACTENI/REFRESH")
         const fetchState = async () => {
@@ -30,8 +30,20 @@ function FourInARowController() {
             }
         };
 
-        fetchState(); // načítání stavu
-    }, []);         // jen pri spusteni
+         // Spuštění intervalu pro pravidelné aktualizace časovače
+         const interval = setInterval(() => {
+            setGameState((prevState) => ({
+                ...prevState,
+                remainingTime: prevState.TimerOn && prevState.gameStarted
+                    ? Math.max(prevState.remainingTime - 1, 0)
+                    : prevState.remainingTime
+            }));
+        }, 1000);
+
+        fetchState(); // načítání stavu pri spusteni
+        // Vyčištění při odchodu z komponenty
+        return () => clearInterval(interval);
+}, []);
     
     const startNewGame = async () => {
         console.log("Starting new game")
@@ -68,26 +80,30 @@ function FourInARowController() {
     };
 
 
-    const makeMove = async (column) => {
-        try {
-            const response = await fetch('http://localhost:3001/fourinarow/makeMove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ column }),
-            });
-            if (response.ok) {
-                const updatedState = await response.json();
-                setGameState(updatedState); // Aktualizace stavu hry z odpovědi serveru
-            } else {
-
-                console.error('Move failed:', await response.json());
-            }
-        } catch (error) {
-            console.error('Error making move:', error);
+const makeMove = async (column) => {
+    try {
+        const response = await fetch('http://localhost:3001/fourinarow/makeMove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ column }),
+        });
+        if (response.ok) {
+            const updatedState = await response.json();
+            setGameState((prevState) => ({
+                ...updatedState,
+                TimerOn: prevState.TimerOn, // Udržení lokálního TimerOn
+            }));
+        } else {
+            const error = await response.json();
+            console.error('Move failed:', error);
         }
-    };
+    } catch (error) {
+        console.error('Error making move:', error);
+    }
+};
+
     const undo = async () => {
         try {
             const response = await fetch('http://localhost:3001/fourinarow/undo', {
@@ -124,8 +140,12 @@ function FourInARowController() {
 
                 if (response.ok) {
                     const updatedState = await response.json();
-                    setGameState(updatedState); // Aktualizuje stav hry na základě odpovědi serveru
-                    console.log("Časový limit nastaven na serveru:", updatedState.timeLimit); // Ověřte, že updatedState.timeLimit není undefined
+                    setGameState({
+                        ...updatedState,
+                        remainingTime: parsedTime, // Okamžitě nastaví zbývající čas
+                        TimerOn: true,  // Přidáno zapnutí časovače
+                    });
+                    console.log("Časový limit nastaven na serveru:", updatedState.timeLimit);
                 } else {
                     console.error("Chyba při nastavení časového limitu na serveru");
                 }
@@ -141,7 +161,37 @@ function FourInARowController() {
         navigate('/'); // Přesměruje na hlavní stránku (HomePage)
         console.log("Returning to main menu");
     };
-
+    const timerToggle = () => {
+        setGameState((prevState) => ({
+            ...prevState,
+            TimerOn: !prevState.TimerOn,
+            // Při vypnutí časovače resetujte čas na původní limit
+            // Pokud se časovač zapíná (předtím byl vypnutý), resetuje zbývající čas na časový limit
+            // Pokud se časovač vypíná, zachová aktuální zbývající čas
+            remainingTime: !prevState.TimerOn ? prevState.timeLimit : prevState.remainingTime
+        }));
+    };
+    //        this.turnColour = `${this.currentPlayer}-turn`;
+    //          this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
+    
+    const getTimerMessage = () => {
+        if (!gameState.TimerOn) return null;
+        if (!gameState.gameStarted) return 'Čas se spustí po prvním tahu.';
+        
+        if (gameState.remainingTime > 0) {
+            return `Zbývající čas na tah: ${gameState.remainingTime} sekund`;
+        } else {
+            //gameState.turnColour === 'red' ? 'yellow' : 'red';
+            const player = gameState.currentPlayer === 'red' ? 'yellow' : 'red'
+            gameState.turnColour = `${player}-turn`;
+            gameState.highlightedPlayer = player === 'red' ?  'Červený' : 'Žlutý' 
+            gameState.message = `hráč vyhrál!`;
+            
+            return "Čas vypršel";
+        }
+    };
+    
+    
 
     // Předání dat a akcí do view
     return (
@@ -157,6 +207,8 @@ function FourInARowController() {
                 toggleSettings={toggleSettings}
                 showNewGameButton={gameState.winner || gameState.full}
                 goToMainMenu={goToMainMenu}
+                timerToggle={timerToggle}
+                timerMessage={getTimerMessage()}
             />
                 {showSettings && <SettingsPopup onClose={toggleSettings} />}
         </div>

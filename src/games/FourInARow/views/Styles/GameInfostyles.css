@@ -1,8 +1,21 @@
 /* Game info styles */
-.game-Info {
-    font-size: 2vw;
-    text-align: left;
-    margin-left: 1vw;
+
+.game-info-container {
+    display: flex;
+    width: 100%;
+    height: 5vh; /* Rezervovaná výška */
+    display: flex;
+    justify-content: left;
+    align-items: flex-start;
+    gap: 1rem; /* Přidá mezeru mezi deskou a textem */
+}
+.game-info {
+    width: 100%;; /* Pevná šířka pro vyhrazení prostoru */
+    font-size: 1rem;
+    text-align: center;
+    transform-origin: left;
+    white-space: nowrap; /* Zabrání zalamování textu */
+    overflow: hidden; /* Zabrání přetékání textu */
 }
 
 .player-colour.red-turn {

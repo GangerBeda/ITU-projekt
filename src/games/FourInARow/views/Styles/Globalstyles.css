@@ -11,6 +11,6 @@
 .mid {
     display: flex;
     align-items: center;
-    flex-direction: row;
-    margin-bottom: 20px;
+    flex-direction: column; /* Zarovná prvky vertikálně */
+    gap: 1rem; /* Mezera mezi Board a game-info-container */
 }

@@ -60,4 +60,11 @@
     cursor: pointer;
 }
 
+.toggleTimer {
+    width: 4vw; /* Šířka tlačítka */
+    height: 2rem; /* Výška tlačítka */
+
+
+}
+
 
