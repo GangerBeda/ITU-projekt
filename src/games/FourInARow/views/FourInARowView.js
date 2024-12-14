@@ -1,5 +1,15 @@
 import React from 'react';
-import './FourInARowView.css';
+
+import './Styles/Globalstyles.css';
+import './Styles/Boardstyles.css';
+import './Styles/Buttonstyles.css';
+import './Styles/GameInfostyles.css';
+import './Styles/Timer.css';
+//TODO TIMR VLOGU I KDYZ UZ JE OZNAMENY VYSLEDEK
+//TODO lepsi timer setting
+//TODOtoggle button hezci
+//TODO settings
+//horni iknoy pr ipulce
 
 function FourInARowView({
     gameState,
@@ -11,13 +21,45 @@ function FourInARowView({
     setTimeLimit,
     toggleSettings,
     showNewGameButton,
-    goToMainMenu }) {
+    goToMainMenu,
+    timerToggle,
+    timerMessage }) {
 
 console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 2x bcs vyvojovy rezim
-
+console.log(gameState.turnColour);
+console.log(gameState.highlightedPlayer);
+console.log(gameState.remainingTime);
 
     return (
         <div className="site">
+
+                {/* home button */}
+                <button className="button goToMainMenu" onClick={goToMainMenu}></button>
+
+                {/* Kontejner pro tlačítka pro časovač, nastavení */}
+                <div className="buttons-container-top">
+
+                        <button className="button timerButton" onClick={setTimeLimit}></button>
+
+                        <button className="button settings" onClick={toggleSettings}></button>
+                                        {/* timer toggle */}
+                    {timerToggle &&(
+                        <button className="toggleTimer" onClick={timerToggle}>timerToggle</button>
+                    )}
+                </div>
+
+                
+
+                <div className="timer-container">
+                    <div className={`timer ${gameState.TimerOn ? 'timer-visible' : ''}`}>
+                        {gameState.TimerOn && timerMessage}
+                    </div>
+                </div>
+
+
+               
+            <div className="mid">
+
                     {/* hraci pole */}
                 <div className="Board">
                     {gameState.board.map((row, rowIndex) => (
@@ -33,29 +75,45 @@ console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 
                             ))}
                         </div>
                     ))}
+
+
+                         {/* Kontejner pro tlačítka desky */}
+                        <div className="buttons-container-board">
+                            <button className="button resetButton" onClick={resetGame}></button>
+                            <button className="button undoButton" onClick={undo}></button>
+
+                        </div>
                 </div>
 
-                {/* Kontejner pro tlačítka */}
-                <div className="buttons-container">
-                    <button className="button resetButton" onClick={resetGame}></button>
-                    <button className="button undoButton" onClick={undo}></button>
-                    <button className="button timerButton" onClick={setTimeLimit}></button>
-                    <button className="button settings" onClick={toggleSettings}></button>
-                    <button className="button goToMainMenu" onClick={goToMainMenu}></button>
+
+                {/* Informace o hře */}
+                <div className="game-info-container">
+                    <span className="game-info">
+                        <span className={`player-colour ${gameState.turnColour}`}>
+                            {gameState.highlightedPlayer}
+                        </span>
+                        {` ${gameState.message}`}
+                    </span>
                 </div>
-            <div className="gameInfo">
-                <p>{`${gameState.message}`}</p>
-                <p>Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}</p>
+
+
+
             </div>
+                {/* Kontejner pro tlačítko Záčít novou hru */}
+                <div className="new-game-container">
+                    {showNewGameButton && (
+                        <button
+                            className="new-gameButton"
+                            onClick={() => {
+                                resetGame();
+                                console.log("Tlačítko 'Záčít novou hru' bylo kliknuto!");
+                            }}
+                        >
+                            Záčít novou hru
+                        </button>
+                    )}
+                </div>
             
-            {showNewGameButton && (
-            <button className="button1" onClick={() => {
-                        resetGame();
-                        console.log("Tlačítko 'Nová hra' bylo kliknuto!");
-                    }}
-                >Nová hra
-            </button>
-            )}
 
         </div>
     );

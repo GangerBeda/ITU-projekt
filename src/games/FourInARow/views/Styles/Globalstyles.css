@@ -1,0 +1,16 @@
+/* Global styles */
+.site {
+    background-color: rgb(93, 86, 153);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.mid {
+    display: flex;
+    align-items: center;
+    flex-direction: column; /* Zarovná prvky vertikálně */
+    gap: 1rem; /* Mezera mezi Board a game-info-container */
+}
