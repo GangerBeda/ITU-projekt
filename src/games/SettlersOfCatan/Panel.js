@@ -8,6 +8,7 @@ export default function Panel(props) {
     const [panel, setPanel] = useState('resources');
     const [playerCards, setPlayerCards] = useState(null);
     const [hexColors, setHexColors] = useState(null);
+    const [extraPoints, setExtraPoints] = useState(null);
 
     useEffect(() => {
         const fetchPlayerCards = async () => {
@@ -28,9 +29,19 @@ export default function Panel(props) {
             }
         };
 
+        const fetchExtraPoints = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/extraPoints');
+                setExtraPoints(response.data);
+            } catch (error) {
+                console.error('Error fetching extra points:', error);
+            }
+        };
+
         const fetchData = async () => {
             await fetchPlayerCards();
             await fetchHexColors();
+            await fetchExtraPoints();
         };
 
         fetchData();
@@ -41,7 +52,7 @@ export default function Panel(props) {
     }, []);
 
     const calculateTotalPoints = (color) => {
-        if (hexColors === null || playerCards === null) {
+        if (hexColors === null || playerCards === null || extraPoints === null) {
             return 0;
         }
         const settlerCount = Object.entries(hexColors)
@@ -50,7 +61,17 @@ export default function Panel(props) {
 
         const vpCount = playerCards[color]?.development?.victory_point || 0;
 
-        return settlerCount + vpCount;
+        let sum = settlerCount + vpCount;
+
+        if (extraPoints?.roads.most_roads === color) {
+            sum += 2;
+        }
+
+        if (extraPoints?.army.largest_army === color) {
+            sum += 2;
+        }
+
+        return sum;
     };
 
     const playerOrder = ['#f00', '#0f0', '#00f', '#ff0'];

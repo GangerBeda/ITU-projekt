@@ -5,6 +5,7 @@ import axios from 'axios';
 
 export default function PanelPlayers(props) {
     const [playerCards, setPlayerCards] = useState(null);
+    const [extraPoints, setExtraPoints] = useState(null);
 
     useEffect(() => {
         const fetchPlayerCards = async () => {
@@ -16,7 +17,25 @@ export default function PanelPlayers(props) {
             }
         };
 
-        fetchPlayerCards();
+        const fetchExtraPoints = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/catan/extraPoints');
+                setExtraPoints(response.data);
+            } catch (error) {
+                console.error('Error fetching extra points:', error);
+            }
+        };
+
+        const fetchData = async () => {
+            await fetchPlayerCards();
+            await fetchExtraPoints();
+        };
+
+        fetchData();
+
+        const intervalId = setInterval(fetchData, 1000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     const calculateTotalResources = (resources) => {
@@ -27,7 +46,7 @@ export default function PanelPlayers(props) {
         return Object.values(developments).reduce((total, count) => total + count, 0);
     };
 
-    if (!playerCards) {
+    if (!playerCards || !extraPoints) {
         return <div>Loading...</div>;
     }
 
@@ -65,34 +84,36 @@ export default function PanelPlayers(props) {
             <div className='separator' />
             <p>Largest Army</p>
             <div className='card-container'>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
+                {playerOrder.map((color) => (
+                    <div key={color} className='card'>
+                        <div
+                            className='circle'
+                            style={{
+                                backgroundColor: extraPoints.army.largest_army === color ? color : '#ccc',
+                                color: '#fff',
+                            }}
+                        >
+                            {extraPoints.army[color]}
+                        </div>
+                    </div>
+                ))}
             </div>
             <div className='separator' />
             <p>Most Roads</p>
             <div className='card-container'>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
-                <div className='card'>
-                    <div className='circle'>0</div>
-                </div>
+                {playerOrder.map((color) => (
+                    <div key={color} className='card'>
+                        <div
+                            className='circle'
+                            style={{
+                                backgroundColor: extraPoints.roads.most_roads === color ? color : '#ccc',
+                                color: '#fff',
+                            }}
+                        >
+                            {extraPoints.roads[color]}
+                        </div>
+                    </div>
+                ))}
             </div>
             <div className='separator' />
         </>
