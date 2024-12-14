@@ -19,7 +19,8 @@ function FourInARowView({
     showNewGameButton,
     goToMainMenu,
     timerToggle,
-    timerMessage
+    timerMessage,
+    toggleTimeLimitPopup
 }) {
     return (
         <div className="site">
@@ -30,7 +31,8 @@ function FourInARowView({
             {/* Grid pro Timer Toggle, Settings */}
             <div className="buttons-container-grid">
                 {/* Timer Button */}
-                <button className="button timerButton" onClick={setTimeLimit}></button>
+                <button className="button timerButton" onClick={toggleTimeLimitPopup}></button>
+
 
                 {/* Toggle */}
                 <div className="timer-toggle-container">

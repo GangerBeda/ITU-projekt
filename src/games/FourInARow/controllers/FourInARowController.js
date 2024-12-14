@@ -4,6 +4,10 @@ import FourInARowView from '../views/FourInARowView';
 import SettingsPopup from '../views/Buttons/SettingsPopup';
 import { useNavigate } from 'react-router-dom'; //home
 
+import TimeLimitPopup from '../views/Buttons/TimeLimitPopup';
+
+
+
 
 const model = new FourInARowModel();
 
@@ -12,7 +16,14 @@ function FourInARowController() {
     const [gameState, setGameState] = useState(model.getState());
     const [showSettings, setShowSettings] = useState(false); // Inicializace stavu pro zobrazení nastavení
     const navigate = useNavigate(); // Inicializace navigace pomocí React Routeru home
+    const [showTimeLimitPopup, setShowTimeLimitPopup] = useState(false);
+
+    const toggleTimeLimitPopup = () => {
+        setShowTimeLimitPopup(!showTimeLimitPopup);
+    };
     
+    
+
     useEffect(() => {
         const fetchState = async () => {
             try {
@@ -122,39 +133,34 @@ const makeMove = async (column) => {
         setShowSettings(!showSettings); // inicializace na false, toggle
     };
 
-    const setTimeLimit = async () => {
-        const time = prompt("Zadejte časový limit na tah (v sekundách):"); //TODO server vypisuje obsah pouze po zadani cassu checknout
-        if (time !== null && !isNaN(time) && Number(time) > 0) {
-            const parsedTime = Number(time);
-            console.log("Nastavený čas na klientovi:", parsedTime);
-
-            try {
-                const response = await fetch('http://localhost:3001/fourinarow/set-time', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ timeLimit: parsedTime }),
+    const setTimeLimit = async (parsedTime) => {
+        console.log("Nastavený čas na klientovi:", parsedTime);
+    
+        try {
+            const response = await fetch('http://localhost:3001/fourinarow/set-time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ timeLimit: parsedTime }),
+            });
+    
+            if (response.ok) {
+                const updatedState = await response.json();
+                setGameState({
+                    ...updatedState,
+                    remainingTime: parsedTime, 
+                    TimerOn: true,  
                 });
-
-                if (response.ok) {
-                    const updatedState = await response.json();
-                    setGameState({
-                        ...updatedState,
-                        remainingTime: parsedTime, // Okamžitě nastaví zbývající čas
-                        TimerOn: true,  // Přidáno zapnutí časovače
-                    });
-                    console.log("Časový limit nastaven na serveru:", updatedState.timeLimit);
-                } else {
-                    console.error("Chyba při nastavení časového limitu na serveru");
-                }
-            } catch (error) {
-                console.error("Chyba při připojení k serveru:", error);
+                console.log("Časový limit nastaven na serveru:", updatedState.timeLimit);
+            } else {
+                console.error("Chyba při nastavení časového limitu na serveru");
             }
-        } else {
-            console.log("Neplatný vstup nebo zrušeno");
+        } catch (error) {
+            console.error("Chyba při připojení k serveru:", error);
         }
     };
+    
 
     const goToMainMenu = () => {
         navigate('/'); // Přesměruje na hlavní stránku (HomePage)
@@ -209,12 +215,21 @@ const makeMove = async (column) => {
                 undo={undo}
                 setTimeLimit={setTimeLimit} // Správný název předání funkce
                 toggleSettings={toggleSettings}
+                toggleTimeLimitPopup={toggleTimeLimitPopup}
                 showNewGameButton={gameState.winner || gameState.full || gameState.remainingTime <= 0}
                 goToMainMenu={goToMainMenu}
                 timerToggle={timerToggle}
                 timerMessage={getTimerMessage()}
+
             />
                 {showSettings && <SettingsPopup onClose={toggleSettings} />}
+                {showTimeLimitPopup && (
+                <TimeLimitPopup
+                    onClose={toggleTimeLimitPopup}
+                    onSetTimeLimit={setTimeLimit}
+                />
+)}
+
         </div>
     );
 
