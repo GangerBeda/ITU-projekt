@@ -14,6 +14,7 @@ class FourInARowModel {
         this.remainingTime = 10; // Zbývající čas na aktuální tah
         this.timeLimit = 30; // Inicializace časového limitu (30 sekund na tah)
         this.TimerOn = false;
+        this.TimerOnVypZap = false;
     }
     // Zde je metoda, která přepíná hráče při vypršení času
     handleTimeOut() {
@@ -51,18 +52,36 @@ class FourInARowModel {
             gameStarted: this.gameStarted,
             remainingTime: this.remainingTime,
             timeLimit: this.timeLimit,
+            
             TimerOn: this.TimerOn,
+            TimerOnVypZap: this.TimerOnVypZap
         };
     }
-    timerToggle(){
-        this.TimerOn = !this.TimerOn;
-        if (!this.TimerOn) {
-            // Při vypnutí časovače
-            this.stopTimer();
-            this.remainingTime = this.timeLimit; // Resetování zbývajícího času
-            this.gameStarted = false; // Zastavení běhu hry
+
+
+        timerToggle(){
+            console.log("thisok.  1111 TimerOnVypZap pred ", this.TimerOnVypZap);
+            console.log("thisok.  2222TimerOn: pred podminkou", this.TimerOn);
+
+            // Toggle the timer state
+            this.TimerOn = !this.TimerOn;
+            this.TimerOnVypZap = this.TimerOn;
+        
+            // If timer is being turned on, reset the game state if needed
+            if (this.TimerOn) {
+                this.remainingTime = this.timeLimit;
+                
+                // Start timer if game has started
+                if (this.gameStarted) {
+                    this.startTimer();
+                }
+            } else {
+                // Stop the timer when toggling off
+                this.stopTimer();
+            }
+            console.log("TimerOn:", this.TimerOn);
+            console.log("TimerOnVypZap:", this.TimerOnVypZap);
         }
-    }
     
 
     resetGame() {
@@ -80,7 +99,6 @@ class FourInARowModel {
 
         // Reset příznaků hry
         this.stopTimer(); // Zastavení časovače
-        this.remainingTime = this.timeLimit;  // Resetuj čas
         this.gameStarted = false;
     }
     //resetuje/pusti timer
@@ -161,8 +179,12 @@ class FourInARowModel {
                     this.message = `hráč je na tahu.`;
                     this.turnColour = `${this.currentPlayer}-turn`;
 
-                    this.TimerOn = true;
-                    this.startTimer(); // Spusť časovač pro dalšího hráče
+                    if(this.TimerOn === true){
+                        this.startTimer(); // Spusť časovač pro dalšího hráče
+                        this.TimerOn = true;
+                    } else{
+                        this.TimerOn = false;
+                    }
                 }
                 
                 return true;  // Vraťte `true`, pokud byl tah úspěšný
@@ -174,24 +196,26 @@ class FourInARowModel {
     
 
     undo() {
-        if (this.movesHistory.length === 0) return; // Pokud není žádný tah k vrácení
-
-
-        this.remainingTime = this.timeLimit;  // Reset času
-        const lastMove = this.movesHistory.pop(); // Odstraňte poslední tah z historie
-        this.board[lastMove.row][lastMove.column] = null; // Odstraňte žeton z herního pole
+        if (this.movesHistory.length === 0) return;
+    
+        console.log("this.TimerOn Před undo - TimerOn:", this.TimerOn);
+    
+        this.remainingTime = this.timeLimit;  
+        const lastMove = this.movesHistory.pop(); 
+        this.board[lastMove.row][lastMove.column] = null; 
         this.currentPlayer = lastMove.player;
         this.winner = null;
         this.full = false;
         this.message = `hráč je na tahu.`;
-
+    
         this.turnColour = `${this.currentPlayer}-turn`;
         this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
-        this.TimerOn = true;
-        this.startTimer();
-        
-
-        
+    
+        if(this.TimerOn === true){
+            this.startTimer();
+        }
+    
+        console.log("this.TimerOn Po undo - TimerOn:", this.TimerOn);
     }
 
     settings(options) {
@@ -203,6 +227,7 @@ class FourInARowModel {
     }
     setTimeLimit(timeLimit) {
         this.timeLimit = timeLimit;
+        this.remainingTime = this.timeLimit; // Aktualizace zbývajícího času
         console.log("Časový limit nastaven na serveru:", this.timeLimit);
         console.log("Časový limit nastaven:", this.timeLimit);
     }

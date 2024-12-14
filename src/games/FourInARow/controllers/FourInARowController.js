@@ -161,18 +161,22 @@ const makeMove = async (column) => {
         navigate('/'); // Přesměruje na hlavní stránku (HomePage)
         console.log("Returning to main menu");
     };
-    const timerToggle = () => {
-        setGameState((prevState) => ({
-            ...prevState,
-            TimerOn: !prevState.TimerOn,
-            // Při vypnutí časovače resetujte čas na původní limit
-            // Pokud se časovač zapíná (předtím byl vypnutý), resetuje zbývající čas na časový limit
-            // Pokud se časovač vypíná, zachová aktuální zbývající čas
-            remainingTime: !prevState.TimerOn ? prevState.timeLimit : prevState.remainingTime
-        }));
+
+    const timerToggle = async () => {
+        try {
+            const response = await fetch('http://localhost:3001/fourinarow/timer-toggle', {
+                method: 'POST',
+            });
+            if (response.ok) {
+                const updatedState = await response.json();
+                setGameState(updatedState);
+            } else {
+                console.error('Failed to toggle timer');
+            }
+        } catch (error) {
+            console.error('Error toggling timer:', error);
+        }
     };
-    //        this.turnColour = `${this.currentPlayer}-turn`;
-    //          this.highlightedPlayer = this.currentPlayer === 'red' ? 'Červený' : 'Žlutý';
     
     const getTimerMessage = () => {
         if (!gameState.TimerOn) return null;

@@ -796,6 +796,11 @@ app.post('/fourinarow/set-time', (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+//ADDED TO 
+app.post('/fourinarow/timer-toggle', (req, res) => {
+    gameModel.timerToggle(); // Call the method on the server-side model
+    res.status(200).json(gameModel.getState());
+});
 
 // ======================================== BLACKJACK START ========================================
 

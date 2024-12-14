@@ -29,6 +29,8 @@ console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 
 console.log(gameState.turnColour);
 console.log(gameState.highlightedPlayer);
 console.log(gameState.remainingTime);
+console.log("thisok VIEW TimerOn",gameState.TimerOn);
+console.log("thisok VIEW TimerOnVypZap ",gameState.TimerOnVypZap);
 
     return (
         <div className="site">
@@ -43,9 +45,9 @@ console.log(gameState.remainingTime);
 
                         <button className="button settings" onClick={toggleSettings}></button>
                                         {/* timer toggle */}
-                    {timerToggle &&(
+                    
                         <button className="toggleTimer" onClick={timerToggle}>timerToggle</button>
-                    )}
+                    
                 </div>
 
                 
