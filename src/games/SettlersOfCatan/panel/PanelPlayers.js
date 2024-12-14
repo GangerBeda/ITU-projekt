@@ -36,7 +36,14 @@ export default function PanelPlayers(props) {
     return (
         <>
             <div className='icon-container'>
-                <FontAwesomeIcon icon={faTimes} className='x-icon' onClick={() => props.setPanel('resources')} />
+                <FontAwesomeIcon
+                    icon={faTimes}
+                    className='x-icon'
+                    style={{
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => props.setPanel('resources')}
+                />
             </div>
             <p>Total Cards</p>
             <div className='card-container'>
@@ -50,7 +57,7 @@ export default function PanelPlayers(props) {
             <p>Development Cards</p>
             <div className='card-container'>
                 {playerOrder.map((color) => (
-                    <div key={color} className='card'>
+                    <div key={color} className='card' style={{ backgroundColor: '#333', color: '#fff' }}>
                         {calculateTotalDevelopments(playerCards[color].development)}
                     </div>
                 ))}

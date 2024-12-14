@@ -42,7 +42,7 @@ export default function Catan() {
 
     return (
         <>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
                 <Board activePlayerColor={activePlayerColor} roll1={roll1} roll2={roll2} gameState={gameState} setGameState={setGameState} />
 
                 <Panel

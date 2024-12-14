@@ -461,17 +461,34 @@ export default function PanelResources(props) {
                 ))}
             </div>
             <div className='card-container'>
-                <div className='card'>{playerCards[props.activePlayerColor].development.knight}</div>
-                <div className='card'>{playerCards[props.activePlayerColor].development.road_building}</div>
-                <div className='card'>{playerCards[props.activePlayerColor].development.year_of_plenty}</div>
-                <div className='card'>{playerCards[props.activePlayerColor].development.monopoly}</div>
-                <div className='card'>{playerCards[props.activePlayerColor].development.victory_point}</div>
+                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                    <p style={{ fontSize: 'small' }}>knight</p>
+                    {playerCards[props.activePlayerColor].development.knight}
+                </div>
+                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                    <p style={{ fontSize: 'small' }}>road_building</p>
+                    {playerCards[props.activePlayerColor].development.road_building}
+                </div>
+                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                    <p style={{ fontSize: 'small' }}>year_of_plenty</p>
+                    {playerCards[props.activePlayerColor].development.year_of_plenty}
+                </div>
+                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                    <p style={{ fontSize: 'small' }}>monopoly</p>
+                    {playerCards[props.activePlayerColor].development.monopoly}
+                </div>
+                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                    <p style={{ fontSize: 'small' }}>victory_point</p>
+                    {playerCards[props.activePlayerColor].development.victory_point}
+                </div>
             </div>
             <div className='separator' />
             <button onClick={(event) => onBuy(event)}>Buy development card</button>
-            <button>Trade</button>
+            {/*<button>Trade</button>*/}
             <div className='separator' />
-            <button onClick={(event) => onRoll(event)}>Roll</button>
+            <button className='roll_btn' onClick={(event) => onRoll(event)}>
+                Roll
+            </button>
             <br />
             <button onClick={(event) => endTurn(event)}>End Turn</button>
             <div className='separator' />
