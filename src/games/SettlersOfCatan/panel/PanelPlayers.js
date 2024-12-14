@@ -79,7 +79,7 @@ export default function PanelPlayers(props) {
                 </div>
             </div>
             <div className='separator' />
-            <p>Longest Road</p>
+            <p>Most Roads</p>
             <div className='card-container'>
                 <div className='card'>
                     <div className='circle'>0</div>

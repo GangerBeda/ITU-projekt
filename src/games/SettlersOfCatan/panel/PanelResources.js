@@ -501,6 +501,14 @@ export default function PanelResources(props) {
                             return true;
                         }
 
+                        axios
+                            .post('http://localhost:3001/catan/moveRobber', {
+                                color: props.activePlayerColor,
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            });
+
                         setPlayerCards((prevPlayerCards) => {
                             let updatedResources = {
                                 ...prevPlayerCards[props.activePlayerColor].resource,
@@ -551,6 +559,14 @@ export default function PanelResources(props) {
                             alert('No road building development cards owned'); // TODO: change to something fancy
                             return true;
                         }
+
+                        axios
+                            .post('http://localhost:3001/catan/roadBuilding', {
+                                color: props.activePlayerColor,
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            });
 
                         props.setGameState({ text: 'Placing road', phase: props.gameState.phase + 10 });
 

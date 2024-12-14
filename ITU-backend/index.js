@@ -126,6 +126,17 @@ app.post('/catan/init', (req, res) => {
         }
     });
 
+    fs.writeFile(
+        'db/extraPoints.json',
+        '{"roads": {"most_roads": null,"#f00": 2,"#0f0": 2,"#00f": 2,"#ff0": 2},"army": {"largest_army": null,"#f00": 0,"#0f0": 0,"#00f": 0,"#ff0": 0}}',
+        (err) => {
+            if (err) {
+                console.error('Error writing to file', err);
+                return res.status(500).json({ message: 'Failed to save gameState' });
+            }
+        }
+    );
+
     res.status(201).json({
         message: 'Init successful',
     });
@@ -183,21 +194,21 @@ app.get('/catan/player', (req, res) => {
 });
 
 app.post('/catan/buildRoad', (req, res) => {
-    fs.readFile('db/playerObj.json', 'utf8', (err, data) => {
+    fs.readFile('db/playerObj.json', 'utf8', (err, playerData) => {
         if (err) {
-            console.error('Error reading file:', err);
+            console.error('Error reading playerObj:', err);
             return res.status(500).json({ message: 'Failed to read playerObj' });
         }
 
         try {
-            const playerData = JSON.parse(data);
+            const playerObj = JSON.parse(playerData);
+            const activePlayerColor = playerObj.activePlayerColor;
 
-            const activePlayerColor = playerData.activePlayerColor;
-            if (!activePlayerColor || !playerData.playerCards[activePlayerColor]) {
+            if (!activePlayerColor || !playerObj.playerCards[activePlayerColor]) {
                 return res.status(404).json({ message: 'Active player not found' });
             }
 
-            const activePlayer = playerData.playerCards[activePlayerColor];
+            const activePlayer = playerObj.playerCards[activePlayerColor];
 
             if (activePlayer.resource.brick < 1 || activePlayer.resource.wood < 1) {
                 return res.status(400).json({ message: 'Not enough resources to build a road' });
@@ -206,21 +217,68 @@ app.post('/catan/buildRoad', (req, res) => {
             activePlayer.resource.brick -= 1;
             activePlayer.resource.wood -= 1;
 
-            playerData.playerCards[activePlayerColor] = activePlayer;
+            playerObj.playerCards[activePlayerColor] = activePlayer;
 
-            fs.writeFile('db/playerObj.json', JSON.stringify(playerData, null, 2), (err) => {
+            fs.writeFile('db/playerObj.json', JSON.stringify(playerObj, null, 2), (err) => {
                 if (err) {
-                    console.error('Error writing to file:', err);
+                    console.error('Error writing playerObj:', err);
                     return res.status(500).json({ message: 'Failed to save playerObj' });
                 }
 
-                res.status(201).json({
-                    message: 'Road built successfully',
-                    player: activePlayer,
+                fs.readFile('db/extraPoints.json', 'utf8', (err, extraPointsData) => {
+                    if (err) {
+                        console.error('Error reading extraPoints:', err);
+                        return res.status(500).json({ message: 'Failed to read extraPoints' });
+                    }
+
+                    try {
+                        const extraPoints = JSON.parse(extraPointsData);
+
+                        if (extraPoints.roads && extraPoints.roads[activePlayerColor] !== undefined) {
+                            extraPoints.roads[activePlayerColor] += 1;
+                        } else {
+                            return res.status(404).json({ message: 'Roads data for active player not found' });
+                        }
+
+                        // Calculate longest road
+                        let maxRoads = -1;
+                        let longestRoadPlayer = extraPoints.roads.most_roads;
+
+                        for (const [color, count] of Object.entries(extraPoints.roads)) {
+                            if (color === 'most_roads') continue;
+
+                            if (count > maxRoads) {
+                                maxRoads = count;
+                                longestRoadPlayer = color;
+                            } else if (count === maxRoads && longestRoadPlayer === color) {
+                                // Preserve current most_roads if there's a tie
+                                longestRoadPlayer = extraPoints.roads.most_roads;
+                            }
+                        }
+
+                        extraPoints.roads.most_roads = longestRoadPlayer;
+
+                        fs.writeFile('db/extraPoints.json', JSON.stringify(extraPoints, null, 2), (err) => {
+                            if (err) {
+                                console.error('Error writing extraPoints:', err);
+                                return res.status(500).json({ message: 'Failed to save extraPoints' });
+                            }
+
+                            res.status(201).json({
+                                message: 'Road built successfully',
+                                player: activePlayer,
+                                roads: extraPoints.roads[activePlayerColor],
+                                longestRoad: extraPoints.roads.most_roads,
+                            });
+                        });
+                    } catch (parseError) {
+                        console.error('Error parsing extraPoints:', parseError);
+                        return res.status(500).json({ message: 'Failed to parse extraPoints' });
+                    }
                 });
             });
         } catch (parseError) {
-            console.error('Error parsing JSON:', parseError);
+            console.error('Error parsing playerObj:', parseError);
             return res.status(500).json({ message: 'Failed to parse playerObj' });
         }
     });
@@ -296,6 +354,142 @@ app.get('/catan/gameState', (req, res) => {
         }
 
         res.status(200).json(JSON.parse(data));
+    });
+});
+
+app.get('/catan/extraPoints', (req, res) => {
+    fs.readFile('db/extraPoints.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file', err);
+            return res.status(500).json({ message: 'Failed to read extraPoints' });
+        }
+
+        res.status(200).json(JSON.parse(data));
+    });
+});
+
+app.post('/catan/moveRobber', (req, res) => {
+    const { color } = req.body;
+
+    if (!color) {
+        return res.status(400).json({ message: 'Color is required in the request body.' });
+    }
+
+    fs.readFile('db/extraPoints.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading extraPoints.json:', err);
+            return res.status(500).json({ message: 'Failed to read extraPoints.json' });
+        }
+
+        try {
+            const extraPoints = JSON.parse(data);
+
+            if (!extraPoints.army || extraPoints.army[color] === undefined) {
+                return res.status(404).json({ message: `Color ${color} not found in army.` });
+            }
+
+            extraPoints.army[color] += 1;
+
+            const armyCounts = Object.entries(extraPoints.army).filter(([key]) => key !== 'largest_army');
+            let maxArmy = -1;
+            let largestArmyColor = extraPoints.army.largest_army;
+
+            for (const [playerColor, count] of armyCounts) {
+                if (count > maxArmy) {
+                    maxArmy = count;
+                    largestArmyColor = playerColor;
+                } else if (count === maxArmy && largestArmyColor === playerColor) {
+                    largestArmyColor = extraPoints.army.largest_army;
+                }
+            }
+
+            extraPoints.army.largest_army = largestArmyColor;
+
+            fs.writeFile('db/extraPoints.json', JSON.stringify(extraPoints, null, 2), (err) => {
+                if (err) {
+                    console.error('Error writing to extraPoints.json:', err);
+                    return res.status(500).json({ message: 'Failed to save extraPoints.json' });
+                }
+
+                res.status(200).json({
+                    message: 'Robber moved successfully',
+                    updatedArmy: extraPoints.army,
+                });
+            });
+        } catch (parseError) {
+            console.error('Error parsing extraPoints.json:', parseError);
+            return res.status(500).json({ message: 'Failed to parse extraPoints.json' });
+        }
+    });
+});
+
+app.post('/catan/roadBuilding', (req, res) => {
+    fs.readFile('db/playerObj.json', 'utf8', (err, playerData) => {
+        if (err) {
+            console.error('Error reading playerObj:', err);
+            return res.status(500).json({ message: 'Failed to read playerObj' });
+        }
+
+        try {
+            const playerObj = JSON.parse(playerData);
+            const activePlayerColor = playerObj.activePlayerColor;
+
+            if (!activePlayerColor || !playerObj.playerCards[activePlayerColor]) {
+                return res.status(404).json({ message: 'Active player not found' });
+            }
+
+            fs.readFile('db/extraPoints.json', 'utf8', (err, extraPointsData) => {
+                if (err) {
+                    console.error('Error reading extraPoints:', err);
+                    return res.status(500).json({ message: 'Failed to read extraPoints' });
+                }
+
+                try {
+                    const extraPoints = JSON.parse(extraPointsData);
+
+                    if (extraPoints.roads && extraPoints.roads[activePlayerColor] !== undefined) {
+                        extraPoints.roads[activePlayerColor] += 2;
+                    } else {
+                        return res.status(404).json({ message: 'Roads data for active player not found' });
+                    }
+
+                    let maxRoads = -1;
+                    let longestRoadPlayer = extraPoints.roads.most_roads;
+
+                    for (const [color, count] of Object.entries(extraPoints.roads)) {
+                        if (color === 'most_roads') continue;
+
+                        if (count > maxRoads) {
+                            maxRoads = count;
+                            longestRoadPlayer = color;
+                        } else if (count === maxRoads && longestRoadPlayer === color) {
+                            longestRoadPlayer = extraPoints.roads.most_roads;
+                        }
+                    }
+
+                    extraPoints.roads.most_roads = longestRoadPlayer;
+
+                    fs.writeFile('db/extraPoints.json', JSON.stringify(extraPoints, null, 2), (err) => {
+                        if (err) {
+                            console.error('Error writing extraPoints:', err);
+                            return res.status(500).json({ message: 'Failed to save extraPoints' });
+                        }
+
+                        res.status(201).json({
+                            message: 'Road building successful',
+                            roads: extraPoints.roads[activePlayerColor],
+                            longestRoad: extraPoints.roads.most_roads,
+                        });
+                    });
+                } catch (parseError) {
+                    console.error('Error parsing extraPoints:', parseError);
+                    return res.status(500).json({ message: 'Failed to parse extraPoints' });
+                }
+            });
+        } catch (parseError) {
+            console.error('Error parsing playerObj:', parseError);
+            return res.status(500).json({ message: 'Failed to parse playerObj' });
+        }
     });
 });
 
@@ -796,7 +990,7 @@ app.post('/fourinarow/set-time', (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-//ADDED TO 
+//ADDED TO
 app.post('/fourinarow/timer-toggle', (req, res) => {
     gameModel.timerToggle(); // Call the method on the server-side model
     res.status(200).json(gameModel.getState());
