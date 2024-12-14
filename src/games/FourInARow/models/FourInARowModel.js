@@ -143,6 +143,7 @@ class FourInARowModel {
         this.highlightedPlayer ='Červený'
 
         // Reset časovače
+        this.remainingTime =  this.timeLimit;
 
 
         // Reset příznaků hry

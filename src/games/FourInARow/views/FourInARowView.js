@@ -103,7 +103,7 @@ function FourInARowView({
                                 resetGame();
                             }}
                         >
-                            Záčít novou hru
+                            Začít novou hru
                         </button>
                     )}
                 </div>

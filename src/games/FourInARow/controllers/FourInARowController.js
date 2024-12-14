@@ -183,8 +183,9 @@ const makeMove = async (column) => {
         
         if (gameState.remainingTime > 0) {
             return `Zbývající čas na tah: ${gameState.remainingTime} sekund`;
+
         } else {
-            //gameState.turnColour === 'red' ? 'yellow' : 'red';
+
             const player = gameState.currentPlayer === 'red' ? 'yellow' : 'red'
             gameState.turnColour = `${player}-turn`;
             gameState.highlightedPlayer = player === 'red' ?  'Červený' : 'Žlutý' 
@@ -208,7 +209,7 @@ const makeMove = async (column) => {
                 undo={undo}
                 setTimeLimit={setTimeLimit} // Správný název předání funkce
                 toggleSettings={toggleSettings}
-                showNewGameButton={gameState.winner || gameState.full}
+                showNewGameButton={gameState.winner || gameState.full || gameState.remainingTime <= 0}
                 goToMainMenu={goToMainMenu}
                 timerToggle={timerToggle}
                 timerMessage={getTimerMessage()}
