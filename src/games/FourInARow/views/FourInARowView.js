@@ -1,5 +1,9 @@
 import React from 'react';
-import './FourInARowView.css';
+import './Styles/Globalstyles.css';
+import './Styles/Boardstyles.css';
+import './Styles/Buttonstyles.css';
+import './Styles/GameInfostyles.css';
+
 
 function FourInARowView({
     gameState,
@@ -21,13 +25,14 @@ console.log(gameState.highlightedPlayer);
         <div className="site">
                 {/* home button */}
                 <button className="button goToMainMenu" onClick={goToMainMenu}></button>
-
+            
                 {/* Kontejner pro tlačítka pro časovač, nastavení */}
                 <div className="buttons-container-top">
                         <button className="button timerButton" onClick={setTimeLimit}></button>
                         <button className="button settings" onClick={toggleSettings}></button>
                 </div>
-
+                    
+            <div className="mid">        
                     {/* hraci pole */}
                 <div className="Board">
                     {gameState.board.map((row, rowIndex) => (
@@ -56,7 +61,7 @@ console.log(gameState.highlightedPlayer);
 
                 {/* Informace o hře */}
 
-                <div className={`gameInfo`}>
+                <div className={`game-Info`}>
                     <p>
                         <span className={`player-colour ${gameState.turnColour}`}>  
                             {gameState.highlightedPlayer}
@@ -68,19 +73,23 @@ console.log(gameState.highlightedPlayer);
                         Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}
                     </p>
                 </div>
+            </div>
+                {/* Kontejner pro tlačítko Záčít novou hru */}
+                <div className="new-game-container">
+                    {showNewGameButton && (
+                        <button
+                            className="new-gameButton"
+                            onClick={() => {
+                                resetGame();
+                                console.log("Tlačítko 'Záčít novou hru' bylo kliknuto!");
+                            }}
+                        >
+                            Záčít novou hru
+                        </button>
+                    )}
+                </div>
+            
 
-
-
-
-                 {/* Tlačítko pro novou hru */}
-                {showNewGameButton && (
-                <button className="button1" onClick={() => {
-                            resetGame();
-                            console.log("Tlačítko 'Nová hra' bylo kliknuto!");
-                        }}
-                    >Nová hra
-                </button>
-                )}
 
         </div>
     );

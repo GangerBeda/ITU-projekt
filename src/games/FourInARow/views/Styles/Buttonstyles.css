@@ -1,0 +1,63 @@
+/* Button styles */
+
+.buttons-container-board {
+    display: flex;
+    gap: 2vw; /* Mezera mezi tlačítky */
+    margin-bottom: 1vh;
+}
+
+.buttons-container-top {
+    display: flex;
+    position: absolute;
+    top: 0.5vh;
+    right: 0.5vw;
+    gap: 0.5vw; /* Mezera mezi tlačítky */
+    margin-bottom: 30px; /* Mezera pod tlačítky */
+}
+
+.button {
+    background-size: 100% 100%;
+    border-radius: 0%; /* čtvercová tlačítka */
+    background-color: transparent; /* bez pozadí */
+    background-position: center; /*obrázek na střed */
+    border: none;
+    cursor: pointer; /* změní kurzor na ruku */
+    width: 4vw; /* Nastaví šířku tlačítka */
+    aspect-ratio: 1 / 1; /* stejná výška a šířka */
+}
+
+.goToMainMenu {
+    background-image: url('../Icons/home_icon.png');
+    position: absolute;
+    top: 0.5vh;
+    left: 0.5vw;
+}
+
+.settings {
+    background-image: url('../Icons/settings_icon.png');
+    padding: 10px;
+}
+
+.resetButton {
+    background-image: url('../Icons/restart_icon.png');
+}
+
+.undoButton {
+    background-image: url('../Icons/Undo.png');
+}
+
+.timerButton {
+    background-image: url('../Icons/timer_icon.png');
+}
+
+.new-gameButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(33, 33, 33);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+

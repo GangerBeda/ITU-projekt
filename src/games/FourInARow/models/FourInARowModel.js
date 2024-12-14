@@ -64,11 +64,11 @@ class FourInARowModel {
                 if (this.checkWinner(row, column, this.currentPlayer)) {
                     this.winner = this.currentPlayer;
                     this.highlightedPlayer = this.winner === 'red' ? 'Červený' : 'Žlutý';
-                    this.message = `hráč vyhrál! Hra je ukončena. Začněte novou hru.`;
+                    this.message = `hráč vyhrál! `;
                     this.turnColour = `${this.winner}-turn`; 
                 } else if (this.checkFull()) {
                     this.full = true;  // Pokud je pole plné, nastavíme, že je hra ukončena
-                    this.message = "Herní pole je plné, remíza! Začněte novou hru.";
+                    this.message = "Herní pole je plné, remíza!";
                     this.turnColour = ''; // Žádný hráč už není na tahu
                     this.highlightedPlayer = ''; // Žádný hráč
                 } else {
