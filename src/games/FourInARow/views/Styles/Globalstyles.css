@@ -1,6 +1,7 @@
 /* Global styles */
 .site {
-    background-color: rgb(93, 86, 153);
+    background: linear-gradient(135deg, #9C27B0, #EDE7C6);
+    color: #000000; /* Černý text jako výchozí */
     height: 100vh;
     display: flex;
     justify-content: center;
