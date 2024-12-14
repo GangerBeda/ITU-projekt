@@ -21,6 +21,12 @@
   outline: none;
 }
 
+
+.square.active {
+  background-color: #fff;
+  border: 3px solid gray;
+}
+
 .square.won {
   background-color: #000;
   color: #000000;
@@ -32,5 +38,5 @@
   background-color: #000;
   color: #000000;
   opacity: 1;
-  border: 2px solid #000000;
+  border: 3px solid #000000;
 }

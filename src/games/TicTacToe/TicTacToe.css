@@ -11,7 +11,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 22px;
-  background-color: #1a1a1a;
+  background-color: #292929;
   padding: 10px;
   border-radius: 35px;
   margin: 20px;
@@ -33,7 +33,7 @@
 
 .tic-tac-toe-header span.active {
   background-color: white;
-  color: black;
+  color: #292929;
 }
 .tic-tac-toe-main {
   display: grid;
@@ -96,6 +96,28 @@
   gap: 10px; /* Space between score items */
 }
 
+.tic-tac-toe-blind-show {
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  align-items: center;     /* Vertically center */
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.tic-tac-toe-rules {
+  color: white;
+  background-color: #292929;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  margin-left: 40px;
+}
+
+.tic-tac-toe-is-next {
+  color: #292929;
+  font-size: 20px;
+  font-weight: bold;
+}
 .winner{
   font-size: 50px;
 }

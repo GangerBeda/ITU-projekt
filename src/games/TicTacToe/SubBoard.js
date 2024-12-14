@@ -11,8 +11,9 @@ const SubBoard = ({ board, isActive, winner, onSquareClick, onHoverSquare, hover
                 onClick={() => isActive && !winner && onSquareClick(i)}
                 onMouseEnter={() => onHoverSquare(i)}
                 onMouseLeave={() => onHoverSquare(null)}
-                isWinner={!!winner}
+                isWinner={winner}
                 isBlind={blindModeActive && !isActive}
+                isActive={isActive}
             />
         ))}
         {winner && <div className="sub-board-winner">{winner}</div>}
