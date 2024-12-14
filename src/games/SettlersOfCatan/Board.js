@@ -76,7 +76,7 @@ export default function Board(props) {
     };
 
     const checkResources = async (grid, phase) => {
-        if (grid === 'path' && phase >= 2) {
+        if (grid === 'path' && phase >= 2 && phase <= 5) {
             try {
                 const response = await axios.get('http://localhost:3001/catan/player');
                 const resources = response.data.playerCards[response.data.activePlayerColor].resource;
@@ -115,7 +115,6 @@ export default function Board(props) {
 
     const hexClicked = (grid, i) => {
         if (grid === 'material') {
-            // TODO: handle robber logic
             return;
         }
 
@@ -154,7 +153,13 @@ export default function Board(props) {
             if (props.gameState.text === 'Placing settler') {
                 props.setGameState({ text: 'Placing road', phase: props.gameState.phase });
             } else if (props.gameState.text === 'Placing road') {
-                props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
+                if (props.gameState.phase > 10) {
+                    props.setGameState({ text: 'Placing road', phase: props.gameState.phase - 5 });
+                } else if (props.gameState.phase > 5) {
+                    props.setGameState({ text: 'Playing', phase: props.gameState.phase - 5 });
+                } else {
+                    props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
+                }
             }
         });
     };

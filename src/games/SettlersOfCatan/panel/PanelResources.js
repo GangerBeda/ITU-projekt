@@ -390,7 +390,38 @@ export default function PanelResources(props) {
             .catch((err) => {
                 console.log(err);
             });
+        if (roll === 7) {
+            setPlayerCards((prevPlayerCards) => {
+                let updatedResources = {
+                    ...prevPlayerCards[props.activePlayerColor].resource,
+                };
 
+                updatedResources.wood += 1;
+                updatedResources.brick += 1;
+                updatedResources.sheep += 1;
+                updatedResources.wheat += 1;
+                updatedResources.ore += 1;
+
+                const updatedPlayerCards = {
+                    ...prevPlayerCards,
+                    [props.activePlayerColor]: {
+                        ...prevPlayerCards[props.activePlayerColor],
+                        resource: updatedResources,
+                    },
+                };
+
+                axios
+                    .post('http://localhost:3001/catan/updatePlayer', {
+                        playerCards: updatedPlayerCards,
+                        activePlayerColor: props.activePlayerColor,
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+
+                return updatedPlayerCards;
+            });
+        }
         props.setGameState({ text: 'Playing', phase: props.gameState.phase });
     };
 
@@ -461,19 +492,193 @@ export default function PanelResources(props) {
                 ))}
             </div>
             <div className='card-container'>
-                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                <div
+                    className='card'
+                    style={{ border: '1px solid black', cursor: 'pointer' }}
+                    onClick={() => {
+                        if (playerCards[props.activePlayerColor].development.knight < 1) {
+                            alert('No knight development cards owned'); // TODO: change to something fancy
+                            return true;
+                        }
+
+                        setPlayerCards((prevPlayerCards) => {
+                            let updatedResources = {
+                                ...prevPlayerCards[props.activePlayerColor].resource,
+                            };
+
+                            updatedResources.wood += 1;
+                            updatedResources.brick += 1;
+                            updatedResources.sheep += 1;
+                            updatedResources.wheat += 1;
+                            updatedResources.ore += 1;
+
+                            let updatedDevelopment = {
+                                ...prevPlayerCards[props.activePlayerColor].development,
+                            };
+
+                            updatedDevelopment.knight -= 1;
+
+                            const updatedPlayerCards = {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: {
+                                    ...prevPlayerCards[props.activePlayerColor],
+                                    resource: updatedResources,
+                                    development: updatedDevelopment,
+                                },
+                            };
+
+                            axios
+                                .post('http://localhost:3001/catan/updatePlayer', {
+                                    playerCards: updatedPlayerCards,
+                                    activePlayerColor: props.activePlayerColor,
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                });
+
+                            return updatedPlayerCards;
+                        });
+                    }}
+                >
                     <p style={{ fontSize: 'small' }}>knight</p>
                     {playerCards[props.activePlayerColor].development.knight}
                 </div>
-                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                <div
+                    className='card'
+                    style={{ border: '1px solid black', cursor: 'pointer' }}
+                    onClick={() => {
+                        if (playerCards[props.activePlayerColor].development.road_building < 1) {
+                            alert('No road building development cards owned'); // TODO: change to something fancy
+                            return true;
+                        }
+
+                        props.setGameState({ text: 'Placing road', phase: props.gameState.phase + 10 });
+
+                        setPlayerCards((prevPlayerCards) => {
+                            let updatedDevelopment = {
+                                ...prevPlayerCards[props.activePlayerColor].development,
+                            };
+
+                            updatedDevelopment.road_building -= 1;
+
+                            const updatedPlayerCards = {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: {
+                                    ...prevPlayerCards[props.activePlayerColor],
+                                    development: updatedDevelopment,
+                                },
+                            };
+
+                            axios
+                                .post('http://localhost:3001/catan/updatePlayer', {
+                                    playerCards: updatedPlayerCards,
+                                    activePlayerColor: props.activePlayerColor,
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                });
+
+                            return updatedPlayerCards;
+                        });
+                    }}
+                >
                     <p style={{ fontSize: 'small' }}>road_building</p>
                     {playerCards[props.activePlayerColor].development.road_building}
                 </div>
-                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                <div
+                    className='card'
+                    style={{ border: '1px solid black', cursor: 'pointer' }}
+                    onClick={() => {
+                        if (playerCards[props.activePlayerColor].development.year_of_plenty < 1) {
+                            alert('No year of plenty development cards owned'); // TODO: change to something fancy
+                            return true;
+                        }
+
+                        setPlayerCards((prevPlayerCards) => {
+                            const resourceTypes = ['wood', 'brick', 'sheep', 'wheat', 'ore'];
+                            let updatedResources = { ...prevPlayerCards[props.activePlayerColor].resource };
+
+                            for (let i = 0; i < 3; i++) {
+                                const randomResource = resourceTypes[Math.floor(Math.random() * resourceTypes.length)];
+                                updatedResources[randomResource] = (updatedResources[randomResource] || 0) + 1;
+                            }
+
+                            const updatedPlayerCards = {
+                                ...prevPlayerCards,
+                                [props.activePlayerColor]: {
+                                    ...prevPlayerCards[props.activePlayerColor],
+                                    resource: updatedResources,
+                                    development: {
+                                        ...prevPlayerCards[props.activePlayerColor].development,
+                                        year_of_plenty: prevPlayerCards[props.activePlayerColor].development.year_of_plenty - 1,
+                                    },
+                                },
+                            };
+
+                            axios
+                                .post('http://localhost:3001/catan/updatePlayer', {
+                                    playerCards: updatedPlayerCards,
+                                    activePlayerColor: props.activePlayerColor,
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                });
+
+                            return updatedPlayerCards;
+                        });
+                    }}
+                >
                     <p style={{ fontSize: 'small' }}>year_of_plenty</p>
                     {playerCards[props.activePlayerColor].development.year_of_plenty}
                 </div>
-                <div className='card' style={{ border: '1px solid black', cursor: 'pointer' }} onClick={() => {}}>
+                <div
+                    className='card'
+                    style={{ border: '1px solid black', cursor: 'pointer' }}
+                    onClick={() => {
+                        if (playerCards[props.activePlayerColor].development.monopoly < 1) {
+                            alert('No monopoly development cards owned'); // TODO: change to something fancy
+                            return true;
+                        }
+
+                        setPlayerCards((prevPlayerCards) => {
+                            let updatedPlayerCards = { ...prevPlayerCards };
+
+                            for (const playerColor in prevPlayerCards) {
+                                if (playerColor !== props.activePlayerColor) {
+                                    updatedPlayerCards[playerColor] = {
+                                        ...prevPlayerCards[playerColor],
+                                        resource: {
+                                            wood: 0,
+                                            brick: 0,
+                                            sheep: 0,
+                                            wheat: 0,
+                                            ore: 0,
+                                        },
+                                    };
+                                }
+                            }
+
+                            updatedPlayerCards[props.activePlayerColor] = {
+                                ...prevPlayerCards[props.activePlayerColor],
+                                development: {
+                                    ...prevPlayerCards[props.activePlayerColor].development,
+                                    monopoly: prevPlayerCards[props.activePlayerColor].development.year_of_plenty - 1,
+                                },
+                            };
+
+                            axios
+                                .post('http://localhost:3001/catan/updatePlayer', {
+                                    playerCards: updatedPlayerCards,
+                                    activePlayerColor: props.activePlayerColor,
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                });
+
+                            return updatedPlayerCards;
+                        });
+                    }}
+                >
                     <p style={{ fontSize: 'small' }}>monopoly</p>
                     {playerCards[props.activePlayerColor].development.monopoly}
                 </div>
