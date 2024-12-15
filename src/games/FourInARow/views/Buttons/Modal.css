@@ -22,7 +22,7 @@
     padding: 2%;
     border-radius: 8px;
     border: 2px solid #333;
-    max-width: 350px; /* Mírně větší šířka */
+    max-width: 350px;
     width: 100%;
     text-align: center;
 }
@@ -30,12 +30,12 @@
 .close-button {
     background-color: #008800;
     border-radius: 8px;
-    border: 1px solid #000; /* Přidání obrysu */
+    border: 1px solid #000;
     padding-bottom: 7px;
     position: absolute;
     top: -1px;
     right: -1px;
-    font-size: 34px; /* Zmenšená velikost pro lepší vizuální dojem */
+    font-size: 34px;
     width: 45px;
     height: 35px;
     background: none;
@@ -85,7 +85,7 @@
 
 /* Submit button */
 .buttonNastavit {
-    background-color: #008800; /* Zelené tlačítko */
+    background-color: #008800;
     color: white;
     width: 50%;
     font-size: 16px;
