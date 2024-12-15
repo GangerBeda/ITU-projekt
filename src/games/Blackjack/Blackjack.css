@@ -20,6 +20,10 @@
     text-shadow: 2px 2px #000;
 }
 
+.blackjack-title{
+    color: white;
+}
+
 /* Scoreboard styles */
 .scoreboard {
     position: absolute;

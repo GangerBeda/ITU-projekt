@@ -185,7 +185,7 @@ function Blackjack() {
                     </div>
                 ))}
             </div>
-            <h2>Your hand: {playerValue}</h2>
+            <h2 className='blackjack-title'>Your hand: {playerValue}</h2>
 
             {/* Scoreboard */}
             <div className="scoreboard">
