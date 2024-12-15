@@ -1060,8 +1060,11 @@ app.post('/blackjack/start', (req, res) => {
     const deck = initializeDeck();
     const playerHand = [deck.pop(), deck.pop()];
     const dealerHand = [deck.pop(), deck.pop()];
+    
+    const dealerValue = calculateHandValue(dealerHand);
+    const playerValue = calculateHandValue(playerHand);
 
-    res.json({ deck, playerHand, dealerHand });
+    res.json({ deck, playerHand, dealerHand, playerValue, dealerValue });
 });
 
 console.log('test 2');
@@ -1074,10 +1077,10 @@ app.post('/blackjack/hit', (req, res) => {
         const playerValue = calculateHandValue(playerHand);
 
         if (playerValue > 21) {
-            return res.json({ playerHand, deck, message: 'Player busts! Dealer wins.', gameOver: true });
+            return res.json({ playerHand, deck, playerValue, message: 'Player busts! Dealer wins.', gameOver: true });
         }
-
-        res.json({ playerHand, deck });
+        
+        res.json({ playerHand, deck, playerValue });
     } else {
         res.status(400).json({ message: 'No cards left in deck' });
     }
@@ -1102,7 +1105,7 @@ app.post('/blackjack/stand', (req, res) => {
         result = 'Dealer wins!';
     }
 
-    res.json({ dealerHand, deck, message: result, gameOver: true });
+    res.json({ dealerHand, deck, message: result, gameOver: true , playerValue, dealerValue});
 });
 
 // ======================================== BLACKJACK END ========================================

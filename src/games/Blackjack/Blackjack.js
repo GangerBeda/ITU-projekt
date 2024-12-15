@@ -6,33 +6,12 @@ import cheatsheet from './cheatsheet.png';
 import sheetICON from './cheatsheetICO.png';
 import homeICON from './home.png';
 
-const calculateHandValue = (hand) => {
-    let value = 0;
-    let aceCount = 0;
-
-    hand.forEach((card) => {
-        if (card.value === 'A') {
-            aceCount += 1;
-            value += 11;
-        } else if (['K', 'Q', 'J'].includes(card.value)) {
-            value += 10;
-        } else {
-            value += parseInt(card.value, 10);
-        }
-    });
-
-    while (value > 21 && aceCount > 0) {
-        value -= 10;
-        aceCount -= 1;
-    }
-
-    return value;
-};
-
 function Blackjack() {
     const [deck, setDeck] = useState([]);
     const [playerHand, setPlayerHand] = useState([]);
     const [dealerHand, setDealerHand] = useState([]);
+    const [playerValue, setPlayerValue] = useState([]);
+    const [dealerValue, setDealerValue] = useState([]);
     const [isPlayerTurn, setIsPlayerTurn] = useState(true);
     const [gameOver, setGameOver] = useState(false);
     const [result, setResult] = useState("");
@@ -59,11 +38,13 @@ function Blackjack() {
 
     const startNewRound = async () => {
         const response = await axios.post('http://localhost:3001/blackjack/start');
-        const { deck, playerHand, dealerHand } = response.data;
+        const { deck, playerHand, dealerHand, playerValue, dealerValue } = response.data;
 
         setDeck(deck);
         setPlayerHand(playerHand);
         setDealerHand(dealerHand);
+        setPlayerValue(playerValue);
+        setDealerValue(dealerValue);
         setIsPlayerTurn(true);
         setGameOver(false);
         setResult("");
@@ -121,12 +102,14 @@ function Blackjack() {
 
         const response = await axios.post('http://localhost:3001/blackjack/hit', {
             deck,
-            playerHand
+            playerHand,
+            playerValue
         });
 
         if (response.data.gameOver) {
             console.log("game over");
-            setPlayerHand(response.data.playerHand);
+            setPlayerHand(response.data.playerHand);     
+            setPlayerValue(response.data.playerValue);
             setResult(response.data.message);
             setGameOver(true);
             if (response.data.message.includes('Player busts')) {
@@ -136,6 +119,7 @@ function Blackjack() {
             console.log("game continue");
             setPlayerHand(response.data.playerHand);
             setDeck(response.data.deck);
+            setPlayerValue(response.data.playerValue);
         }
     };
 
@@ -144,7 +128,8 @@ function Blackjack() {
         const response = await axios.post('http://localhost:3001/blackjack/stand', {
             deck,
             dealerHand,
-            playerHand
+            playerHand,
+            dealerValue
         });
 
         setDealerHand(response.data.dealerHand);
@@ -166,7 +151,7 @@ function Blackjack() {
                 {gameOver && <button ref={playAgainButtonRef} className="blackjack-action-button" onClick={() => startNewRound()}>Play Again</button>}
             </div>
 
-            <h3>Dealer's hand{gameOver && ': ' + calculateHandValue(dealerHand)}</h3>
+            <h3>Dealer's hand{gameOver && ': ' + dealerValue}</h3>
             <div className="dealer-hand">
                 {dealerHand.map((card, index) => (
                     <div key={index} className="blackjack-card">
@@ -188,7 +173,7 @@ function Blackjack() {
                     </div>
                 ))}
             </div>
-            <h2>Your hand: {calculateHandValue(playerHand)}</h2>
+            <h2>Your hand: {playerValue}</h2>
             <div className="scoreboard">
                 <div className="score-container">
                         <span>Wins:</span>
