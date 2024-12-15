@@ -1,3 +1,8 @@
+//
+//  File: index.js
+//  Author: Matěj Bedřich, xbedri04
+//
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
