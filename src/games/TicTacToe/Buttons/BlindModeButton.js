@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  rendering blind button
+*/
 import React, { useState } from "react";
 import "./MenuButtons.css";
 

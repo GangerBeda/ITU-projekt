@@ -1,3 +1,7 @@
+/* author: Martin Vrablec
+*  component which shows rules of ultimate tic tac toe 
+*/
+
 import React from 'react';
 import "./Rules.css";
 

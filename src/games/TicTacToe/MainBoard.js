@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  component for rendering main board in Ultimate Tic Tac Toe nad its subboards
+*/
 import React, { useState } from "react";
 import SubBoard from "./SubBoard";
 import "./MainBoard.css";

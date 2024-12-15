@@ -1,3 +1,8 @@
+/* author: Martin Vrablec
+*  main component of the TicTacToe game
+* contains main functions and state for correct game rendering and working
+*/
+
 import React, { useState, useEffect } from "react";
 import MainBoard from "./MainBoard";
 import ClassicBoard from "./ClassicBoard"; 

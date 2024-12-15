@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  fiel contains all api calls to backend for TicTacToe 
+*/
 const BASE_URL = "http://localhost:3001/tictactoe";
 
 

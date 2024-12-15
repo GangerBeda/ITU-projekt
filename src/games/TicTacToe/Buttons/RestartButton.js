@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  rendering restart button
+*/
 import React from "react";
 import "./MenuButtons.css";
 

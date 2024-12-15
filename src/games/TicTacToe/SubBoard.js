@@ -1,3 +1,7 @@
+/* author: Martin Vrablec
+* component for correct rendering of subbboards in Ultimate Tic Tac Toe and their squares
+*/
+
 import React from "react";
 import Square from "./Square";
 import "./SubBoard.css";

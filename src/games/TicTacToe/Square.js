@@ -1,3 +1,7 @@
+/* author: Martin Vrablec
+*  component for rendering square in the game boards
+*/
+
 import React from "react";
 import "./Square.css";
 

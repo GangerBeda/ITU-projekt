@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  rendering rules button
+*/
 import React, { useState } from "react";
 import "./MenuButtons.css";
 

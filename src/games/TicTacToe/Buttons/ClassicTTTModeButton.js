@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  rendering button for changin mode of the game 
+*/
 import React from "react";
 import "./MenuButtons.css";
 

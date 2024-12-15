@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  component for rendering main board for classic Tic Tac Toe and theer squares
+*/
 import React from "react";
 import Square from "./Square";
 import "./ClassicBoard.css";

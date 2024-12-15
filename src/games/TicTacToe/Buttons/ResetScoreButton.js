@@ -1,3 +1,6 @@
+/* author: Martin Vrablec
+*  rendering reset score button
+*/
 import React from "react";
 import "./MenuButtons.css";
 
