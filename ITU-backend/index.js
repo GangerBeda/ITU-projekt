@@ -949,9 +949,9 @@ app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 // ======================================== TIC TAC TOE END ========================================
-// 4 in a Row
+// ======================================== 4 IN A ROW ========================================
 const gameModel = new FourInARowModel(); // vytvoření instance modelu
-
+// ODSRANĚNO NADBYTEČNÉ NEW GAME
 //  ADDED vrací aktuální stav hry, po refreshi
 app.get('/fourinarow/current-state', (req, res) => {
     res.status(200).json(gameModel.getState());
@@ -970,10 +970,6 @@ app.post('/fourinarow/makeMove', (req, res) => {
     } else {
         res.status(400).json({ message: 'Column is full or game is over' });
     }
-});
-app.post('/fourinarow/new-game', (req, res) => {
-    gameModel.resetGame(); // volá resetovací metodu ve vašem modelu
-    res.status(200).json(gameModel.getState()); // vrátí aktualizovaný stav hry
 });
 app.post('/fourinarow/reset', (req, res) => {
     gameModel.resetGame(); // volá resetovací metodu ve vašem modelu
