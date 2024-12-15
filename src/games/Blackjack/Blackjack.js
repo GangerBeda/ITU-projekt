@@ -1,3 +1,8 @@
+//
+//  File: Blackjack.js
+//  Author: Matěj Bedřich, xbedri04  
+//
+
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -36,6 +41,7 @@ function Blackjack() {
         console.log("New round effect");
     }, []);
 
+// New round BE request
     const startNewRound = async () => {
         const response = await axios.post('http://localhost:3001/blackjack/start');
         const { deck, playerHand, dealerHand, playerValue, dealerValue } = response.data;
@@ -66,6 +72,7 @@ function Blackjack() {
         };
     }, [isPlayerTurn, gameOver]);
 
+// Double tap detector
     const handleDoubleTap = async () => {
         const now = Date.now();
         if (now - lastTapRef.current < 300) {
@@ -82,7 +89,7 @@ function Blackjack() {
         swipeStartTimeRef.current = Date.now();
     };
     
-    
+// Swipe detector
     const handlePointerUp = (e) => {
         const swipeDistance = e.clientX - initialXRef.current;
         const swipeDuration = Date.now() - swipeStartTimeRef.current;
@@ -97,6 +104,7 @@ function Blackjack() {
         swipeStartTimeRef.current = null;
     };
 
+// Hit BE request
     const handleHit = async () => {
         if (!isPlayerTurn || gameOver) {return;}
 
@@ -123,6 +131,7 @@ function Blackjack() {
         }
     };
 
+//  Stand BE request
     const handleStand = async () => {
         setIsPlayerTurn(false);
         const response = await axios.post('http://localhost:3001/blackjack/stand', {
@@ -143,6 +152,7 @@ function Blackjack() {
         }
     };
 
+// Presentation
     return (
         <div className="blackjack-container">
             <div className="blackjack-action-buttons">
@@ -160,6 +170,7 @@ function Blackjack() {
                 ))}
             </div>
             
+            {/* Gesture field */}
             <div className="gesture-field" ref={gestureFieldRef}>
                 <p className="gesture-instructions">Double-tap to Hit, Swipe to Stand<br /><br /> 
                 Dealer draws to 17, single deck. <br /><br />
@@ -174,6 +185,8 @@ function Blackjack() {
                 ))}
             </div>
             <h2>Your hand: {playerValue}</h2>
+
+            {/* Scoreboard */}
             <div className="scoreboard">
                 <div className="score-container">
                         <span>Wins:</span>
