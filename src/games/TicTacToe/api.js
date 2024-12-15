@@ -1,5 +1,7 @@
 const BASE_URL = "http://localhost:3001/tictactoe";
 
+
+// get new classic game from backend
 export const createClassicGame = async () => {
     try {
         const response = await fetch(`${BASE_URL}/new-classic-game`, {
@@ -14,6 +16,8 @@ export const createClassicGame = async () => {
     }
 };
 
+// make a move in classic game
+// pass cellIndex to backend to validate move
 export const makeClassicMove = async (cellIndex) => {
     try {
         const response = await fetch(`${BASE_URL}/classic-game/move`, {
@@ -32,6 +36,7 @@ export const makeClassicMove = async (cellIndex) => {
     }
 };
 
+// get new ultimate game from backend
 export const createUltimateGame = async () => {
     try {
         const response = await fetch(`${BASE_URL}/new-ultimate-game`, {
@@ -46,6 +51,9 @@ export const createUltimateGame = async () => {
     }
 };
 
+// make a move in ultimate game
+// pass subBoardIndex and cellIndex to backend to validate move
+// pass blindMode to backend to toggle blind mode
 export const makeUltimateMove = async (subBoardIndex, cellIndex, blindMode) => {
     try {
         blindMode = blindMode === null ? null : blindMode;
@@ -66,6 +74,7 @@ export const makeUltimateMove = async (subBoardIndex, cellIndex, blindMode) => {
     }
 };
 
+// get score from backend
 export const getScore = async () => {
     try {
         const response = await fetch(`${BASE_URL}/get-score`, {
@@ -80,6 +89,8 @@ export const getScore = async () => {
     }
 };
 
+// set score in backend
+// used for resetting score
 export const setScore = async (player, wins) => {
     try {
         const response = await fetch(`${BASE_URL}/set-score`, {
@@ -95,23 +106,5 @@ export const setScore = async (player, wins) => {
         return response.json();
     } catch (error) {
         console.error("Error setting score", error);
-    }
-};
-
-export const whoIsNext = async (isClassicMode) => {
-    try {
-        const response = await fetch(`${BASE_URL}/is-next`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ isClassicMode }),
-        });
-        if (!response.ok) {
-            throw new Error("Failed to get next player");
-        }
-        return response.json();
-    } catch (error) {
-        console.error("Error to get next player", error);
     }
 };

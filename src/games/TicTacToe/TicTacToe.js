@@ -127,7 +127,7 @@ const TicTacToe = () => {
     startUltimateGame();
   }, []);
 
-  // render the game
+  // render the main page of the game
   // show correct information on current states
   return (
     <div className="tic-tac-toe">
