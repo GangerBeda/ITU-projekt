@@ -1,3 +1,8 @@
+/*********************************************************
+ * Autor: Martin Bureš <xbures38>
+*  Project: Games Hub
+ * Game: 4 in a Row
+ *********************************************************/
 import React, { useState, useEffect } from 'react';
 import { FourInARowModel } from '../models/FourInARowModel';
 import FourInARowView from '../views/FourInARowView';

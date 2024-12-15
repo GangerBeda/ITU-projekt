@@ -1,3 +1,8 @@
+/*********************************************************
+ * Autor: Martin Bureš <xbures38>
+*  Project: Games Hub
+ * Game: 4 in a Row
+ *********************************************************/
 class FourInARowModel {
     constructor() {
         this.board = Array(6).fill(null).map(() => Array(7).fill(null));
