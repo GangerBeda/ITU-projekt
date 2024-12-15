@@ -218,7 +218,7 @@ function Blackjack() {
             {showHelpModal && (
                 <div className="blackjack-modal-overlay" onClick={() => setShowHelpModal(false)}>
                     <div className="blackjack-modal-content" onClick={e => e.stopPropagation()}>
-                        <h2>How to Play Blackjack</h2>
+                        <h2 className='blackjack-title'>How to Play Blackjack</h2>
                         <p>
                             The aim is to get as close to 21 as possible without going over.
                             <br /> 
