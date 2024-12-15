@@ -1,5 +1,5 @@
 import React from 'react';
-import './SettingsPopup.css';
+import './Modal.css';
 
 function SettingsPopup({ onClose }) {
     return (

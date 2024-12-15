@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FourInARowModel } from '../models/FourInARowModel';
 import FourInARowView from '../views/FourInARowView';
 import SettingsPopup from '../views/Buttons/SettingsPopup';
-import { useNavigate } from 'react-router-dom'; //home
-
+import { useNavigate } from 'react-router-dom';
 import TimeLimitPopup from '../views/Buttons/TimeLimitPopup';
 
 const model = new FourInARowModel();
-
 
 function FourInARowController() {
     const [gameState, setGameState] = useState(model.getState());
@@ -19,11 +17,10 @@ function FourInARowController() {
         setShowTimeLimitPopup(!showTimeLimitPopup);
     };
     
-
     useEffect(() => {
         const fetchState = async () => {
             try {
-                // Načítání aktuálního stavu
+                // Načítání aktuálního stavu hry při prvním načtení nebo po obnovení stránky
                 const response = await fetch('http://localhost:3001/fourinarow/current-state');
                 if (response.ok) {
                     const updatedState = await response.json();
@@ -47,7 +44,7 @@ function FourInARowController() {
                 ) {
                     return {
                         ...prevState,
-                        remainingTime: prevState.remainingTime - 1
+                        remainingTime: prevState.remainingTime - 1 
                     };
                 }
                 return prevState; // Neodečítat čas, pokud podmínky nejsou splněny
@@ -87,13 +84,14 @@ const makeMove = async (column) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ column }),
+            body: JSON.stringify({ column }),               // převádí JavaScript objekt do řetězce JSON (JavaScript Object Notation),
+                                                            // aby mohl být odeslán na server.
         });
         if (response.ok) {
             const updatedState = await response.json();
             setGameState((prevState) => ({
                 ...updatedState,
-                TimerOn: prevState.TimerOn, // Udržení lokálního TimerOn
+                TimerOn: prevState.TimerOn, // Zachování stavu časovače na klientovi
             }));
         } else {
             const error = await response.json();
@@ -118,9 +116,6 @@ const makeMove = async (column) => {
         } catch (error) {
             console.error('Error undoing move:', error);
         }
-    };
-    const toggleSettings = () => {
-        setShowSettings(!showSettings); // inicializace na false, toggle
     };
 
     const setTimeLimit = async (parsedTime) => {
@@ -150,12 +145,6 @@ const makeMove = async (column) => {
             console.error("Chyba při připojení k serveru:", error);
         }
     };
-    
-
-    const goToMainMenu = () => {
-        navigate('/'); // Přesměruje na hlavní stránku (HomePage)
-        console.log("Returning to main menu");
-    };
 
     const timerToggle = async () => {
         try {
@@ -178,6 +167,16 @@ const makeMove = async (column) => {
         } catch (error) {
             console.error('Error toggling timer:', error);
         }
+    };
+
+    const toggleSettings = () => {
+        setShowSettings(!showSettings); // inicializace na false, toggle
+    };
+    
+
+    const goToMainMenu = () => {
+        navigate('/'); // Přesměruje na hlavní stránku (HomePage)
+        console.log("Returning to main menu");
     };
     
     
@@ -206,19 +205,22 @@ const makeMove = async (column) => {
         <div>
 
             <FourInARowView
+                goToMainMenu={goToMainMenu}
+                toggleSettings={toggleSettings}
+                toggleTimeLimitPopup={toggleTimeLimitPopup}
+                timerToggle={timerToggle}
                 gameState={gameState}
                 makeMove={makeMove}
                 resetGame={resetGame}
                 undo={undo}
-                setTimeLimit={setTimeLimit} // Správný název předání funkce
-                toggleSettings={toggleSettings}
-                toggleTimeLimitPopup={toggleTimeLimitPopup}
                 showNewGameButton={gameState.winner || gameState.full || gameState.remainingTime <= 0}
-                goToMainMenu={goToMainMenu}
-                timerToggle={timerToggle}
                 timerMessage={getTimerMessage()}
+                setTimeLimit={setTimeLimit}  // Předáno do TimeLimitPopup pro nastavení časového limitu
 
+                
             />
+                {/* Podmíněné vykreslení popupů pro nastavení a časový limit,
+                s předáním funkcí pro zavření a nastavení hodnot */}
                 {showSettings && <SettingsPopup onClose={toggleSettings} />}
                 {showTimeLimitPopup && (
                 <TimeLimitPopup
@@ -229,7 +231,6 @@ const makeMove = async (column) => {
 
         </div>
     );
-
 }
 
 export default FourInARowController;

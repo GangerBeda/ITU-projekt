@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './SettingsPopup.css';
+import './Modal.css';
 
 function TimeLimitPopup({ onClose, onSetTimeLimit }) {
     const [seconds, setSeconds] = useState("00");
@@ -8,8 +8,8 @@ function TimeLimitPopup({ onClose, onSetTimeLimit }) {
         const totalSeconds = Number(seconds);
 
         if (totalSeconds > 0 && totalSeconds <= 100) {
-            onSetTimeLimit(totalSeconds); // Zavolá funkci z `FourInARowController.js`
-            onClose(); // Zavře popup
+            onSetTimeLimit(totalSeconds); // Zavolá z FourInARowController
+            onClose();
         } else {
             alert("Zadejte platný čas mezi 1 a 100 sekund!");
         }

@@ -950,9 +950,7 @@ app.listen(port, () => {
 });
 // ======================================== TIC TAC TOE END ========================================
 // ======================================== 4 IN A ROW ========================================
-const gameModel = new FourInARowModel(); // vytvoření instance modelu
-// ODSRANĚNO NADBYTEČNÉ NEW GAME
-//  ADDED vrací aktuální stav hry, po refreshi
+const gameModel = new FourInARowModel(); // // Vytvoření sdílené instance modelu pro zamezení duplicit a centralizovanou správu stavu
 app.get('/fourinarow/current-state', (req, res) => {
     res.status(200).json(gameModel.getState());
 });
