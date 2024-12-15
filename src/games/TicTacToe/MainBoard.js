@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import SubBoard from "./SubBoard";
 import "./MainBoard.css";
 
-const MainBoard = ({ subBoards, mainBoard, onSquareClick, activeSubBoard, blindModeActive }) => {
+const MainBoard = ({ subBoards, mainBoard, onSquareClick, isUltimateWinner, activeSubBoard, blindModeActive }) => {
     
     const [hoveredSquare, setHoveredSquare] = useState(null);
 
     return (
-        <div className="main-board">
+        <div className= {`tic-tac-toe-main-board ${isUltimateWinner ? "won" : ""}`}>
             {subBoards.map((subBoard, index) => (
                 <SubBoard
                     key={index}

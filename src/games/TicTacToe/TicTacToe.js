@@ -3,11 +3,11 @@ import MainBoard from "./MainBoard";
 import ClassicBoard from "./ClassicBoard"; 
 import { createClassicGame, makeClassicMove, createUltimateGame, makeUltimateMove, getScore, setScore } from "./api";
 import RestartButton from "./Buttons/RestartButton";
-import ClassicTTTModeButton from "./Buttons/ClassicTTTModeButton";
 import BlindModeButton from "./Buttons/BlindModeButton";
 import ResetScoreButton from "./Buttons/ResetScoreButton";
 import HomeButton from "./Buttons/HomeButton";
 import InfoButton from "./Buttons/InfoButton";
+import Rules from "./Rules";
 import "./TicTacToe.css";
 
 const TicTacToe = () => {
@@ -28,6 +28,7 @@ const TicTacToe = () => {
 
     const [score, setScoreState] = useState([]);
 
+    // change game mode
     const toggleGameMode = () => {
         setIsClassicMode(!isClassicMode);
         if (classicIsXNext == null) {
@@ -35,16 +36,19 @@ const TicTacToe = () => {
         }
     };
 
+    // make request to server to turn on blind mode
     const toggleBlindMode = async () => {
         const gameUpdate = await makeUltimateMove(null, null, blindMode);
         setBlindMode(gameUpdate.blindMode);
     };
 
+    // make request to server to reset score (setting them both to 0)
     const resetScore = () => {
         updateScore("X", 0);
         updateScore("O", 0);
     };
 
+    // make request to server to restart the game (calling new game)
     const restartGame = () => {
         if (isClassicMode) {
             startClassicGame();
@@ -53,7 +57,7 @@ const TicTacToe = () => {
         }
     };
 
-
+    // make request to server to create a new classic game
     const startClassicGame = async () => {
         const game = await createClassicGame();
         setClassicBoard(game.board);
@@ -61,24 +65,32 @@ const TicTacToe = () => {
         setClassicWinner(game.winner);
     };
 
+    // mkae request to server to make a move in classic game, validates it, cheks for winner and updates the board
+    // backend increments score if winner is found so fetch score if there is winner
     const makeClassicMoveClick = async (cellIndex) => {
         const gameUpdate = await makeClassicMove(cellIndex);
         if(classicWinner) return;
         setClassicBoard(gameUpdate.board);
         setClassicIsXNext(gameUpdate.isXNext);
         setClassicWinner(gameUpdate.winner);
-        fetchScore();
+        if(gameUpdate.winner) {
+          fetchScore();
+        }
     };
 
+    // make request to server to create a new ultimate game
     const startUltimateGame = async () => {
         const game = await createUltimateGame();
         setSubBoards(game.subBoards);
         setMainBoard(game.mainBoard);
         setIsXNext(game.isXNext);
+        setUltimateWinner(game.winner);
         setActiveSubBoard(game.activeSubBoard);
         setBlindMode(game.blindMode);
     };
 
+    // make request to server to make a move in ultimate game, validates it, cheks for winner and updates the board
+    // backend increments score if winner is found so fetch score if there is winner
     const makeUltimateMoveClick = async (subBoardIndex, cellIndex) => {
         const gameUpdate = await makeUltimateMove(subBoardIndex, cellIndex, null);
         if(ultimateWinner) return;
@@ -88,23 +100,29 @@ const TicTacToe = () => {
         setActiveSubBoard(gameUpdate.activeSubBoard);
         setBlindMode(gameUpdate.blindMode);
         setUltimateWinner(gameUpdate.winner);
-        fetchScore();
+        if(gameUpdate.winner) {
+          fetchScore();
+        }
     };
 
+    // make request to server to fetch score and update it 
     const fetchScore = async () => {
         const currentScore = await getScore();
         setScoreState(currentScore);
     };
 
+    // just toggles the visibility of the rules
     const toggleRulesVisibility = () => {
         setShowRules((prevShowRules) => !prevShowRules);
     };
 
+    // make request to server to update score used for resetting score
     const updateScore = async (player, wins) => {
         const updatedScore = await setScore(player, wins);
         setScoreState(updatedScore);
     };
 
+    // called on first render to fetch score and start ultimate game
     useEffect(() => {
         fetchScore();
         startUltimateGame();
@@ -132,54 +150,24 @@ const TicTacToe = () => {
           <div className="tic-tac-toe-main">
             <div className="tic-tac-toe-filler">
               {showRules && !isClassicMode && (
-                <div className="tic-tac-toe-rules">
-                 <p>
-                <strong>Rules of Ultimate Tic Tac Toe:</strong>
-                </p>
-
-                <ul>
-                <li>
-                    <strong>Game Plan:</strong>
-                    The game board consists of 9 smaller 3x3 grids, forming a larger 3x3 grid (a total of 81 cells). 
-                    Each smaller grid is a "mini-board," and winning on a mini-board marks it as won by that player.
-                </li>
-
-                <li>
-                    <strong>Turns and Moves:</strong>
-                    Players take turns placing their marks (X or O) in an empty cell. The position of the move on the mini-board 
-                    determines which mini-board the next player must play in. For example, if you place your mark in the top-right 
-                    cell of a mini-board, the next player must play in the top-right mini-board.
-                </li>
-
-                <li>
-                    <strong>Forced Moves:</strong>
-                    If the required mini-board (based on the previous move) is already won or full, the next player may choose any 
-                    empty cell on any available mini-board.
-                </li>
-
-                <li>
-                    <strong>Winning a Mini-Board:</strong>
-                    A player wins a mini-board by placing 3 of their marks in a row (horizontally, vertically, or diagonally) 
-                    within that mini-board.
-                </li>
-
-                <li>
-                    <strong>Winning the Game:</strong>
-                    The overall game is won by claiming 3 mini-boards in a row (horizontally, vertically, or diagonally) on the larger 3x3 grid.
-                </li>
-
-                <li>
-                    <strong>Game End:</strong>
-                    The game ends when one player wins 3 mini-boards in a row, or when all mini-boards are full. If no player has 3 
-                    mini-boards in a row and the entire board is full, the game ends in a draw.
-                </li>
-                </ul>
-
-                </div>
+                <Rules />
               )}
             </div>
-            {/* {ultimateWinner && !isClassicMode && <p className="winner">Winner: {ultimateWinner}</p>}
-            {classicWinner && isClassicMode && <p className="winner">Winner: {classicWinner}</p>} */}
+
+              {(classicWinner && isClassicMode) && (
+                <div className="tic-tac-toe-winner">
+                  Winner: {classicWinner}
+                  <RestartButton onClick={restartGame} />
+                </div>
+              )}
+
+              {(ultimateWinner && !isClassicMode) && (
+                <div className="tic-tac-toe-winner">
+                  Winner: {ultimateWinner}
+                  <RestartButton onClick={restartGame} />
+                </div>
+              )}
+
             <div className="tic-tac-toe-board">
               {isClassicMode ? (
                 <ClassicBoard
@@ -194,6 +182,7 @@ const TicTacToe = () => {
                   onSquareClick={makeUltimateMoveClick}
                   activeSubBoard={activeSubBoard}
                   blindModeActive={blindMode}
+                  isUltimateWinner={ultimateWinner}
                 />
               )}
             </div>
@@ -207,10 +196,15 @@ const TicTacToe = () => {
               </div>
               <div className="tic-tac-toe-menu-separator"></div>
               <div className="tic-tac-toe-menu-bottom">
-                <p className="score-TicTacToe">Score</p>
-                <p className="score-TicTacToe">
-                  X: {score.X} ---------- O: {score.O}
-                </p>
+                <p className="tic-tac-toe-score">Score</p>
+                <div className="tic-tac-toe-score-container">
+                  <p className="tic-tac-toe-score">
+                    X: {score.X}
+                  </p>
+                  <p className="tic-tac-toe-score">
+                    O: {score.O}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -3,7 +3,9 @@ import Square from "./Square";
 import "./SubBoard.css";
 
 const SubBoard = ({ board, isActive, winner, onSquareClick, onHoverSquare, hoveredSquare, blindModeActive }) => (
-    <div className={`sub-board ${winner ? "won" : ""} ${isActive ? "active" : ""} ${hoveredSquare ? "highlight" : ""}`}>
+    <div className={`sub-board ${winner ? "won" : ""} 
+                                ${isActive ? "active" : ""} 
+                                ${!winner && hoveredSquare ? "highlight" : ""}`}>
         {board.map((value, i) => (
             <Square
                 key={i}

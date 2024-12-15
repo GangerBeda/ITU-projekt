@@ -48,6 +48,7 @@
 }
 
 .tic-tac-toe-board {
+  position: relative;
   border-radius: 10px;
   display: flex;
   justify-content: center; /* Center content horizontally */
@@ -104,20 +105,37 @@
   font-size: 20px;
 }
 
-.tic-tac-toe-rules {
-  color: white;
-  background-color: #292929;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-  margin-left: 40px;
-}
-
 .tic-tac-toe-is-next {
   color: #292929;
   font-size: 20px;
   font-weight: bold;
 }
-.winner{
-  font-size: 50px;
+
+.tic-tac-toe-score {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.tic-tac-toe-score-container {
+  display: flex;
+  justify-content: space-between;
+  width: auto;
+  margin: 0px 30px 0px 30px;
+}
+
+.tic-tac-toe-winner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  background-color: #292929;
+  padding: 10px;
+  border-radius: 10px;
+  border: #292929 50px solid;
+  z-index: 10;
+  text-align: center;
 }
