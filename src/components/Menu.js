@@ -15,7 +15,7 @@ import TicTacToe from '../games/TicTacToe/TicTacToe';
 
 const games = [
     { id: 'blackjack', name: 'Blackjack', component: Blackjack },
-    { id: 'ticTacToe', name: 'Tic Tac Toe', component: TicTacToe },
+    { id: 'ticTacToe', name: 'Ultimate Tic Tac Toe', component: TicTacToe },
     { id: 'catan', name: 'Settlers of Catan', component: Catan },
     { id: 'chess', name: 'Chess', component: Chess },
     { id: 'fourinarow', name: 'FourInARow', component: FourInARow },
