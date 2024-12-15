@@ -144,6 +144,7 @@ function Blackjack() {
         setDealerHand(response.data.dealerHand);
         setResult(response.data.message);
         setGameOver(true);
+        setDealerValue(response.data.dealerValue);
 
         if (response.data.message.includes('Player wins')) {
             setWins((prev) => prev + 1);
