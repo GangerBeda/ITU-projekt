@@ -1,3 +1,8 @@
+/*********************************************************
+ * Autor: Martin Bureš <xbures38>
+*  Project: Games Hub
+ * Game: 4 in a Row
+ *********************************************************/
 import React, { useState } from 'react';
 import './Modal.css';
 

@@ -1,5 +1,11 @@
-/* Game info styles */
-.game-info-container {
+/*********************************************************
+ * Autor: Martin Bureš <xbures38>
+*  Project: Games Hub
+ * Game: 4 in a Row
+ *********************************************************/
+
+/* Kontejner pro herní informace (rezervuje místo) */
+.game-info-container4 {
     display: flex;
     width: 100%;
     height: 5vh; /* Rezervovaná výška */
@@ -8,15 +14,15 @@
     gap: 1rem; /* Přidá mezeru mezi deskou a textem */
 }
 
-.game-info {
+/* Textová informace o aktuálním hráči */
+.game-info4 {
     width: 100%;
     font-size: 2rem;
     text-align: center;
     transform-origin: left;
-    white-space: nowrap; /* Zabrání zalamování textu */
-    overflow: hidden; /* Zabrání přetékání textu */
 }
 
+/* Zvýraznění aktuálního hráče podle barvy tahu */
 .player-colour.red-turn {
     color: red;
 }

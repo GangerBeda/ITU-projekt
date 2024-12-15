@@ -1,3 +1,8 @@
+/*********************************************************
+ * Autor: Martin Bureš <xbures38>
+*  Project: Games Hub
+ * Game: 4 in a Row
+ *********************************************************/
 import React from 'react';
 import Switch from 'react-switch';
 import './Styles/Globalstyles.css';
@@ -21,33 +26,33 @@ function FourInARowView({
 
 }) {
     return (
-        <div className="site">
+        <div className="site4">
 
             {/* Home Button */}
-        <button className="button4 goToMainMenu" onClick={goToMainMenu}></button>
+        <button className="button4 goToMainMenu4" onClick={goToMainMenu}></button>
     
-            {/* Sloučený grid pro všechna tlačítka */}
+            {/* kontejner s tlačítkami vpravo nahoře ve sloupci */}
             <div className="buttons-container-grid4">
     
-                {/* Tlačítko s pravidly hry */}
-                <button className="button4 rulesButton">
+                {/* Hover s pravidly hry */}
+                <button className="button4 rulesButton4">
                     <div className="rules-hover"> 
-                        <h1>Pravidla hry</h1>
-                        <ul>
+                        <h4>Pravidla hry</h4>
+                        <ul4>
                             <li><strong>Cíl hry:</strong> Spojte čtyři kameny v řadě (horizontálně, vertikálně nebo diagonálně).</li>
                             <li><strong>Začátek hry:</strong> Červený hráč začíná, hráči se střídají po tahu.</li>
                             <li><strong>Tah:</strong> Klikněte na sloupec, kámen spadne na nejnižší volné místo.</li>
                             <li><strong>Konec hry:</strong> Hra končí spojením čtyř kamenů nebo plnou deskou.</li>
                             <li><strong>Vrácení tahu a reset:</strong> Použijte tlačítka pod deskou.</li>
                             <li><strong>Hra na čas:</strong> Aktivujte časovač s limitem pro tah. Nestihnutí tahu znamená prohru. Čas lze nastavit.</li>
-                        </ul>
+                        </ul4>
 
                     </div>
                 </button>
     
     
                 {/* Timer Button */}
-                <button className="button4 timerButton" onClick={toggleTimeLimitPopup}></button>
+                <button className="button4 timerButton4" onClick={toggleTimeLimitPopup}></button>
     
                 {/* Toggle */}
                 <Switch className="button4 switch4"
@@ -59,13 +64,13 @@ function FourInARowView({
             </div>
 
             {/* Timer Container */}
-            <div className="timer-container">
-                <div className={`timer ${gameState.TimerOn ? 'timer-visible' : ''}`}>
+            <div className="timer-container4">
+                <div className={`timer4 ${gameState.TimerOn ? 'timer-visible4' : ''}`}>
                     {gameState.TimerOn && timerMessage}
                 </div>
             </div>
 
-            <div className="mid">
+            <div className="mid4">
 
                 {/* Game Board */}
                 <div className="Board">
@@ -84,15 +89,15 @@ function FourInARowView({
                     ))}
 
                     {/* Board Buttons */}
-                    <div className="buttons-container-board">
-                        <button className="button4 resetButton" onClick={resetGame}></button>
-                        <button className="button4 undoButton" onClick={undo}></button>
+                    <div className="buttons-container-board4">
+                        <button className="button4 resetButton4" onClick={resetGame}></button>
+                        <button className="button4 undoButton4" onClick={undo}></button>
                     </div>
                 </div>
 
                 {/* Game Info */}
-                <div className="game-info-container">
-                    <span className="game-info">
+                <div className="game-info-container4">
+                    <span className="game-info4">
                         <span className={`player-colour ${gameState.turnColour}`}>
                             {gameState.highlightedPlayer}
                         </span>
@@ -102,10 +107,10 @@ function FourInARowView({
             </div>
 
             {/* New Game Button */}
-            <div className="new-game-container">
+            <div className="new-game-container4">
                 {showNewGameButton && (
                     <button
-                        className="new-gameButton"
+                        className="new-gameButton4"
                         onClick={() => {
                             resetGame();
                         }}

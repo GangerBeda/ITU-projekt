@@ -1,4 +1,8 @@
-/* Board styles */
+/*********************************************************
+ * Autor: Martin Bureš <xbures38>
+*  Project: Games Hub
+ * Game: 4 in a Row
+ *********************************************************/
 .Board {
     width: clamp(40vw, 50vh, 60vw);  /*(min, preferred, max) */
     height: fit-content;
