@@ -157,7 +157,7 @@ const makeMove = async (column) => {
                     ...updatedState,
                     remainingTime: updatedState.timeLimit, 
                     TimerOn: updatedState.TimerOnVypZap, 
-                    gameStarted: true,
+
                 });
     
                 console.log("Timer toggled and state updated");

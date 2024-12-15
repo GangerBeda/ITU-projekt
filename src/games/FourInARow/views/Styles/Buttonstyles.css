@@ -1,10 +1,6 @@
-/* Button Styles */
-
-
 .buttons-container-board {
     display: flex;
-    gap: 2vw; /* Mezera mezi tlačítky */
-    margin-bottom: 1vh;
+    gap: 20px;
 }
 
 .button {
@@ -14,10 +10,10 @@
     border: none;
     cursor: pointer;
     width: 4vw;
+    border-radius: 0%;
     aspect-ratio: 1 / 1;
 }
 
-/* Specific Button Styles */
 .goToMainMenu {
     background-image: url('../Icons/home_icon.png');
     position: absolute;
@@ -35,7 +31,7 @@
 
 .new-game-container {
     width: 100%;
-    height: 50px;
+    height: 5%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,8 +39,9 @@
 
 .new-gameButton {
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 1.5rem;
     background-color: rgb(33, 33, 33);
+    height: 100%;
     color: white;
     cursor: pointer;
     border-radius: 8px;
@@ -52,53 +49,80 @@
 }
 
 .new-gameButton:hover {
-    background-color: rgb(50, 50, 50);
+    background-color: rgb(70, 70, 70);
 }
 
 .buttons-container-grid {
-    display: flex;
-    flex-direction: column; /* Vertikální layout */
-    gap: 1vh;               /* Mezera mezi tlačítky */
+    display: grid;
+    grid-template-rows: repeat(4, 1fr); 
+    grid-template-columns: repeat(4, 1fr); 
     position: absolute;
-    top: 2vh;               /* Pozice odshora */
-    right: 2vw;             /* Pozice zprava */
-    align-items: center;    /* Zarovnání prvků horizontálně */
-    width: 4vw;
-    z-index: 10;
-}
-
-.buttons-container-grid > * {
-    flex: 1; /* Rovnoměrné sdílení prostoru */
-    display: flex;
+    top: 1%;
+    right: 1%;
+    width: 30%;
+    aspect-ratio: 1 / 1;
     justify-content: center;
     align-items: center;
+
 }
 
-
 .timerButton {
-    grid-column: 1;
-    grid-row: 1;
+    grid-row: 3;
+    grid-column: 4;
     background-image: url('../Icons/timer_icon.png');
+    justify-self: center;
+    align-self: center;
+}
+
+.switch {
+    grid-row: 4;
+    grid-column: 4;
+    width: auto;
+    justify-self: center;
+    align-self: center;
+}
+/* sdilene */
+.settings, .rulesButton {
+    justify-self: center;
+    align-self: center;
+    grid-column: 4;
+    background-size: cover;
+    width: 4vw;
+    height: 4vw;
 }
 
 .settings {
-    grid-column: 2;
-    grid-row: 1;
+    grid-row: 2;
     background-image: url('../Icons/settings_icon.png');
 }
 
-/* Timer Toggle Styles */
-.timer-toggle-container {
-    width: 4vw; /* Podobné jako tlačítka */
-    aspect-ratio: 1 / 1; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.rulesButton {
+    grid-row: 1;
+    background-image: url('../Icons/napoveda.png');
 }
 
+.rules-hover {
+    visibility: hidden;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 30%;
+    transform: translate(-50%, -50%);
+    transition: transform 2s ease;
+    background-color: rgba(255, 255, 255, 0.83);
+    text-align: left;
+    color: black;
+    border-radius: 5%;
+    border: 2px solid #000000;
+}
 
-.switch {
-    transform: scale(1.5);
-    width: auto; /* Relativní šířka */
-    margin: 1vh;
+.rulesButton:hover .rules-hover {
+    visibility: visible;
+    transform: translate(-50%, -50%);
+}
+
+.rules-hover h1 {
+    text-align: center;
+    font-size: 30px;
+    margin-bottom: 1rem;
 }

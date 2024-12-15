@@ -8,10 +8,11 @@
 }
 
 .timer {
-    font-size: 2rem;
+    font-size: 3vh;
     color: black;
     font-weight: bold;
     display: none; /* Výchozí skrytí */
+    padding-bottom: 2vh;
 }
 
 .timer-visible {

@@ -22,29 +22,42 @@ function FourInARowView({
 }) {
     return (
         <div className="site">
+
             {/* Home Button */}
-            <button className="button goToMainMenu" onClick={goToMainMenu}></button>
-
-            {/* Grid pro Timer Toggle, Settings */}
+        <button className="button goToMainMenu" onClick={goToMainMenu}></button>
+    
+            {/* Sloučený grid pro všechna tlačítka */}
             <div className="buttons-container-grid">
+    
+                {/* Tlačítko s pravidly hry */}
+                <button className="button rulesButton">
+                    <div className="rules-hover"> 
+                        <h1>Pravidla hry</h1>
+                        <ul>
+                            <li><strong>Cíl hry:</strong> Spojte čtyři kameny v řadě (horizontálně, vertikálně nebo diagonálně).</li>
+                            <li><strong>Začátek hry:</strong> Červený hráč začíná, hráči se střídají po tahu.</li>
+                            <li><strong>Tah:</strong> Klikněte na sloupec, kámen spadne na nejnižší volné místo.</li>
+                            <li><strong>Konec hry:</strong> Hra končí spojením čtyř kamenů nebo plnou deskou.</li>
+                            <li><strong>Vrácení tahu a reset:</strong> Použijte tlačítka pod deskou.</li>
+                            <li><strong>Hra na čas:</strong> Aktivujte časovač s limitem pro tah. Nestihnutí tahu znamená prohru. Čas lze nastavit.</li>
+                        </ul>
 
+                    </div>
+                </button>
+    
                 {/* Settings Button */}
                 <button className="button settings" onClick={toggleSettings}></button>
-
+    
                 {/* Timer Button */}
                 <button className="button timerButton" onClick={toggleTimeLimitPopup}></button>
-
+    
                 {/* Toggle */}
-                <div className="timer-toggle-container">
-                <Switch className= "button switch"
+                <Switch className="button switch"
                     onChange={timerToggle}
                     checked={gameState.TimerOnVypZap}
                     uncheckedIcon={false}
                     checkedIcon={false}
                 />
-
-                </div>
-
             </div>
 
             {/* Timer Container */}
@@ -55,11 +68,8 @@ function FourInARowView({
             </div>
 
             <div className="mid">
-                {/* Game Board */}
 
-                {/* Vytvoření herní desky 6x7 pomocí funkce map,
-                iterováním přes řádky a sloupce
-                a vykreslováním buňky s odpovídajícími CSS třídami */}
+                {/* Game Board */}
                 <div className="Board">
                     {gameState.board.map((row, rowIndex) => (
                         <div key={rowIndex} className="board-row">

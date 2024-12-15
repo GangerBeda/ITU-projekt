@@ -24,11 +24,11 @@
     background-color: #e0e0e0;
     border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.4s;
+    transition: background-color 0.2s;
 }
 
 .board-cell:hover {
-    background-color: #ccc;
+    background-color: #DA70D6;
 }
 
 .board-cell.red .piece {

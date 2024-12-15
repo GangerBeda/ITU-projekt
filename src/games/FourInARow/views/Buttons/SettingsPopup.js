@@ -5,9 +5,9 @@ function SettingsPopup({ onClose }) {
     return (
         <div className="popup-overlay">
             <div className="popup-content">
-                <p>Nastaveni barev</p>
-                <p>Nastaveni velikosti</p>
-                <button onClick={onClose}>Zavřít</button>
+                <button className="close-button" onClick={onClose}>×</button>
+                <h2>Nastavení hry</h2>
+                <p>Zde by se mohly zobrazit různé možnosti nastavení...</p>
             </div>
         </div>
     );

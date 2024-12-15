@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import './Modal.css';
 
+// Funkce pro generování možností výběru času
+const generateOptions = (limit) =>
+    Array.from({ length: limit + 1 }, (_, i) => (
+        <option key={i} value={i.toString().padStart(2, '0')}>
+            {i.toString().padStart(2, '0')}
+        </option>
+    ));
+
 function TimeLimitPopup({ onClose, onSetTimeLimit }) {
-    const [seconds, setSeconds] = useState("00");
+    const [seconds, setSeconds] = useState("15");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleSubmit = () => {
         const totalSeconds = Number(seconds);
@@ -11,20 +20,15 @@ function TimeLimitPopup({ onClose, onSetTimeLimit }) {
             onSetTimeLimit(totalSeconds); // Zavolá z FourInARowController
             onClose();
         } else {
-            alert("Zadejte platný čas mezi 1 a 100 sekund!");
+            setErrorMessage("Zadejte platný čas od 1 do 100!");
         }
     };
 
-    const generateOptions = (limit) =>
-        Array.from({ length: limit + 1 }, (_, i) => (
-            <option key={i} value={i.toString().padStart(2, '0')}>
-                {i.toString().padStart(2, '0')}
-            </option>
-        ));
-
     return (
         <div className="popup-overlay">
-            <div className="popup-content" style={{ position: 'relative' }}>
+
+            <div className="popup-content">
+
                 <button className="close-button" onClick={onClose}>×</button>
                 <h2>Nastavení časového limitu</h2>
                 <div className="wheel-picker-container">
@@ -37,8 +41,11 @@ function TimeLimitPopup({ onClose, onSetTimeLimit }) {
                     </select>
                     <span> sekund</span>
                 </div>
+                {errorMessage && <div className="error-message">{errorMessage}</div>}
                 <button onClick={handleSubmit}>Nastavit</button>
+
             </div>
+
         </div>
     );
 }
