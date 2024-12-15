@@ -54,12 +54,12 @@
 
 .buttons-container-grid {
     display: grid;
-    grid-template-rows: repeat(4, 1fr); 
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-rows: repeat(3, 1fr); 
+    grid-template-columns: repeat(3, 1fr); 
     position: absolute;
     top: 1%;
     right: 1%;
-    width: 30%;
+    width: 15%;
     aspect-ratio: 1 / 1;
     justify-content: center;
     align-items: center;
@@ -67,7 +67,7 @@
 }
 
 .timerButton {
-    grid-row: 3;
+    grid-row: 2;
     grid-column: 4;
     background-image: url('../Icons/timer_icon.png');
     justify-self: center;
@@ -75,25 +75,20 @@
 }
 
 .switch {
-    grid-row: 4;
+    grid-row: 3;
     grid-column: 4;
     width: auto;
     justify-self: center;
     align-self: center;
 }
-/* sdilene */
-.settings, .rulesButton {
+
+.rulesButton {
     justify-self: center;
     align-self: center;
     grid-column: 4;
     background-size: cover;
     width: 4vw;
     height: 4vw;
-}
-
-.settings {
-    grid-row: 2;
-    background-image: url('../Icons/settings_icon.png');
 }
 
 .rulesButton {

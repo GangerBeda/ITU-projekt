@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FourInARowModel } from '../models/FourInARowModel';
 import FourInARowView from '../views/FourInARowView';
-import SettingsPopup from '../views/Buttons/SettingsPopup';
 import { useNavigate } from 'react-router-dom';
 import TimeLimitPopup from '../views/Buttons/TimeLimitPopup';
 
@@ -180,6 +179,7 @@ const makeMove = async (column) => {
     };
     
     
+    
     const getTimerMessage = () => {
         if (!gameState.TimerOnVypZap) return null;
         if (!gameState.gameStarted) return 'Čas se spustí po tahu.';
@@ -221,7 +221,7 @@ const makeMove = async (column) => {
             />
                 {/* Podmíněné vykreslení popupů pro nastavení a časový limit,
                 s předáním funkcí pro zavření a nastavení hodnot */}
-                {showSettings && <SettingsPopup onClose={toggleSettings} />}
+
                 {showTimeLimitPopup && (
                 <TimeLimitPopup
                     onClose={toggleTimeLimitPopup}

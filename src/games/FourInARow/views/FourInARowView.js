@@ -45,8 +45,6 @@ function FourInARowView({
                     </div>
                 </button>
     
-                {/* Settings Button */}
-                <button className="button settings" onClick={toggleSettings}></button>
     
                 {/* Timer Button */}
                 <button className="button timerButton" onClick={toggleTimeLimitPopup}></button>
