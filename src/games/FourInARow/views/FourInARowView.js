@@ -8,16 +8,17 @@ import './Styles/Timer.css';
 
 
 function FourInARowView({
-    gameState,
-    makeMove,
-    resetGame,
-    undo,
-    toggleSettings,
-    showNewGameButton,
-    goToMainMenu,
-    timerToggle,
-    timerMessage,
-    toggleTimeLimitPopup
+    goToMainMenu,            // návrat na hlavní obrazovku
+    toggleSettings,          // zobrazení/zavření nastavení
+    toggleTimeLimitPopup,    // zobrazení/zavření nastavení časového limitu
+    timerToggle,             // zapnutí/vypnutí časovače
+    gameState,              
+    makeMove,                // provedení tahu
+    resetGame,               // restartování hry, začátek nové hry
+    undo,                    // vrácení posledního tahu
+    showNewGameButton,       // boolean zobrazit tlačítko "Začít novou hru"
+    timerMessage,            // Zpráva zobrazující zbývající čas na tah
+
 }) {
     return (
         <div className="site">
@@ -55,13 +56,17 @@ function FourInARowView({
 
             <div className="mid">
                 {/* Game Board */}
+
+                {/* Vytvoření herní desky 6x7 pomocí funkce map,
+                iterováním přes řádky a sloupce
+                a vykreslováním buňky s odpovídajícími CSS třídami */}
                 <div className="Board">
                     {gameState.board.map((row, rowIndex) => (
                         <div key={rowIndex} className="board-row">
                             {row.map((cell, colIndex) => (
                                 <div
                                     key={colIndex}
-                                    className={`board-cell ${cell || ''}`}
+                                    className={`board-cell ${cell || ''}`} // Přidání CSS třídy podle stavu buňky (červená/žlutá/prázdná)
                                     onClick={() => makeMove(colIndex)}
                                 >
                                     {cell && <div className={`piece ${cell}`}></div>}
