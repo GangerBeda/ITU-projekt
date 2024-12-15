@@ -29,7 +29,7 @@ function TimeLimitPopup({ onClose, onSetTimeLimit }) {
 
             <div className="popup-content">
 
-                <button className="close-button" onClick={onClose}>×</button>
+                <button4 className="close-button" onClick={onClose}>×</button4>
                 <h2>Nastavení časového limitu</h2>
                 <div className="wheel-picker-container">
                     <select
@@ -42,7 +42,8 @@ function TimeLimitPopup({ onClose, onSetTimeLimit }) {
                     <span> sekund</span>
                 </div>
                 {errorMessage && <div className="error-message">{errorMessage}</div>}
-                <button onClick={handleSubmit}>Nastavit</button>
+                <button className="buttonNastavit" onClick={handleSubmit}>Nastavit</button>
+
 
             </div>
 

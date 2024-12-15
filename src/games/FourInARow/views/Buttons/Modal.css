@@ -23,22 +23,28 @@
 }
 
 .close-button {
+    background-color: #008800;
+    border-radius: 8px;
+    border: 1px solid #000; /* Přidání obrysu */
+    padding-bottom: 7px;
     position: absolute;
     top: -1px;
     right: -1px;
     font-size: 34px; /* Zmenšená velikost pro lepší vizuální dojem */
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 35px;
     background: none;
     cursor: pointer;
     color: red;
     display: flex;
     align-items: center;
+    text-align-last: center;
     justify-content: center;
 }
 
 .close-button:hover {
-    color: #ff6b6b;
+    color: red;
+    background: grey;
 }
 .wheel-picker-container {
     display: flex;
@@ -73,15 +79,17 @@
 }
 
 /* Submit button */
-button {
+.buttonNastavit {
     background-color: #008800; /* Zelené tlačítko */
     color: white;
+    width: 50%;
     font-size: 16px;
-    border-radius: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
     transition: background-color 0.2s ease;
 }
-button:hover {
-    background-color: #00BB00;
+.buttonNastavit:hover {
+    background-color: grey;
 }
 
 /* Adjust heading */

@@ -24,13 +24,13 @@ function FourInARowView({
         <div className="site">
 
             {/* Home Button */}
-        <button className="button goToMainMenu" onClick={goToMainMenu}></button>
+        <button className="button4 goToMainMenu" onClick={goToMainMenu}></button>
     
             {/* Sloučený grid pro všechna tlačítka */}
-            <div className="buttons-container-grid">
+            <div className="buttons-container-grid4">
     
                 {/* Tlačítko s pravidly hry */}
-                <button className="button rulesButton">
+                <button className="button4 rulesButton">
                     <div className="rules-hover"> 
                         <h1>Pravidla hry</h1>
                         <ul>
@@ -47,10 +47,10 @@ function FourInARowView({
     
     
                 {/* Timer Button */}
-                <button className="button timerButton" onClick={toggleTimeLimitPopup}></button>
+                <button className="button4 timerButton" onClick={toggleTimeLimitPopup}></button>
     
                 {/* Toggle */}
-                <Switch className="button switch"
+                <Switch className="button4 switch4"
                     onChange={timerToggle}
                     checked={gameState.TimerOnVypZap}
                     uncheckedIcon={false}
@@ -85,8 +85,8 @@ function FourInARowView({
 
                     {/* Board Buttons */}
                     <div className="buttons-container-board">
-                        <button className="button resetButton" onClick={resetGame}></button>
-                        <button className="button undoButton" onClick={undo}></button>
+                        <button className="button4 resetButton" onClick={resetGame}></button>
+                        <button className="button4 undoButton" onClick={undo}></button>
                     </div>
                 </div>
 
