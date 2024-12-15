@@ -1,3 +1,8 @@
+//
+//  File: Menu.js
+//  Author: Matěj Bedřich, xbedri04
+//
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Menu.css';

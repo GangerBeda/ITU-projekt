@@ -1,3 +1,8 @@
+//
+//  File: GameLoader.js
+//  Author: Matěj Bedřich, xbedri04
+//
+
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Blackjack from '../games/Blackjack/Blackjack';
