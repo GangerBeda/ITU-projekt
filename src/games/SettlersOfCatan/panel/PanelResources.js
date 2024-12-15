@@ -702,16 +702,22 @@ export default function PanelResources(props) {
                 </div>
             </div>
             <div className='separator' />
-            <button onClick={(event) => onBuy(event)}>Buy development card</button>
+            <button className='c_button' onClick={(event) => onBuy(event)}>
+                Buy development card
+            </button>
             {/*<button>Trade</button>*/}
             <div className='separator' />
-            <button className='roll_btn' onClick={(event) => onRoll(event)}>
+            <button className='roll_btn c_button' onClick={(event) => onRoll(event)}>
                 Roll
             </button>
             <br />
-            <button onClick={(event) => endTurn(event)}>End Turn</button>
+            <button className='c_button' onClick={(event) => endTurn(event)}>
+                End Turn
+            </button>
             <div className='separator' />
-            <button onClick={() => props.setPanel('leaderboard')}>Leaderboard</button>
+            <button className='c_button' onClick={() => props.setPanel('leaderboard')}>
+                Leaderboard
+            </button>
         </>
     );
 }

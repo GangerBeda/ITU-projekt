@@ -40,7 +40,7 @@
     align-items: center;
 }
 
-button {
+.c_button {
     width: 90%;
     padding: 10px;
     background-color: #000;
@@ -50,7 +50,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.c_button:hover {
     background-color: #333;
 }
 
