@@ -88,7 +88,6 @@ function Blackjack() {
     const handleDoubleTap = async () => {
         const now = Date.now();
         if (now - lastTapRef.current < 300) {
-            // Double-tap
             hitButtonRef.current.click();
             if (gameOver) playAgainButtonRef.current.click();
             lastTapRef.current = 0;
@@ -97,7 +96,6 @@ function Blackjack() {
         }
     };
 
-    // Record when, where cursor is on mouse down
     const handlePointerDown = (e) => {
         initialXRef.current = e.clientX;
         swipeStartTimeRef.current = Date.now();
@@ -108,15 +106,12 @@ function Blackjack() {
         const swipeDistance = e.clientX - initialXRef.current;
         const swipeDuration = Date.now() - swipeStartTimeRef.current;
     
-        if (swipeDistance > 200 && swipeDuration <= 300) {
-            // If swipe conditions are met, trigger the Stand button
+        if ((swipeDistance < -200 || swipeDistance > 200) && swipeDuration <= 300) {
             standButtonRef.current.click();
         } else if (swipeDistance < 20) {
-            // Short movement, so check for double-tap
             handleDoubleTap();
         }
     
-        // Reset swipe tracking variables
         initialXRef.current = null;
         swipeStartTimeRef.current = null;
     };
