@@ -1,6 +1,7 @@
 import React from 'react';
 import "./Rules.css";
 
+// componentn to display the rules of the game
 const Rules = () => {
   return (
     <div className="tic-tac-toe-rules">

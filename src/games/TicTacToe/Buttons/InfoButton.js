@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./MenuButtons.css";
 
+// button used to toggle the rules
 const InfoButton = ({ onToggleRules }) => {
     return (
       <div

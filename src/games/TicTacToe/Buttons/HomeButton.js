@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./MenuButtons.css";
 
+// button used to navigate to the home page
 const HomeButton = () => {
 
     const navigate = useNavigate();

@@ -2,7 +2,11 @@ import React from "react";
 import Square from "./Square";
 import "./SubBoard.css";
 
+// sub-board component for main board in Ultimete Tic Tac Toe
 const SubBoard = ({ board, isActive, winner, onSquareClick, onHoverSquare, hoveredSquare, blindModeActive }) => (
+
+    // sets styles based on parsed information 
+    // renders squares based on parsed information
     <div className={`sub-board ${winner ? "won" : ""} 
                                 ${isActive ? "active" : ""} 
                                 ${!winner && hoveredSquare ? "highlight" : ""}`}>
