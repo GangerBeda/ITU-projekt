@@ -1,20 +1,17 @@
 import React from 'react';
+import Switch from 'react-switch';
 import './Styles/Globalstyles.css';
 import './Styles/Boardstyles.css';
 import './Styles/Buttonstyles.css';
 import './Styles/GameInfostyles.css';
 import './Styles/Timer.css';
-import './Styles/Switch.css';
-//TODO lepsi timer setting
-//TODO settings
+
+
 function FourInARowView({
     gameState,
-    remainingTime,
     makeMove,
-    startNewGame,
     resetGame,
     undo,
-    setTimeLimit,
     toggleSettings,
     showNewGameButton,
     goToMainMenu,
@@ -24,31 +21,29 @@ function FourInARowView({
 }) {
     return (
         <div className="site">
-
             {/* Home Button */}
             <button className="button goToMainMenu" onClick={goToMainMenu}></button>
 
             {/* Grid pro Timer Toggle, Settings */}
             <div className="buttons-container-grid">
-                {/* Timer Button */}
-                <button className="button timerButton" onClick={toggleTimeLimitPopup}></button>
-
-
-                {/* Toggle */}
-                <div className="timer-toggle-container">
-                    <label className="timer-toggle-switch">
-                        <input 
-                            type="checkbox" 
-                            checked={gameState.TimerOnVypZap}
-                            onChange={timerToggle}
-                            aria-label="Toggle game timer"
-                        />
-                        <span className="timer-toggle-slider" aria-hidden="true"></span>
-                    </label>
-                </div>
 
                 {/* Settings Button */}
                 <button className="button settings" onClick={toggleSettings}></button>
+
+                {/* Timer Button */}
+                <button className="button timerButton" onClick={toggleTimeLimitPopup}></button>
+
+                {/* Toggle */}
+                <div className="timer-toggle-container">
+                <Switch className= "button switch"
+                    onChange={timerToggle}
+                    checked={gameState.TimerOnVypZap}
+                    uncheckedIcon={false}
+                    checkedIcon={false}
+                />
+
+                </div>
+
             </div>
 
             {/* Timer Container */}
@@ -59,7 +54,6 @@ function FourInARowView({
             </div>
 
             <div className="mid">
-
                 {/* Game Board */}
                 <div className="Board">
                     {gameState.board.map((row, rowIndex) => (
@@ -112,3 +106,5 @@ function FourInARowView({
 }
 
 export default FourInARowView;
+
+//--startnewgame

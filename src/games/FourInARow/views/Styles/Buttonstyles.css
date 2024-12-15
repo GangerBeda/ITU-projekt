@@ -1,15 +1,5 @@
-/* Button styles */
-.buttons-container-grid {
-    display: grid;
-    grid-template-columns: repeat(2, auto); /* Dva sloupce */
-    grid-template-rows: repeat(2, auto);    /* Dva řádky */
-    gap: 10px;                             /* Mezera mezi prvky */
-    align-items: center;                   /* Zarovnání vertikálně */
-    justify-items: center;                 /* Zarovnání horizontálně */
-    position: absolute;
-    top: 2vh;                              /* Posun nahoru */
-    right: 2vw;                            /* Posun doprava */
-}
+/* Button Styles */
+
 
 .buttons-container-board {
     display: flex;
@@ -35,6 +25,56 @@
     left: 0.5vw;
 }
 
+.resetButton {
+    background-image: url('../Icons/restart_icon.png');
+}
+
+.undoButton {
+    background-image: url('../Icons/Undo.png');
+}
+
+.new-game-container {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.new-gameButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(33, 33, 33);
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.new-gameButton:hover {
+    background-color: rgb(50, 50, 50);
+}
+
+.buttons-container-grid {
+    display: flex;
+    flex-direction: column; /* Vertikální layout */
+    gap: 1vh;               /* Mezera mezi tlačítky */
+    position: absolute;
+    top: 2vh;               /* Pozice odshora */
+    right: 2vw;             /* Pozice zprava */
+    align-items: center;    /* Zarovnání prvků horizontálně */
+    width: 4vw;
+    z-index: 10;
+}
+
+.buttons-container-grid > * {
+    flex: 1; /* Rovnoměrné sdílení prostoru */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
 .timerButton {
     grid-column: 1;
     grid-row: 1;
@@ -47,18 +87,18 @@
     background-image: url('../Icons/settings_icon.png');
 }
 
-.resetButton {
-    background-image: url('../Icons/restart_icon.png');
+/* Timer Toggle Styles */
+.timer-toggle-container {
+    width: 4vw; /* Podobné jako tlačítka */
+    aspect-ratio: 1 / 1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.undoButton {
-    background-image: url('../Icons/Undo.png');
-}
 
-.new-gameButton {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: rgb(33, 33, 33);
-    color: white;
-    cursor: pointer;
+.switch {
+    transform: scale(1.5);
+    width: auto; /* Relativní šířka */
+    margin: 1vh;
 }

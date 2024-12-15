@@ -6,9 +6,6 @@ import { useNavigate } from 'react-router-dom'; //home
 
 import TimeLimitPopup from '../views/Buttons/TimeLimitPopup';
 
-
-
-
 const model = new FourInARowModel();
 
 
@@ -21,7 +18,6 @@ function FourInARowController() {
     const toggleTimeLimitPopup = () => {
         setShowTimeLimitPopup(!showTimeLimitPopup);
     };
-    
     
 
     useEffect(() => {
@@ -39,38 +35,32 @@ function FourInARowController() {
                 console.error("Chyba při připojení k serveru:", error);
             }
         };
-
-         // Spuštění intervalu pro pravidelné aktualizace časovače
-         const interval = setInterval(() => {
-            setGameState((prevState) => ({
-                ...prevState,
-                remainingTime: prevState.TimerOn && prevState.gameStarted
-                    ? Math.max(prevState.remainingTime - 1, 0)
-                    : prevState.remainingTime
-            }));
-        }, 1000);
-
-        fetchState(); // načítání stavu pri spusteni
-        // Vyčištění při odchodu z komponenty
-        return () => clearInterval(interval);
-}, []);
     
-    const startNewGame = async () => {
-        console.log("Starting new game")
-        try {
-            const response = await fetch('http://localhost:3001/fourinarow/new-game', {
-                method: 'POST',
+        const interval = setInterval(() => {
+            setGameState((prevState) => {
+                // Kontrola všech podmínek pro správný běh časovače
+                if (
+                    prevState.TimerOn &&
+                    prevState.TimerOnVypZap &&
+                    prevState.gameStarted &&
+                    prevState.remainingTime > 0
+                ) {
+                    return {
+                        ...prevState,
+                        remainingTime: prevState.remainingTime - 1
+                    };
+                }
+                return prevState; // Neodečítat čas, pokud podmínky nejsou splněny
             });
-            if (response.ok) {
-                const updatedState = await response.json();
-                setGameState(updatedState);  // aktualizuje stav hry na základě odpovědi ze serveru
-                console.log("updated state in startNewGame");
-            } else {
-            }
-        } catch (error) {
-            console.error('Error starting new game:', error);
-        }
-    };
+        }, 1000);
+    
+        fetchState(); // Načtení stavu při prvním vykreslení
+    
+        // Vyčištění intervalu při unmountu komponenty
+        return () => clearInterval(interval);
+    }, []);
+    
+    
     const resetGame = async () => {
         console.log("Reseting game")
         try {
@@ -121,7 +111,7 @@ const makeMove = async (column) => {
             });
             if (response.ok) {
                 const updatedState = await response.json();
-                setGameState(updatedState); // Aktualizuje stav hry podle odpovědi serveru
+                setGameState(updatedState);
             } else {
                 console.error('Failed to undo move');
             }
@@ -174,7 +164,14 @@ const makeMove = async (column) => {
             });
             if (response.ok) {
                 const updatedState = await response.json();
-                setGameState(updatedState);
+                setGameState({
+                    ...updatedState,
+                    remainingTime: updatedState.timeLimit, 
+                    TimerOn: updatedState.TimerOnVypZap, 
+                    gameStarted: true,
+                });
+    
+                console.log("Timer toggled and state updated");
             } else {
                 console.error('Failed to toggle timer');
             }
@@ -182,6 +179,7 @@ const makeMove = async (column) => {
             console.error('Error toggling timer:', error);
         }
     };
+    
     
     const getTimerMessage = () => {
         if (!gameState.TimerOnVypZap) return null;
@@ -210,7 +208,6 @@ const makeMove = async (column) => {
             <FourInARowView
                 gameState={gameState}
                 makeMove={makeMove}
-                startNewGame={startNewGame}
                 resetGame={resetGame}
                 undo={undo}
                 setTimeLimit={setTimeLimit} // Správný název předání funkce
