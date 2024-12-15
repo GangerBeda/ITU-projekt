@@ -1,3 +1,7 @@
+// author: Jaroslav Synek <xsynekj00>
+// project: Games Hub
+// game: Settlers of Catan
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HexGrid, Layout, Hexagon, GridGenerator } from 'react-hexgrid';
@@ -6,12 +10,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faBookOpen, faRedo } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
+// hex IDs that are not part of the board
 const INVALID_HEXES_MATERIALS = [0, 1, 2, 3, 4, 8, 9, 14, 15, 21, 22, 27, 28, 32, 33, 34, 35, 36];
 const INVALID_HEXES_SETTLERS = [
     0, 1, 4, 5, 6, 9, 12, 15, 18, 22, 25, 28, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 62, 65, 68, 72, 75, 78, 81, 84, 85, 86, 89, 90,
 ];
 const INVALID_HEXES_PATHS = [7, 9, 11, 22, 24, 26, 28, 41, 43, 45, 47, 49, 62, 64, 66, 68, 79, 81, 83];
 
+// returns the color that represents certain material
 const convertToColor = (materialType) => {
     const colors = {
         wood: '#060',
@@ -22,7 +28,7 @@ const convertToColor = (materialType) => {
     };
     return colors[materialType] || '#000';
 };
-
+//  returns the color that represents certain material that is lighter and visible on hover
 const convertToHoverColor = (materialType) => {
     const hoverColors = {
         wood: '#090',
@@ -35,12 +41,14 @@ const convertToHoverColor = (materialType) => {
 };
 
 export default function Board(props) {
+    // state hooks
     const [hoveredHex, setHoveredHex] = useState(null);
     const [hexColors, setHexColors] = useState({});
     const [hexHoverColors, setHexHoverColors] = useState({});
     const [materialTypes, setMaterialTypes] = useState([]);
     const [numberTokens, setNumberTokens] = useState([]);
 
+    // fetch when component mounts
     useEffect(() => {
         const fetchCatanState = async () => {
             try {
@@ -67,22 +75,25 @@ export default function Board(props) {
         fetchCatanState();
     }, []);
 
+    // returns color of hex in some grid with some id
     const getHexColor = (grid, i) => {
         return hexColors[`${grid}-${i}`] || '#222';
     };
 
+    // returns color of hex in some grid with some id (hover version)
     const getHexHoverColor = (grid, i) => {
         return hexHoverColors[`${grid}-${i}`] || '#555';
     };
 
+    // check if player can build a road or settler
     const checkResources = async (grid, phase) => {
-        if (grid === 'path' && phase >= 2) {
+        if (grid === 'path' && phase >= 2 && phase <= 5) {
             try {
                 const response = await axios.get('http://localhost:3001/catan/player');
                 const resources = response.data.playerCards[response.data.activePlayerColor].resource;
 
                 if (resources.wood < 1 || resources.brick < 1) {
-                    alert('Not enough resources, 1 wood & 1 brick required'); // TODO: change to something fancy
+                    alert('Not enough resources, 1 wood & 1 brick required');
                     return true;
                 }
 
@@ -96,7 +107,7 @@ export default function Board(props) {
                 const resources = response.data.playerCards[response.data.activePlayerColor].resource;
 
                 if (resources.wood < 1 || resources.brick < 1 || resources.sheep < 1 || resources.wheat < 1) {
-                    alert('Not enough resources, 1 wood, 1 brick, 1 sheep & 1 wheat required'); // TODO: change to something fancy
+                    alert('Not enough resources, 1 wood, 1 brick, 1 sheep & 1 wheat required');
                     return true;
                 }
                 await axios.post('http://localhost:3001/catan/buildSettleman', { activePlayerColor: props.activePlayerColor });
@@ -113,9 +124,9 @@ export default function Board(props) {
         return false;
     };
 
+    // handles all logic regarding clicking any hex (setter/road/material)
     const hexClicked = (grid, i) => {
         if (grid === 'material') {
-            // TODO: handle robber logic
             return;
         }
 
@@ -150,15 +161,21 @@ export default function Board(props) {
                     console.error('Request failed:', error);
                 });
 
-            // Update game state
             if (props.gameState.text === 'Placing settler') {
                 props.setGameState({ text: 'Placing road', phase: props.gameState.phase });
             } else if (props.gameState.text === 'Placing road') {
-                props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
+                if (props.gameState.phase > 10) {
+                    props.setGameState({ text: 'Placing road', phase: props.gameState.phase - 5 });
+                } else if (props.gameState.phase > 5) {
+                    props.setGameState({ text: 'Playing', phase: props.gameState.phase - 5 });
+                } else {
+                    props.setGameState({ text: 'Ending turn', phase: props.gameState.phase });
+                }
             }
         });
     };
 
+    // renders one of grids (setter/road/material)
     const renderHexGrid = (grid, size, spacing, flat, invalidHexes, hexRadius) => {
         let j = 0;
         return (
@@ -231,7 +248,11 @@ export default function Board(props) {
             <Link key={''} to={'/'} className='home-icon-container'>
                 <FontAwesomeIcon icon={faHome} className='home-icon' />
             </Link>
-            <FontAwesomeIcon icon={faBookOpen} className='rules-icon' />
+            <FontAwesomeIcon
+                icon={faBookOpen}
+                className='rules-icon'
+                onClick={() => window.open('https://www.catan.com/understand-catan/game-rules', '_blank')}
+            />
             <FontAwesomeIcon
                 icon={faRedo}
                 className='reset-icon'

@@ -9,6 +9,7 @@ const ClassicBoard = ({ board, onSquareClick }) => (
                 key={index}
                 value={value}
                 onClick={() => onSquareClick(index)}
+                isActive={true}
             />
         ))}
     </div>

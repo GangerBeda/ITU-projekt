@@ -1,0 +1,64 @@
+/* Button styles */
+.buttons-container-grid {
+    display: grid;
+    grid-template-columns: repeat(2, auto); /* Dva sloupce */
+    grid-template-rows: repeat(2, auto);    /* Dva řádky */
+    gap: 10px;                             /* Mezera mezi prvky */
+    align-items: center;                   /* Zarovnání vertikálně */
+    justify-items: center;                 /* Zarovnání horizontálně */
+    position: absolute;
+    top: 2vh;                              /* Posun nahoru */
+    right: 2vw;                            /* Posun doprava */
+}
+
+.buttons-container-board {
+    display: flex;
+    gap: 2vw; /* Mezera mezi tlačítky */
+    margin-bottom: 1vh;
+}
+
+.button {
+    background-size: 100% 100%;
+    background-color: transparent;
+    background-position: center;
+    border: none;
+    cursor: pointer;
+    width: 4vw;
+    aspect-ratio: 1 / 1;
+}
+
+/* Specific Button Styles */
+.goToMainMenu {
+    background-image: url('../Icons/home_icon.png');
+    position: absolute;
+    top: 0.5vh;
+    left: 0.5vw;
+}
+
+.timerButton {
+    grid-column: 1;
+    grid-row: 1;
+    background-image: url('../Icons/timer_icon.png');
+}
+
+.settings {
+    grid-column: 2;
+    grid-row: 1;
+    background-image: url('../Icons/settings_icon.png');
+}
+
+.resetButton {
+    background-image: url('../Icons/restart_icon.png');
+}
+
+.undoButton {
+    background-image: url('../Icons/Undo.png');
+}
+
+.new-gameButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(33, 33, 33);
+    color: white;
+    cursor: pointer;
+}

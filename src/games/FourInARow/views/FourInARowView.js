@@ -1,6 +1,12 @@
 import React from 'react';
-import './FourInARowView.css';
-
+import './Styles/Globalstyles.css';
+import './Styles/Boardstyles.css';
+import './Styles/Buttonstyles.css';
+import './Styles/GameInfostyles.css';
+import './Styles/Timer.css';
+import './Styles/Switch.css';
+//TODO lepsi timer setting
+//TODO settings
 function FourInARowView({
     gameState,
     remainingTime,
@@ -11,14 +17,50 @@ function FourInARowView({
     setTimeLimit,
     toggleSettings,
     showNewGameButton,
-    goToMainMenu }) {
-
-console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 2x bcs vyvojovy rezim
-
-
+    goToMainMenu,
+    timerToggle,
+    timerMessage,
+    toggleTimeLimitPopup
+}) {
     return (
         <div className="site">
-                    {/* hraci pole */}
+
+            {/* Home Button */}
+            <button className="button goToMainMenu" onClick={goToMainMenu}></button>
+
+            {/* Grid pro Timer Toggle, Settings */}
+            <div className="buttons-container-grid">
+                {/* Timer Button */}
+                <button className="button timerButton" onClick={toggleTimeLimitPopup}></button>
+
+
+                {/* Toggle */}
+                <div className="timer-toggle-container">
+                    <label className="timer-toggle-switch">
+                        <input 
+                            type="checkbox" 
+                            checked={gameState.TimerOnVypZap}
+                            onChange={timerToggle}
+                            aria-label="Toggle game timer"
+                        />
+                        <span className="timer-toggle-slider" aria-hidden="true"></span>
+                    </label>
+                </div>
+
+                {/* Settings Button */}
+                <button className="button settings" onClick={toggleSettings}></button>
+            </div>
+
+            {/* Timer Container */}
+            <div className="timer-container">
+                <div className={`timer ${gameState.TimerOn ? 'timer-visible' : ''}`}>
+                    {gameState.TimerOn && timerMessage}
+                </div>
+            </div>
+
+            <div className="mid">
+
+                {/* Game Board */}
                 <div className="Board">
                     {gameState.board.map((row, rowIndex) => (
                         <div key={rowIndex} className="board-row">
@@ -33,32 +75,40 @@ console.log("VIEW FourInARowView:", { gameState, setTimeLimit }); //toto je tam 
                             ))}
                         </div>
                     ))}
+
+                    {/* Board Buttons */}
+                    <div className="buttons-container-board">
+                        <button className="button resetButton" onClick={resetGame}></button>
+                        <button className="button undoButton" onClick={undo}></button>
+                    </div>
                 </div>
 
-                {/* Kontejner pro tlačítka */}
-                <div className="buttons-container">
-                    <button className="button resetButton" onClick={resetGame}></button>
-                    <button className="button undoButton" onClick={undo}></button>
-                    <button className="button timerButton" onClick={setTimeLimit}></button>
-                    <button className="button settings" onClick={toggleSettings}></button>
-                    <button className="button goToMainMenu" onClick={goToMainMenu}></button>
+                {/* Game Info */}
+                <div className="game-info-container">
+                    <span className="game-info">
+                        <span className={`player-colour ${gameState.turnColour}`}>
+                            {gameState.highlightedPlayer}
+                        </span>
+                        {` ${gameState.message}`}
+                    </span>
                 </div>
-            <div className="gameInfo">
-                <p>{`${gameState.message}`}</p>
-                <p>Zbývající čas na tah: {gameState.timeLimit !== null ? `${gameState.timeLimit} sekund` : 'Není nastaven'}</p>
             </div>
-            
-            {showNewGameButton && (
-            <button className="button1" onClick={() => {
-                        resetGame();
-                        console.log("Tlačítko 'Nová hra' bylo kliknuto!");
-                    }}
-                >Nová hra
-            </button>
-            )}
 
+            {/* New Game Button */}
+            <div className="new-game-container">
+                {showNewGameButton && (
+                    <button
+                        className="new-gameButton"
+                        onClick={() => {
+                            resetGame();
+                        }}
+                    >
+                        Začít novou hru
+                    </button>
+                )}
+            </div>
         </div>
     );
 }
- 
+
 export default FourInARowView;

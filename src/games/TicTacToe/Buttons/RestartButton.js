@@ -1,9 +1,9 @@
 import React from "react";
-import "./RestartButton.css";
+import "./MenuButtons.css";
 
 const RestartButton = ({onClick}) => {
     return (
-        <div className="restart-button" onClick={onClick}>
+        <div className="tic-tac-toe-menu-button" onClick={onClick}>
             Restart
         </div>
     );

@@ -1,0 +1,17 @@
+/* Global styles */
+.site {
+    background: linear-gradient(135deg, #9C27B0, #EDE7C6);
+    color: #000000; /* Černý text jako výchozí */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.mid {
+    display: flex;
+    align-items: center;
+    flex-direction: column; /* Zarovná prvky vertikálně */
+    gap: 1rem; /* Mezera mezi Board a game-info-container */
+}

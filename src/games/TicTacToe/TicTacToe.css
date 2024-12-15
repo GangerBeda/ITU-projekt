@@ -4,20 +4,120 @@
   align-items: center;
 }
 
-.buttons-board{
-  width: 100%;
+.tic-tac-toe-header {
+  width: 740px;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 22px;
+  background-color: #292929;
+  padding: 10px;
+  border-radius: 35px;
+  margin: 20px;
+}
+
+.tic-tac-toe-header span {
+  width: 220px;
   height: 20px;
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 25px;
+  padding: 10px 30px;
+  color: white;
+  font-weight: bold;
+  border-radius: 30px;
+  text-align: center;
+  user-select: none;
 }
 
+.tic-tac-toe-header span.active {
+  background-color: white;
+  color: #292929;
+}
+.tic-tac-toe-main {
+  display: grid;
+  grid-template-columns: 2fr 6fr 2fr; /* 1 part blank space, 6 parts board, 2 parts menu */
+  height: 100%; /* Full height of the container */
+  width: 100%; /* Full width of the container */
+  padding: 20px; /* Optional padding for the entire container */
+}
+
+.tic-tac-toe-filler {
+  background-color: transparent; /* Blank space area */
+}
+
+.tic-tac-toe-board {
+  border-radius: 10px;
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  padding: 10px; /* Space inside the board */
+}
+
+.tic-tac-toe-menu {
+  border-radius: 10px;
+  padding: 20px;
+  color: white; /* White text color for menu */
+  display: flex;
+  flex-direction: column; /* Stack menu sections vertically */
+  margin-right: 40px;
+  height: 80%; /* Full height of the menu */
+  gap: 10px; /* Gap between sections */
+}
+
+.tic-tac-toe-menu-top,
+.tic-tac-toe-menu-bottom {
+  background-color: #292929; /* Slightly lighter box color */
+  border-radius: 10px; /* Rounded edges for the sections */
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
+}
+
+.tic-tac-toe-menu-top {
+  flex-grow: 2; /* Taller section for buttons */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between buttons */
+}
+
+.tic-tac-toe-menu-separator {
+  height: 5px; /* Height of the white strip */
+  background-color: white;
+  border-radius: 50px; /* Rounded edges for the strip */
+  margin: 10px 0; /* Space above and below the separator */
+}
+
+.tic-tac-toe-menu-bottom {
+  flex-grow: 1; /* Smaller section for score */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center the score vertically */
+  text-align: center;
+  gap: 10px; /* Space between score items */
+}
+
+.tic-tac-toe-blind-show {
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  align-items: center;     /* Vertically center */
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.tic-tac-toe-rules {
+  color: white;
+  background-color: #292929;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  margin-left: 40px;
+}
+
+.tic-tac-toe-is-next {
+  color: #292929;
+  font-size: 20px;
+  font-weight: bold;
+}
 .winner{
   font-size: 50px;
-}
-
-.score-TicTacToe{
-  font-size: 40px;
 }

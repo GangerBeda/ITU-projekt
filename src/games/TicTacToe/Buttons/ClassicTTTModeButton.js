@@ -1,9 +1,9 @@
 import React from "react";
-import "./ClassicTTTModeButton.css";
+import "./MenuButtons.css";
 
 const ClassicTTTModeButton = ({ onClick }) => {
     return (
-        <div className="classic-button" onClick={onClick}>
+        <div className="tic-tac-toe-menu-button" onClick={onClick}>
             Classic Tic Tac Toe
         </div>
     );

@@ -1,9 +1,9 @@
 import React from "react";
-import "./ResetScoreButton.css";
+import "./MenuButtons.css";
 
 const ResetScoreButton = ({ onClick }) => {
     return (
-        <div className="reset-score-button" onClick={onClick}>
+        <div className="tic-tac-toe-menu-button" onClick={onClick}>
             Reset Score
         </div>
     );

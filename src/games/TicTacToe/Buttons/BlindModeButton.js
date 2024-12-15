@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "./BlindModeButton.css";
+import "./MenuButtons.css";
 
 const BlindModeButton = ({onClick}) => {
     return (
-        <div className="blind-button" onClick={onClick}>
+        <div className="tic-tac-toe-menu-button" onClick={onClick}>
             Blind Mode
         </div>
     );
